@@ -1,0 +1,149 @@
+2026-04-19 21:14:45,661 - INFO - Loaded: (4429940, 40)
+2026-04-19 21:14:45,661 - INFO - 
+=== Phase 4.1: Cleaning ===
+2026-04-19 21:14:47,268 - INFO - Inf/NaN: 4429940 -> 4429940 (dropped 0)
+2026-04-19 21:14:49,267 - INFO - Clipped features: 18
+2026-04-19 21:14:49,267 - INFO -   DNS: 443 rows clipped at 0.77
+2026-04-19 21:14:49,267 - INFO -   Tot sum: 443 rows clipped at 175125.15
+2026-04-19 21:14:49,267 - INFO -   Std: 443 rows clipped at 4679.63
+2026-04-19 21:14:49,267 - INFO -   IAT: 443 rows clipped at 0.12
+2026-04-19 21:14:49,267 - INFO -   Variance: 443 rows clipped at 21898928.77
+2026-04-19 21:14:49,267 - INFO -   AVG: 432 rows clipped at 3686.00
+2026-04-19 21:14:49,267 - INFO -   Tot size: 432 rows clipped at 3686.00
+2026-04-19 21:14:49,267 - INFO -   Min: 424 rows clipped at 2858.00
+2026-04-19 21:14:49,267 - INFO -   Max: 374 rows clipped at 15994.00
+2026-04-19 21:14:49,267 - INFO -   ARP: 366 rows clipped at 0.90
+2026-04-19 21:14:50,270 - INFO - After cleaning: 4,429,940 rows
+2026-04-19 21:14:50,270 - INFO - 
+=== Phase 4.1b: Post-clean validation ===
+2026-04-19 21:14:53,821 - INFO - Processed data validity: 100.0000%
+2026-04-19 21:14:53,822 - INFO - 
+=== Phase 4.2: Label encoding ===
+2026-04-19 21:14:54,580 - INFO - 34-class label encoder: 34 classes
+2026-04-19 21:14:54,801 - INFO - Category map missing rows: 0
+2026-04-19 21:14:55,180 - INFO - 8-class category encoder: 8 categories
+2026-04-19 21:14:55,230 - INFO - Binary: 199,989 benign, 4,229,951 attack
+2026-04-19 21:14:55,231 - INFO - 
+=== Phase 4.3: Stratified split (70/10/20) ===
+2026-04-19 21:14:59,810 - INFO - Train: 3,100,958  Val: 442,994  Test: 885,988
+2026-04-19 21:14:59,810 - INFO - Ratios: 70.0% / 10.0% / 20.0%
+2026-04-19 21:14:59,817 - INFO -   train: 34 classes present
+2026-04-19 21:14:59,826 - INFO -   val: 34 classes present
+2026-04-19 21:14:59,829 - INFO -   test: 34 classes present
+2026-04-19 21:14:59,831 - INFO - 
+=== Phase 4.4: RobustScaler (fit on train only) ===
+2026-04-19 21:15:07,382 - INFO - Near-zero IQR report saved: D:/thesis_final/data/processed/near_zero_iqr_features.json
+2026-04-19 21:15:07,382 - INFO - Scaler center (median): min=0.0000, max=6510.4683, mean=337.3625
+2026-04-19 21:15:07,383 - INFO - Scaler scale (IQR):     min=0.000927, max=48939.0000, mean=3087.6852
+2026-04-19 21:15:07,383 - INFO - WARNING: 23 features have train IQR ~= 0 (near-constant in train):
+2026-04-19 21:15:07,383 - INFO -   fin_flag_number: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=4.52e-02, kind=concentrated, action=manual
+2026-04-19 21:15:07,383 - INFO -   syn_flag_number: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=1.50e-01, kind=concentrated, action=manual
+2026-04-19 21:15:07,383 - INFO -   rst_flag_number: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=5.90e-02, kind=concentrated, action=manual
+2026-04-19 21:15:07,383 - INFO -   psh_flag_number: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=5.58e-02, kind=concentrated, action=manual
+2026-04-19 21:15:07,383 - INFO -   ack_flag_number: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=2.34e-01, kind=concentrated, action=manual
+2026-04-19 21:15:07,384 - INFO -   ece_flag_number: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=0.00e+00, kind=constant, action=auto_freeze
+2026-04-19 21:15:07,384 - INFO -   cwr_flag_number: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=0.00e+00, kind=constant, action=auto_freeze
+2026-04-19 21:15:07,384 - INFO -   fin_count: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=1.27e-01, kind=concentrated, action=manual
+2026-04-19 21:15:07,384 - INFO -   rst_count: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=1.28e-01, kind=concentrated, action=manual
+2026-04-19 21:15:07,384 - INFO -   HTTP: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=5.72e-02, kind=concentrated, action=manual
+2026-04-19 21:15:07,384 - INFO -   HTTPS: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=1.24e-01, kind=concentrated, action=manual
+2026-04-19 21:15:07,384 - INFO -   DNS: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=7.90e-04, kind=rare_signal, action=allow
+2026-04-19 21:15:07,384 - INFO -   Telnet: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=0.00e+00, kind=constant, action=auto_freeze
+2026-04-19 21:15:07,384 - INFO -   SMTP: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=0.00e+00, kind=constant, action=auto_freeze
+2026-04-19 21:15:07,384 - INFO -   SSH: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=4.10e-04, kind=rare_signal, action=allow
+2026-04-19 21:15:07,384 - INFO -   IRC: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=0.00e+00, kind=constant, action=auto_freeze
+2026-04-19 21:15:07,384 - INFO -   UDP: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=1.82e-01, kind=concentrated, action=manual
+2026-04-19 21:15:07,384 - INFO -   DHCP: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=0.00e+00, kind=constant, action=auto_freeze
+2026-04-19 21:15:07,384 - INFO -   ARP: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=5.19e-04, kind=rare_signal, action=allow
+2026-04-19 21:15:07,384 - INFO -   ICMP: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=8.93e-02, kind=concentrated, action=manual
+2026-04-19 21:15:07,385 - INFO -   IGMP: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=0.00e+00, kind=constant, action=auto_freeze
+2026-04-19 21:15:07,385 - INFO -   IPv: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=9.99e-01, kind=concentrated, action=manual
+2026-04-19 21:15:07,385 - INFO -   LLC: train_iqr=0.00e+00, scale=1.00e+00, non_zero_frac=9.99e-01, kind=concentrated, action=manual
+2026-04-19 21:15:07,385 - INFO -   Review near_zero_iqr_features.json before final attack-budget decisions.
+2026-04-19 21:15:07,385 - INFO - 
+=== Phase 4.5: Saving arrays ===
+2026-04-19 21:15:10,039 - INFO -   X_train.npy: shape=(3100958, 39), dtype=float32
+2026-04-19 21:15:10,320 - INFO -   X_val.npy: shape=(442994, 39), dtype=float32
+2026-04-19 21:15:10,946 - INFO -   X_test.npy: shape=(885988, 39), dtype=float32
+2026-04-19 21:15:10,952 - INFO -   y_train.npy: shape=(3100958,), dtype=int32
+2026-04-19 21:15:10,954 - INFO -   y_val.npy: shape=(442994,), dtype=int32
+2026-04-19 21:15:10,956 - INFO -   y_test.npy: shape=(885988,), dtype=int32
+2026-04-19 21:15:10,960 - INFO -   y_train_cat.npy: shape=(3100958,), dtype=int32
+2026-04-19 21:15:10,961 - INFO -   y_val_cat.npy: shape=(442994,), dtype=int32
+2026-04-19 21:15:10,962 - INFO -   y_test_cat.npy: shape=(885988,), dtype=int32
+2026-04-19 21:15:10,966 - INFO -   y_train_bin.npy: shape=(3100958,), dtype=int32
+2026-04-19 21:15:10,967 - INFO -   y_val_bin.npy: shape=(442994,), dtype=int32
+2026-04-19 21:15:10,968 - INFO -   y_test_bin.npy: shape=(885988,), dtype=int32
+2026-04-19 21:15:10,968 - INFO - 
+=== Phase 4.6: Class weights ===
+2026-04-19 21:15:11,483 - INFO - Top 5 highest weights (34-class):
+2026-04-19 21:15:11,483 - INFO -   UPLOADING_ATTACK: 108.9661
+2026-04-19 21:15:11,483 - INFO -   RECON-PINGSWEEP: 60.2807
+2026-04-19 21:15:11,483 - INFO -   BACKDOOR_MALWARE: 42.3223
+2026-04-19 21:15:11,483 - INFO -   XSS: 35.1598
+2026-04-19 21:15:11,483 - INFO -   SQLINJECTION: 25.9473
+2026-04-19 21:15:11,483 - INFO - Top 5 lowest weights (34-class):
+2026-04-19 21:15:11,483 - INFO -   DDOS-UDP_FLOOD: 0.6515
+2026-04-19 21:15:11,483 - INFO -   VULNERABILITYSCAN: 0.6515
+2026-04-19 21:15:11,483 - INFO -   DDOS-ICMP_FLOOD: 0.6515
+2026-04-19 21:15:11,484 - INFO -   DDOS-RSTFINFLOOD: 0.6515
+2026-04-19 21:15:11,484 - INFO -   DDOS-SYNONYMOUSIP_FLOOD: 0.6515
+2026-04-19 21:15:11,484 - INFO - Weight ranges: 34-class=[0.651, 108.966], 8-class=[0.270, 44.219], binary=[0.524, 11.075]
+2026-04-19 21:15:11,484 - INFO - 
+=== Phase 4.7: Perturbation mask ===
+2026-04-19 21:15:11,485 - INFO -   WARNING: 'fin_flag_number' has near-zero IQR (1.00e+00) kind=concentrated max=1.0000. Keeping mutable; scaled-epsilon interpretation may be unreliable.
+2026-04-19 21:15:11,485 - INFO -   WARNING: 'syn_flag_number' has near-zero IQR (1.00e+00) kind=concentrated max=1.0000. Keeping mutable; scaled-epsilon interpretation may be unreliable.
+2026-04-19 21:15:11,485 - INFO -   WARNING: 'rst_flag_number' has near-zero IQR (1.00e+00) kind=concentrated max=1.0000. Keeping mutable; scaled-epsilon interpretation may be unreliable.
+2026-04-19 21:15:11,485 - INFO -   WARNING: 'psh_flag_number' has near-zero IQR (1.00e+00) kind=concentrated max=1.0000. Keeping mutable; scaled-epsilon interpretation may be unreliable.
+2026-04-19 21:15:11,485 - INFO -   WARNING: 'ack_flag_number' has near-zero IQR (1.00e+00) kind=concentrated max=1.0000. Keeping mutable; scaled-epsilon interpretation may be unreliable.
+2026-04-19 21:15:11,485 - INFO -   WARNING: 'fin_count' has near-zero IQR (1.00e+00) kind=concentrated max=100.0000. Keeping mutable; scaled-epsilon interpretation may be unreliable.
+2026-04-19 21:15:11,486 - INFO -   WARNING: 'rst_count' has near-zero IQR (1.00e+00) kind=concentrated max=100.0000. Keeping mutable; scaled-epsilon interpretation may be unreliable.
+2026-04-19 21:15:11,486 - INFO -   Full (1.0): 3, Partial (0.3): 16, Frozen (0.0): 20 [auto-frozen: 7, capped-to-partial: 7]
+2026-04-19 21:15:11,486 - INFO - 
+=== Phase 4.8: Content hashes ===
+2026-04-19 21:15:11,962 - INFO -   Content hashes saved.
+2026-04-19 21:15:11,963 - INFO - 
+=== Phase 4.9: Run manifest ===
+2026-04-19 21:15:18,101 - INFO -   Run manifest saved.
+2026-04-19 21:15:18,102 - INFO - 
+====================================================================
+2026-04-19 21:15:18,102 - INFO -      CICIoT2023 PREPROCESSING COMPLETE
+2026-04-19 21:15:18,102 - INFO - ====================================================================
+2026-04-19 21:15:18,102 - INFO - Schema:           Modified Schema A (39 features)
+2026-04-19 21:15:18,102 - INFO - Mode:             SAMPLE (three-tier caps)
+2026-04-19 21:15:18,102 - INFO - Rows loaded:      4,429,940
+2026-04-19 21:15:18,102 - INFO - After cleaning:   4,429,940
+2026-04-19 21:15:18,102 - INFO - Train/Val/Test:   3,100,958 / 442,994 / 885,988  (70/10/20 stratified)
+2026-04-19 21:15:18,103 - INFO - Features:         39
+2026-04-19 21:15:18,103 - INFO - Classes:          34 (full) | 8 (category) | 2 (binary)
+2026-04-19 21:15:18,103 - INFO - 
+2026-04-19 21:15:18,103 - INFO - Scaler IQR:       min=0.000927, max=48939.0000, mean=3087.6852
+2026-04-19 21:15:18,104 - INFO - Top-5 largest IQRs:
+2026-04-19 21:15:18,104 - INFO -   Tot sum=48939.0000
+2026-04-19 21:15:18,104 - INFO -   Variance=44315.3320
+2026-04-19 21:15:18,104 - INFO -   Rate=24751.8893
+2026-04-19 21:15:18,104 - INFO -   Max=1014.0000
+2026-04-19 21:15:18,104 - INFO -   AVG=518.0000
+2026-04-19 21:15:18,104 - INFO - Top-5 smallest IQRs (risk zone for PGD):
+2026-04-19 21:15:18,104 - INFO -   ICMP=1.000000
+2026-04-19 21:15:18,104 - INFO -   IGMP=1.000000
+2026-04-19 21:15:18,104 - INFO -   IPv=1.000000
+2026-04-19 21:15:18,104 - INFO -   LLC=1.000000
+2026-04-19 21:15:18,104 - INFO -   IAT=0.000927
+2026-04-19 21:15:18,104 - INFO - 
+2026-04-19 21:15:18,104 - INFO - Pre-clean validity (EDA report): 100.0000% overall
+2026-04-19 21:15:18,104 - INFO - Processed data validity: 100.0000% overall
+2026-04-19 21:15:18,105 - INFO -   worst rule: R_nonneg_Header_Length at 0.0000%
+2026-04-19 21:15:18,105 - INFO - 
+2026-04-19 21:15:18,105 - INFO - Class weights (34-class):
+2026-04-19 21:15:18,105 - INFO -   highest 3: UPLOADING_ATTACK=108.9661, RECON-PINGSWEEP=60.2807, BACKDOOR_MALWARE=42.3223
+2026-04-19 21:15:18,105 - INFO -   lowest  3: DDOS-ICMP_FLOOD=0.6515, DDOS-RSTFINFLOOD=0.6515, DDOS-SYNONYMOUSIP_FLOOD=0.6515
+2026-04-19 21:15:18,105 - INFO -   weight range: [0.6515, 108.9661]  (ratio: 167.3x)
+2026-04-19 21:15:18,105 - INFO - 
+2026-04-19 21:15:18,105 - INFO - Perturbation mask: 3 features at 1.0, 16 at 0.3, 20 frozen
+2026-04-19 21:15:18,105 - INFO - 
+2026-04-19 21:15:18,105 - INFO - Augmentation applied: NONE (SMOTE/ADASYN skipped by design)
+2026-04-19 21:15:18,105 - INFO - Imbalance handling: class-weighted loss vectors saved for downstream use.
+2026-04-19 21:15:18,105 - INFO - 
+2026-04-19 21:15:18,105 - INFO - All artifacts saved. Content hashes committed to run_manifest.json.
+2026-04-19 21:15:18,105 - INFO - ====================================================================

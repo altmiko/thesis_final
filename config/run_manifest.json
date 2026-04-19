@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-04-19T19:32:36.050520",
-  "git_commit": "not-a-git-repo",
+  "timestamp": "2026-04-19T21:15:18.100928",
+  "git_commit": "62f6b1fe33e43fc56e11d7fbe0b8119919adf0fe",
   "python_version": "3.10.20 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:42:35) [MSC v.1942 64 bit (AMD64)]",
   "package_versions": {
     "numpy": "2.2.6",
@@ -24,7 +24,7 @@
     "rare": null
   },
   "rows": {
-    "loaded": 4429940,
+    "loaded_parquet": 4429940,
     "after_clean": 4429940,
     "train": 3100958,
     "val": 442994,
@@ -46,75 +46,144 @@
   "clip_log": {
     "Rate": {
       "upper_clip": 998643.8095238096,
+      "original_max": 10485760.0,
       "n_clipped": 358
     },
     "ece_flag_number": {
       "upper_clip": 0.2,
+      "original_max": 1.0,
       "n_clipped": 295
     },
     "cwr_flag_number": {
       "upper_clip": 0.1,
+      "original_max": 1.0,
       "n_clipped": 311
     },
     "DNS": {
       "upper_clip": 0.7700609999988228,
+      "original_max": 1.0,
       "n_clipped": 443
     },
     "Telnet": {
       "upper_clip": 0.1,
+      "original_max": 0.6,
       "n_clipped": 134
     },
     "SMTP": {
       "upper_clip": 0.1,
+      "original_max": 0.9,
       "n_clipped": 155
     },
     "IRC": {
       "upper_clip": 0.1,
+      "original_max": 0.9,
       "n_clipped": 134
     },
     "DHCP": {
       "upper_clip": 0.4,
+      "original_max": 0.8,
       "n_clipped": 47
     },
     "ARP": {
       "upper_clip": 0.9,
+      "original_max": 1.0,
       "n_clipped": 366
     },
     "IGMP": {
       "upper_clip": 0.1,
+      "original_max": 0.4,
       "n_clipped": 188
     },
     "Tot sum": {
       "upper_clip": 175125.14639999717,
+      "original_max": 289481.0,
       "n_clipped": 443
     },
     "Min": {
       "upper_clip": 2858.0,
+      "original_max": 4410.0,
       "n_clipped": 424
     },
     "Max": {
       "upper_clip": 15994.0,
+      "original_max": 39162.0,
       "n_clipped": 374
     },
     "AVG": {
       "upper_clip": 3686.0,
+      "original_max": 7885.2,
       "n_clipped": 432
     },
     "Std": {
       "upper_clip": 4679.629126996343,
+      "original_max": 10625.816277141044,
       "n_clipped": 443
     },
     "Tot size": {
       "upper_clip": 3686.0,
+      "original_max": 7885.2,
       "n_clipped": 432
     },
     "IAT": {
       "upper_clip": 0.12192565047500886,
+      "original_max": 65724.00937809944,
       "n_clipped": 443
     },
     "Variance": {
       "upper_clip": 21898928.76700072,
+      "original_max": 112907971.55555557,
       "n_clipped": 443
     }
+  },
+  "near_zero_iqr": {
+    "threshold": 1e-06,
+    "rare_signal_non_zero_threshold": 0.001,
+    "freeze_policy": {
+      "constant": "auto_freeze",
+      "rare_signal": "allow",
+      "concentrated": "manual"
+    },
+    "counts_by_kind": {
+      "constant": 7,
+      "rare_signal": 3,
+      "concentrated": 13
+    },
+    "auto_frozen_features": [
+      "DHCP",
+      "IGMP",
+      "IRC",
+      "SMTP",
+      "Telnet",
+      "cwr_flag_number",
+      "ece_flag_number"
+    ],
+    "capped_partial_features": [
+      "ack_flag_number",
+      "fin_count",
+      "fin_flag_number",
+      "psh_flag_number",
+      "rst_count",
+      "rst_flag_number",
+      "syn_flag_number"
+    ],
+    "manual_review_features": [
+      "ack_flag_number",
+      "fin_count",
+      "fin_flag_number",
+      "psh_flag_number",
+      "rst_count",
+      "rst_flag_number",
+      "syn_flag_number"
+    ],
+    "manual_decisions": {
+      "ack_flag_number": "allow_mutable",
+      "fin_count": "allow_mutable",
+      "fin_flag_number": "allow_mutable",
+      "psh_flag_number": "allow_mutable",
+      "rst_count": "allow_mutable",
+      "rst_flag_number": "allow_mutable",
+      "syn_flag_number": "allow_mutable"
+    },
+    "decision_timestamp": "2026-04-19T21:15:18.100928"
   }
 }

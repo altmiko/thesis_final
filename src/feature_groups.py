@@ -42,6 +42,10 @@ IMMUTABLE_FEATURES = ['Protocol Type', 'TCP', 'UDP', 'ICMP']
 QUASI_IMMUTABLE_FEATURES = [
     'HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 'SSH', 'IRC',
     'DHCP', 'ARP', 'IPv', 'LLC', 'IGMP',
+    # TTL is OS/network-stack dominated and should not be freely perturbed.
+    'Time_To_Live',
+    # Header_Length is a derived flow aggregate tied to packet structure/count.
+    'Header_Length',
 ]
 
 # ── Binary features (protocol indicators, values in {0, 1}) ────────────────
@@ -64,7 +68,7 @@ INTEGER_FEATURES = [
 # ── Mutable features (attacker can influence via packet crafting) ───────────
 
 BASE_MUTABLE = [
-    'Rate', 'Header_Length', 'Variance',
+    'Rate', 'Variance',
     'fin_flag_number', 'syn_flag_number', 'rst_flag_number',
     'psh_flag_number', 'ack_flag_number', 'ece_flag_number',
     'cwr_flag_number',
@@ -74,8 +78,30 @@ BASE_MUTABLE = [
 
 MUTABLE_FEATURES = BASE_MUTABLE + [
     'ack_count', 'syn_count', 'fin_count', 'rst_count',
-    'Number', 'Time_To_Live',
+    'Number',
 ]
+
+# ── Near-zero-IQR governance for perturbation policy ───────────────────────
+
+NEAR_ZERO_IQR_THRESHOLD = 1e-6
+RARE_SIGNAL_NONZERO_THRESHOLD = 1e-3
+NEAR_ZERO_FREEZE_POLICY = {
+    'constant': 'auto_freeze',
+    'rare_signal': 'allow',
+    'concentrated': 'manual',
+}
+
+# Explicit manual decisions for near-zero-IQR concentrated features.
+# Allowed values: 'allow_mutable' | 'force_freeze'
+MANUAL_CONCENTRATED_DECISIONS = {
+    'fin_flag_number': 'allow_mutable',
+    'syn_flag_number': 'allow_mutable',
+    'rst_flag_number': 'allow_mutable',
+    'psh_flag_number': 'allow_mutable',
+    'ack_flag_number': 'allow_mutable',
+    'fin_count': 'allow_mutable',
+    'rst_count': 'allow_mutable',
+}
 
 # ── Category mapping (uppercase labels as found in the CSV) ─────────────────
 

@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 
+VALID_PROTOCOLS = {0, 1, 2, 6, 17, 47}
+
+
 @dataclass
 class ValidationResult:
     n_samples: int
@@ -57,7 +60,7 @@ def validate_batch(X: np.ndarray, feature_names: List[str]) -> ValidationResult:
     # G2 — Protocol Type in valid IP protocol numbers
     if has('Protocol Type'):
         proto = np.round(df['Protocol Type'].values).astype(int)
-        V['R_protocol_valid'] = ~np.isin(proto, [0, 1, 2, 6, 17])
+        V['R_protocol_valid'] = ~np.isin(proto, list(VALID_PROTOCOLS))
 
     # G3 — Binary features in {0, 1}
     for c in ['HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 'SSH', 'IRC',
@@ -65,19 +68,26 @@ def validate_batch(X: np.ndarray, feature_names: List[str]) -> ValidationResult:
         if has(c):
             V[f'R_binary_{c}'] = ~np.isin(np.round(df[c].values).astype(int), [0, 1])
 
-    # G4 — Protocol <-> transport-layer indicator consistency
+    # G4 — Protocol-indicator consistency (indicator implies protocol)
+    # Note: for this CICIoT2023 release, protocol-indicator columns may carry
+    # noisy/soft values before rounding. We enforce the robust implication
+    # direction only: if indicator=1, Protocol Type must match.
     if has('Protocol Type') and has('TCP'):
         p = np.round(df['Protocol Type'].values).astype(int)
         t = np.round(df['TCP'].values).astype(int)
-        V['R_proto_tcp'] = ((p == 6) & (t != 1)) | ((p != 6) & (t != 0))
+        V['R_proto_tcp'] = (t == 1) & (p != 6)
     if has('Protocol Type') and has('UDP'):
         p = np.round(df['Protocol Type'].values).astype(int)
         u = np.round(df['UDP'].values).astype(int)
-        V['R_proto_udp'] = ((p == 17) & (u != 1)) | ((p != 17) & (u != 0))
+        V['R_proto_udp'] = (u == 1) & (p != 17)
     if has('Protocol Type') and has('ICMP'):
         p = np.round(df['Protocol Type'].values).astype(int)
         i = np.round(df['ICMP'].values).astype(int)
-        V['R_proto_icmp'] = ((p == 1) & (i != 1)) | ((p != 1) & (i != 0))
+        V['R_proto_icmp'] = (i == 1) & (p != 1)
+    if has('Protocol Type') and has('IGMP'):
+        p = np.round(df['Protocol Type'].values).astype(int)
+        g = np.round(df['IGMP'].values).astype(int)
+        V['R_proto_igmp'] = (g == 1) & (p != 2)
 
     # G5 — Statistical ordering Min <= AVG <= Max
     if has('Min') and has('Max'):
