@@ -1,0 +1,120 @@
+{
+  "timestamp": "2026-04-19T19:32:36.050520",
+  "git_commit": "not-a-git-repo",
+  "python_version": "3.10.20 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:42:35) [MSC v.1942 64 bit (AMD64)]",
+  "package_versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "sklearn": "1.7.2",
+    "matplotlib": "3.10.8",
+    "scipy": "1.15.3",
+    "umap-learn": "0.5.12"
+  },
+  "seeds": {
+    "numpy": 42,
+    "random": 42,
+    "sklearn_random_state": 42
+  },
+  "schema": "Modified Schema A (39 features)",
+  "mode": "SAMPLE",
+  "sample_cap": {
+    "majority": 200000,
+    "medium": 200000,
+    "minority": null,
+    "rare": null
+  },
+  "rows": {
+    "loaded": 4429940,
+    "after_clean": 4429940,
+    "train": 3100958,
+    "val": 442994,
+    "test": 885988
+  },
+  "n_features": 39,
+  "n_classes": {
+    "34class": 34,
+    "8class": 8,
+    "binary": 2
+  },
+  "content_hashes": {
+    "X_train": "72dd8ccf3cabaf3f1d348e7262a5f6dbe8b714b50e1637290a120a334aa8c613",
+    "X_val": "f57db1c72589a3efcfd7aec7ef9ba1a2213b0947eafb14189fc65835e6efeb9c",
+    "X_test": "bd8f6fb05e4bb764fde74155d926adfa71304f977a68eed9100ecb0078f6d821",
+    "scaler": "a4c7146abe1604fdcea11180a81689fc6bb22f0c3c211af96d79c95baee3e172",
+    "label_encoder": "0cfeca179c1b56e2072045f5512e7cca5fdb05fb0d03be66b41928df70f7dbd2"
+  },
+  "clip_log": {
+    "Rate": {
+      "upper_clip": 998643.8095238096,
+      "n_clipped": 358
+    },
+    "ece_flag_number": {
+      "upper_clip": 0.2,
+      "n_clipped": 295
+    },
+    "cwr_flag_number": {
+      "upper_clip": 0.1,
+      "n_clipped": 311
+    },
+    "DNS": {
+      "upper_clip": 0.7700609999988228,
+      "n_clipped": 443
+    },
+    "Telnet": {
+      "upper_clip": 0.1,
+      "n_clipped": 134
+    },
+    "SMTP": {
+      "upper_clip": 0.1,
+      "n_clipped": 155
+    },
+    "IRC": {
+      "upper_clip": 0.1,
+      "n_clipped": 134
+    },
+    "DHCP": {
+      "upper_clip": 0.4,
+      "n_clipped": 47
+    },
+    "ARP": {
+      "upper_clip": 0.9,
+      "n_clipped": 366
+    },
+    "IGMP": {
+      "upper_clip": 0.1,
+      "n_clipped": 188
+    },
+    "Tot sum": {
+      "upper_clip": 175125.14639999717,
+      "n_clipped": 443
+    },
+    "Min": {
+      "upper_clip": 2858.0,
+      "n_clipped": 424
+    },
+    "Max": {
+      "upper_clip": 15994.0,
+      "n_clipped": 374
+    },
+    "AVG": {
+      "upper_clip": 3686.0,
+      "n_clipped": 432
+    },
+    "Std": {
+      "upper_clip": 4679.629126996343,
+      "n_clipped": 443
+    },
+    "Tot size": {
+      "upper_clip": 3686.0,
+      "n_clipped": 432
+    },
+    "IAT": {
+      "upper_clip": 0.12192565047500886,
+      "n_clipped": 443
+    },
+    "Variance": {
+      "upper_clip": 21898928.76700072,
+      "n_clipped": 443
+    }
+  }
+}

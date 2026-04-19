@@ -1,0 +1,40 @@
+Name,Type,Description,Domain_Range,Mean,Std,Min,25%,50%,75%,Max
+Header_Length,float,Total header length of all packets in the flow,"[0.00, 60.00]",15.0499,10.3224,0.0000,7.9200,19.8800,20.0000,60.0000
+Protocol Type,categorical,"IP protocol number (6=TCP, 17=UDP, 1=ICMP, 2=IGMP)","[0.00, 47.00]",11.7165,12.1506,0.0000,6.0000,6.0000,17.0000,47.0000
+Time_To_Live,float,Time-to-live value (hop limit) of packets in the flow,"[0.00, 255.00]",73.6326,27.8015,0.0000,64.0000,64.0000,65.9100,255.0000
+Rate,float,Packet rate of the flow (packets per second),"[0.00, 10485760.00]",18820.4421,44116.6403,0.0000,1088.2340,6511.2767,25833.3580,10485760.0000
+fin_flag_number,integer,Number of packets with FIN flag set,"[0.00, 1.00]",0.0515,0.2079,0.0000,0.0000,0.0000,0.0000,1.0000
+syn_flag_number,integer,Number of packets with SYN flag set,"[0.00, 1.00]",0.1615,0.3459,0.0000,0.0000,0.0000,0.0200,1.0000
+rst_flag_number,integer,Number of packets with RST flag set,"[0.00, 1.00]",0.0673,0.2293,0.0000,0.0000,0.0000,0.0000,1.0000
+psh_flag_number,integer,Number of packets with PSH flag set,"[0.00, 1.00]",0.0924,0.2272,0.0000,0.0000,0.0000,0.0200,1.0000
+ack_flag_number,integer,Number of packets with ACK flag set,"[0.00, 1.00]",0.2530,0.3733,0.0000,0.0000,0.0000,0.5000,1.0000
+ece_flag_number,integer,Number of packets with ECE flag set,"[0.00, 1.00]",0.0001,0.0050,0.0000,0.0000,0.0000,0.0000,1.0000
+cwr_flag_number,integer,Number of packets with CWR flag set,"[0.00, 1.00]",0.0001,0.0036,0.0000,0.0000,0.0000,0.0000,1.0000
+ack_count,integer,Number of packets with ACK flag set in the same flow,"[0.00, 100.00]",10.7846,24.7401,0.0000,0.0000,0.0000,7.0000,100.0000
+syn_count,integer,Number of packets with SYN flag set in the same flow,"[0.00, 100.00]",14.2477,33.7888,0.0000,0.0000,0.0000,1.0000,100.0000
+fin_count,integer,Number of packets with FIN flag set in the same flow,"[0.00, 100.00]",4.6855,20.6843,0.0000,0.0000,0.0000,0.0000,100.0000
+rst_count,integer,Number of packets with RST flag set in the same flow,"[0.00, 100.00]",5.6444,21.5824,0.0000,0.0000,0.0000,0.0000,100.0000
+HTTP,binary,Binary: flow uses HTTP protocol,"[0.00, 1.00]",0.0650,0.2246,0.0000,0.0000,0.0000,0.0000,1.0000
+HTTPS,binary,Binary: flow uses HTTPS protocol,"[0.00, 1.00]",0.1376,0.2992,0.0000,0.0000,0.0000,0.0200,1.0000
+DNS,binary,Binary: flow uses DNS protocol,"[0.00, 1.00]",0.0111,0.0484,0.0000,0.0000,0.0000,0.0000,1.0000
+Telnet,binary,Binary: flow uses Telnet protocol,"[0.00, 0.60]",0.0000,0.0020,0.0000,0.0000,0.0000,0.0000,0.6000
+SMTP,binary,Binary: flow uses SMTP protocol,"[0.00, 0.90]",0.0000,0.0022,0.0000,0.0000,0.0000,0.0000,0.9000
+SSH,binary,Binary: flow uses SSH protocol,"[0.00, 1.00]",0.0011,0.0210,0.0000,0.0000,0.0000,0.0000,1.0000
+IRC,binary,Binary: flow uses IRC protocol,"[0.00, 0.90]",0.0001,0.0026,0.0000,0.0000,0.0000,0.0000,0.9000
+TCP,binary,Binary: transport-layer protocol is TCP,"[0.00, 1.00]",0.5487,0.4542,0.0000,0.0000,0.7000,1.0000,1.0000
+UDP,binary,Binary: transport-layer protocol is UDP,"[0.00, 1.00]",0.2191,0.3640,0.0000,0.0000,0.0000,0.3000,1.0000
+DHCP,binary,Binary: flow uses DHCP protocol,"[0.00, 0.80]",0.0008,0.0115,0.0000,0.0000,0.0000,0.0000,0.8000
+ARP,binary,Binary: flow uses ARP protocol,"[0.00, 1.00]",0.0112,0.0434,0.0000,0.0000,0.0000,0.0000,1.0000
+ICMP,binary,Binary: transport-layer protocol is ICMP,"[0.00, 1.00]",0.0913,0.2774,0.0000,0.0000,0.0000,0.0000,1.0000
+IGMP,binary,Binary: transport-layer protocol is IGMP,"[0.00, 0.40]",0.0001,0.0030,0.0000,0.0000,0.0000,0.0000,0.4000
+IPv,binary,Binary: flow uses IPv4/IPv6,"[0.00, 1.00]",0.9888,0.0434,0.0000,1.0000,1.0000,1.0000,1.0000
+LLC,binary,Binary: flow uses LLC sub-layer protocol,"[0.00, 1.00]",0.9888,0.0434,0.0000,1.0000,1.0000,1.0000,1.0000
+Tot sum,float,Sum of packet sizes in the flow (bytes),"[120.00, 289481.00]",24508.9744,31815.9007,120.0000,6000.0000,6000.0000,54939.0000,289481.0000
+Min,float,Minimum packet size in the flow (bytes),"[42.00, 4410.00]",118.5579,190.6866,42.0000,60.0000,60.0000,66.0000,4410.0000
+Max,float,Maximum packet size in the flow (bytes),"[46.00, 39162.00]",637.0523,959.3350,46.0000,60.0000,214.0000,1074.0000,39162.0000
+AVG,float,Average packet size in the flow (bytes),"[46.00, 7885.20]",338.1947,399.2007,46.0000,60.0000,82.8000,578.0000,7885.2000
+Std,float,Standard deviation of packet sizes in the flow,"[0.00, 10625.82]",180.7099,322.2047,0.0000,0.0000,3.3000,210.6751,10625.8163
+Tot size,float,Total size of all packets in the flow (bytes),"[46.00, 7885.20]",338.1947,399.2007,46.0000,60.0000,82.8000,578.0000,7885.2000
+IAT,float,Inter-arrival time between consecutive packets,"[0.00, 65724.01]",0.0396,38.8917,0.0000,0.0000,0.0002,0.0010,65724.0094
+Number,integer,Total packet count in the flow,"[2.00, 100.00]",77.3026,39.0476,2.0000,10.0000,100.0000,100.0000,100.0000
+Variance,float,Variance of packet sizes in the flow,"[0.00, 112907971.56]",136471.9378,599648.1045,0.0000,0.0000,10.8900,44383.9857,112907971.5556

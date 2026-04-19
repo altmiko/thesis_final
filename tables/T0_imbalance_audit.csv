@@ -1,0 +1,35 @@
+class,category,count,pct_total,imbalance_ratio_vs_max,tier,thesis_strategy
+UPLOADING_ATTACK,Web,1196,0.0027%,0.000174,rare,keep full; class-weighted loss; VAE at CATEGORY level (not per-class); flag reconstruction quality
+RECON-PINGSWEEP,Recon,2161,0.0048%,0.000313,rare,keep full; class-weighted loss; VAE at CATEGORY level (not per-class); flag reconstruction quality
+BACKDOOR_MALWARE,Web,3078,0.0068%,0.000447,rare,keep full; class-weighted loss; VAE at CATEGORY level (not per-class); flag reconstruction quality
+XSS,Web,3705,0.0082%,0.000537,rare,keep full; class-weighted loss; VAE at CATEGORY level (not per-class); flag reconstruction quality
+SQLINJECTION,Web,5022,0.0112%,0.000729,rare,keep full; class-weighted loss; VAE at CATEGORY level (not per-class); flag reconstruction quality
+COMMANDINJECTION,Web,5168,0.0115%,0.000750,rare,keep full; class-weighted loss; VAE at CATEGORY level (not per-class); flag reconstruction quality
+BROWSERHIJACKING,Web,5630,0.0125%,0.000817,rare,keep full; class-weighted loss; VAE at CATEGORY level (not per-class); flag reconstruction quality
+DICTIONARYBRUTEFORCE,BruteForce,12522,0.0278%,0.001817,minority,keep full; class-weighted loss; VAE trainable
+DDOS-SLOWLORIS,DDoS,22400,0.0498%,0.003250,minority,keep full; class-weighted loss; VAE trainable
+DDOS-HTTP_FLOOD,DDoS,27597,0.0613%,0.004003,minority,keep full; class-weighted loss; VAE trainable
+DOS-HTTP_FLOOD,DoS,68799,0.1528%,0.009981,minority,keep full; class-weighted loss; VAE trainable
+RECON-PORTSCAN,Recon,78730,0.1749%,0.011421,minority,keep full; class-weighted loss; VAE trainable
+RECON-OSSCAN,Recon,93970,0.2087%,0.013632,minority,keep full; class-weighted loss; VAE trainable
+RECON-HOSTDISCOVERY,Recon,128677,0.2858%,0.018667,medium,keep full; use class-weighted loss in baseline
+DNS_SPOOFING,Spoofing,171468,0.3809%,0.024875,medium,keep full; use class-weighted loss in baseline
+DDOS-ACK_FRAGMENTATION,DDoS,272793,0.6059%,0.039574,medium,keep full; use class-weighted loss in baseline
+DDOS-UDP_FRAGMENTATION,DDoS,274909,0.6106%,0.039881,medium,keep full; use class-weighted loss in baseline
+MITM-ARPSPOOFING,Spoofing,294469,0.6541%,0.042718,medium,keep full; use class-weighted loss in baseline
+VULNERABILITYSCAN,Recon,357583,0.7943%,0.051874,medium,keep full; use class-weighted loss in baseline
+DDOS-ICMP_FRAGMENTATION,DDoS,433157,0.9622%,0.062838,medium,keep full; use class-weighted loss in baseline
+MIRAI-GREIP_FLOOD,Mirai,719655,1.5986%,0.104400,medium,keep full; use class-weighted loss in baseline
+MIRAI-UDPPLAIN,Mirai,852695,1.8941%,0.123700,medium,keep full; use class-weighted loss in baseline
+MIRAI-GREETH_FLOOD,Mirai,949381,2.1088%,0.137726,medium,keep full; use class-weighted loss in baseline
+BENIGN,Benign,1051373,2.3354%,0.152522,majority,cap at 200K for baseline; cap at 200K for VAE training
+DOS-SYN_FLOOD,DoS,1942176,4.3141%,0.281750,majority,cap at 200K for baseline; cap at 200K for VAE training
+DOS-TCP_FLOOD,DoS,2558256,5.6826%,0.371124,majority,cap at 200K for baseline; cap at 200K for VAE training
+DOS-UDP_FLOOD,DoS,3177323,7.0577%,0.460932,majority,cap at 200K for baseline; cap at 200K for VAE training
+DDOS-SYNONYMOUSIP_FLOOD,DDoS,3445659,7.6537%,0.499859,majority,cap at 200K for baseline; cap at 200K for VAE training
+DDOS-RSTFINFLOOD,DDoS,3872808,8.6026%,0.561825,majority,cap at 200K for baseline; cap at 200K for VAE training
+DDOS-SYN_FLOOD,DDoS,3886130,8.6322%,0.563758,majority,cap at 200K for baseline; cap at 200K for VAE training
+DDOS-PSHACK_FLOOD,DDoS,3920372,8.7082%,0.568725,majority,cap at 200K for baseline; cap at 200K for VAE training
+DDOS-TCP_FLOOD,DDoS,4306086,9.5650%,0.624681,majority,cap at 200K for baseline; cap at 200K for VAE training
+DDOS-UDP_FLOOD,DDoS,5181027,11.5085%,0.751608,majority,cap at 200K for baseline; cap at 200K for VAE training
+DDOS-ICMP_FLOOD,DDoS,6893259,15.3118%,1.000000,majority,cap at 200K for baseline; cap at 200K for VAE training
