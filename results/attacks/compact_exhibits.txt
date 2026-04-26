@@ -1,0 +1,389 @@
+FEATURES (39):
+Header_Length[1.0] Protocol_Type[FROZEN] Time_To_Live[FROZEN] Rate[1.0] fin_flag_number[0.3] syn_flag_number[0.3]
+rst_flag_number[0.3] psh_flag_number[0.3] ack_flag_number[0.3] ece_flag_number[FROZEN] cwr_flag_number[FROZEN] ack_count[0.3]
+syn_count[0.3] fin_count[0.3] rst_count[0.3] HTTP[FROZEN] HTTPS[FROZEN] DNS[FROZEN] Telnet[FROZEN] SMTP[FROZEN] SSH[FROZEN]
+IRC[FROZEN] TCP[FROZEN] UDP[FROZEN] DHCP[FROZEN] ARP[FROZEN] ICMP[FROZEN] IGMP[FROZEN] IPv[FROZEN] LLC[FROZEN] Tot_sum[1.0]
+Min[1.0] Max[1.0] AVG[1.0] Std[1.0] Tot_size[1.0] IAT[1.0] Number[1.0] Variance[1.0]
+
+--- MLP + FGSM epsilon=0.30: ASR_raw=28.1%, Validity=0.0%, ASR_valid=0.0% (13611 flipped, 0 valid) ---
+[MLP | FGSM epsilon=0.30 | Sample 1/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 61.8 | MIN>MAX, MIN>MAX (Max=-74.2)
+Max | 230.0 | -74.2 | MIN>MAX, MIN>MAX (Min=61.8), NEGATIVE
+AVG | 111.2 | -44.2 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3383.73 | -9910.87 | NEGATIVE, VAR!=STD^2
+Std | 58.17 | -4.98 | NEGATIVE, VAR!=STD^2
+[MLP | FGSM epsilon=0.30 | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 34 | Frozen: 19/19 | Shown: 7/34
+Protocol Type | 6.0 (TCP) | 9.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 1.3 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 66.0 | 64.2 | MIN>MAX, MIN>MAX (Max=-74.2)
+Max | 230.0 | -74.2 | MIN>MAX, MIN>MAX (Min=64.2), NEGATIVE
+AVG | 118.3 | -37.1 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3089.79 | -10204.81 | NEGATIVE, VAR!=STD^2
+Std | 55.59 | -7.57 | NEGATIVE, VAR!=STD^2
+[MLP | FGSM epsilon=0.30 | Sample 3/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 61.8 | MIN>MAX, MIN>MAX (Max=-90.2)
+Max | 214.0 | -90.2 | MIN>MAX, MIN>MAX (Min=61.8), NEGATIVE
+AVG | 105.6 | -49.8 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 2144.71 | -11149.89 | NEGATIVE, VAR!=STD^2
+Std | 46.31 | -16.84 | NEGATIVE, VAR!=STD^2
+[MLP | FGSM epsilon=0.30 | Sample 4/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 6.0 (TCP) | 9.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 61.8 | MIN>MAX, MIN>MAX (Max=-128.2)
+Max | 176.0 | -128.2 | MIN>MAX, MIN>MAX (Min=61.8), NEGATIVE
+AVG | 100.0 | -55.4 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 1560.44 | -11734.16 | NEGATIVE, VAR!=STD^2
+Std | 39.5 | -23.65 | NEGATIVE, VAR!=STD^2
+[MLP | FGSM epsilon=0.30 | Sample 5/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 35 | Frozen: 19/19 | Shown: 7/35
+Protocol Type | 17.0 (UDP) | 20.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 1.3 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 61.8 | MIN>MAX, MIN>MAX (Max=-74.2)
+Max | 230.0 | -74.2 | MIN>MAX, MIN>MAX (Min=61.8), NEGATIVE
+AVG | 114.2 | -41.2 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3675.07 | 16969.67 | VAR!=STD^2
+Std | 60.62 | -2.53 | NEGATIVE, VAR!=STD^2
+--- MLP + PGD epsilon=0.30: ASR_raw=37.8%, Validity=0.0%, ASR_valid=0.0% (18293 flipped, 0 valid) ---
+[MLP | PGD epsilon=0.30 | Sample 1/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 17.0 (UDP) | 20.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 1.3 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 58.0 | 58.35 | MIN>MAX, MIN>MAX (Max=-214.2)
+Max | 90.0 | -214.2 | MIN>MAX, MIN>MAX (Min=58.35), NEGATIVE
+AVG | 86.8 | -68.6 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 102.4 | -13192.2 | NEGATIVE, VAR!=STD^2
+Std | 10.12 | -53.03 | NEGATIVE, VAR!=STD^2
+[MLP | PGD epsilon=0.30 | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 34 | Frozen: 19/19 | Shown: 7/34
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.77 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 66.0 | 67.8 | MIN>MAX, MIN>MAX (Max=-177.2)
+Max | 127.0 | -177.2 | MIN>MAX, MIN>MAX (Min=67.8), NEGATIVE
+AVG | 75.4 | 114.25 | AVG OUTSIDE RANGE
+Variance | 436.27 | -9534.68 | NEGATIVE, VAR!=STD^2
+Std | 20.89 | 84.04 | VAR!=STD^2
+[MLP | PGD epsilon=0.30 | Sample 3/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 17.0 (UDP) | 13.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 60.66 | MIN>MAX, MIN>MAX (Max=-90.2)
+Max | 214.0 | -90.2 | MIN>MAX, MIN>MAX (Min=60.66), NEGATIVE
+AVG | 87.4 | -68.0 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 2200.93 | -11093.67 | NEGATIVE, VAR!=STD^2
+Std | 46.91 | -16.24 | NEGATIVE, VAR!=STD^2
+[MLP | PGD epsilon=0.30 | Sample 4/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 17.0 (UDP) | 13.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 60.16 | MIN>MAX, MIN>MAX (Max=-74.2)
+Max | 230.0 | -74.2 | MIN>MAX, MIN>MAX (Min=60.16), NEGATIVE
+AVG | 78.4 | -77.0 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 2856.71 | -10437.89 | NEGATIVE, VAR!=STD^2
+Std | 53.45 | -9.71 | NEGATIVE, VAR!=STD^2
+[MLP | PGD epsilon=0.30 | Sample 5/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 35 | Frozen: 19/19 | Shown: 7/35
+Protocol Type | 17.0 (UDP) | 20.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 1.3 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 58.2 | MIN>MAX, MIN>MAX (Max=-90.2)
+Max | 214.0 | -90.2 | MIN>MAX, MIN>MAX (Min=58.2), NEGATIVE
+AVG | 144.4 | -11.0 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3828.93 | -9465.67 | NEGATIVE, VAR!=STD^2
+Std | 61.88 | -1.28 | NEGATIVE, VAR!=STD^2
+--- MLP + C&W: ASR_raw=13.6%, Validity=0.0%, ASR_valid=0.0% (1319 flipped, 0 valid) ---
+[MLP | C&W | Sample 1/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=25904.3 | Violations: 34 | Frozen: 19/19 | Shown: 5/34
+Protocol Type | 17.0 (UDP) | 17.49 | NOT VALID IANA PROTOCOL
+UDP | 1.0 | 1.02 | FRACTIONAL BINARY
+Min | 50.0 | 54.29 | -
+Max | 214.0 | 186.4 | -
+AVG | 77.4 | -32.12 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 2582.93 | -453.59 | NEGATIVE, VAR!=STD^2
+Std | 50.82 | 40.01 | VAR!=STD^2
+[MLP | C&W | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=6274.68 | Violations: 23 | Frozen: 18/19 | Shown: 2/23
+Protocol Type | 6.0 (TCP) | 6.56 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.96 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 551.0 | 550.98 | -
+Max | 2962.0 | 2907.4 | -
+AVG | 1562.5 | 1579.03 | -
+Variance | 333394.5 | 332864.59 | -
+Std | 577.4 | 582.16 | -
+[MLP | C&W | Sample 3/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=25840.86 | Violations: 33 | Frozen: 18/19 | Shown: 4/33
+Protocol Type | 17.0 (UDP) | 17.3 | NOT VALID IANA PROTOCOL
+UDP | 1.0 | 0.99 | -
+Min | 50.0 | 54.25 | -
+Max | 176.0 | 149.77 | -
+AVG | 66.2 | -31.63 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 1502.62 | -922.18 | NEGATIVE, VAR!=STD^2
+Std | 38.76 | 28.22 | VAR!=STD^2
+[MLP | C&W | Sample 4/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=25187.43 | Violations: 33 | Frozen: 19/19 | Shown: 4/33
+Protocol Type | 17.0 (UDP) | 17.33 | NOT VALID IANA PROTOCOL
+UDP | 1.0 | 1.0 | -
+Min | 50.0 | 54.19 | -
+Max | 97.0 | 75.81 | -
+AVG | 66.3 | -36.67 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 270.46 | -2679.02 | NEGATIVE, VAR!=STD^2
+Std | 16.45 | 6.07 | VAR!=STD^2
+[MLP | C&W | Sample 5/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=24654.9 | Violations: 34 | Frozen: 19/19 | Shown: 5/34
+Protocol Type | 17.0 (UDP) | 17.65 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 1.03 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 50.0 | 54.18 | -
+Max | 339.0 | 326.14 | -
+AVG | 118.5 | 7.21 | AVG OUTSIDE RANGE
+Variance | 7812.28 | 4605.62 | VAR!=STD^2
+Std | 88.39 | 78.8 | VAR!=STD^2
+--- CNN-LSTM + FGSM epsilon=0.30: ASR_raw=1.9%, Validity=0.0%, ASR_valid=0.0% (925 flipped, 0 valid) ---
+[CNN-LSTM | FGSM epsilon=0.30 | Sample 1/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 58.2 | MIN>MAX, MIN>MAX (Max=-238.2)
+Max | 66.0 | -238.2 | MIN>MAX, MIN>MAX (Min=58.2), NEGATIVE
+AVG | 64.2 | -91.2 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 8.4 | 13303.0 | VAR!=STD^2
+Std | 2.9 | -60.26 | NEGATIVE, VAR!=STD^2
+[CNN-LSTM | FGSM epsilon=0.30 | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 58.2 | MIN>MAX, MIN>MAX (Max=-227.2)
+Max | 77.0 | -227.2 | MIN>MAX, MIN>MAX (Min=58.2), NEGATIVE
+AVG | 65.3 | -90.1 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 24.9 | 13319.5 | VAR!=STD^2
+Std | 4.99 | -58.16 | NEGATIVE, VAR!=STD^2
+[CNN-LSTM | FGSM epsilon=0.30 | Sample 3/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 58.2 | MIN>MAX, MIN>MAX (Max=-238.2)
+Max | 66.0 | -238.2 | MIN>MAX, MIN>MAX (Min=58.2), NEGATIVE
+AVG | 64.2 | -91.2 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 8.4 | 13303.0 | VAR!=STD^2
+Std | 2.9 | -60.26 | NEGATIVE, VAR!=STD^2
+[CNN-LSTM | FGSM epsilon=0.30 | Sample 4/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 58.2 | MIN>MAX, MIN>MAX (Max=-126.2)
+Max | 178.0 | -126.2 | MIN>MAX, MIN>MAX (Min=58.2), NEGATIVE
+AVG | 79.6 | -75.8 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 1292.27 | 14586.87 | VAR!=STD^2
+Std | 35.95 | 99.1 | VAR!=STD^2
+[CNN-LSTM | FGSM epsilon=0.30 | Sample 5/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 58.2 | MIN>MAX, MIN>MAX (Max=-90.2)
+Max | 214.0 | -90.2 | MIN>MAX, MIN>MAX (Min=58.2), NEGATIVE
+AVG | 79.6 | -75.8 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 2236.27 | 15530.87 | VAR!=STD^2
+Std | 47.29 | 110.44 | VAR!=STD^2
+--- CNN-LSTM + PGD epsilon=0.30: ASR_raw=4.1%, Validity=0.0%, ASR_valid=0.0% (1976 flipped, 0 valid) ---
+[CNN-LSTM | PGD epsilon=0.30 | Sample 1/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=13294.6 | Violations: 35 | Frozen: 19/19 | Shown: 7/35
+Protocol Type | 6.0 (TCP) | 7.35 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.93 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 94.0 | 95.8 | MIN>MAX, MIN>MAX (Max=-206.2)
+Max | 98.0 | -206.2 | MIN>MAX, MIN>MAX (Min=95.8), NEGATIVE
+AVG | 94.4 | -61.0 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 1.6 | -13293.0 | NEGATIVE, VAR!=STD^2
+Std | 1.26 | -61.89 | NEGATIVE, VAR!=STD^2
+[CNN-LSTM | PGD epsilon=0.30 | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=13294.6 | Violations: 34 | Frozen: 19/19 | Shown: 7/34
+Protocol Type | 6.0 (TCP) | 2.76 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.93 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 59.75 | MIN>MAX, MIN>MAX (Max=-74.2)
+Max | 230.0 | -74.2 | MIN>MAX, MIN>MAX (Min=59.75), NEGATIVE
+AVG | 103.6 | -51.8 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3681.82 | 16976.42 | VAR!=STD^2
+Std | 60.68 | -2.48 | NEGATIVE, VAR!=STD^2
+[CNN-LSTM | PGD epsilon=0.30 | Sample 3/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=13294.6 | Violations: 34 | Frozen: 18/19 | Shown: 7/34
+Protocol Type | 6.0 (TCP) | 7.29 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 1.04 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 94.0 | 95.8 | MIN>MAX, MIN>MAX (Max=-210.2)
+Max | 94.0 | -210.2 | MIN>MAX, MIN>MAX (Min=95.8), NEGATIVE
+AVG | 94.0 | -61.4 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 0.0 | -13294.6 | NEGATIVE, VAR!=STD^2
+Std | 0.0 | -63.15 | NEGATIVE, VAR!=STD^2
+[CNN-LSTM | PGD epsilon=0.30 | Sample 4/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 7.56 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 1.04 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 66.0 | 67.8 | MIN>MAX, MIN>MAX (Max=-148.2)
+Max | 156.0 | -148.2 | MIN>MAX, MIN>MAX (Min=67.8), NEGATIVE
+AVG | 75.0 | -80.4 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 810.0 | 14104.6 | VAR!=STD^2
+Std | 28.46 | -34.69 | NEGATIVE, VAR!=STD^2
+[CNN-LSTM | PGD epsilon=0.30 | Sample 5/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=13294.6 | Violations: 35 | Frozen: 19/19 | Shown: 7/35
+Protocol Type | 6.0 (TCP) | 8.46 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.9 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 66.0 | 64.2 | MIN>MAX, MIN>MAX (Max=-74.2)
+Max | 230.0 | -74.2 | MIN>MAX, MIN>MAX (Min=64.2), NEGATIVE
+AVG | 96.9 | -58.5 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3163.66 | 16458.26 | VAR!=STD^2
+Std | 56.25 | -6.91 | NEGATIVE, VAR!=STD^2
+--- CNN-LSTM + C&W: ASR_raw=14.8%, Validity=0.0%, ASR_valid=0.0% (714 flipped, 0 valid) ---
+[CNN-LSTM | C&W | Sample 1/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=15287.73 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 5.71 | NOT VALID IANA PROTOCOL
+TCP | 1.0 | 0.9 | FRACTIONAL BINARY
+Min | 60.0 | 59.89 | MIN>MAX, MIN>MAX (Max=48.81)
+Max | 60.0 | 48.81 | MIN>MAX, MIN>MAX (Min=59.89)
+AVG | 60.0 | 72.72 | AVG OUTSIDE RANGE
+Variance | 0.0 | -15287.73 | NEGATIVE, VAR!=STD^2
+Std | 0.0 | 1.56 | VAR!=STD^2
+[CNN-LSTM | C&W | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=2043.68 | Violations: 23 | Frozen: 17/19 | Shown: 1/23
+Protocol Type | 6.0 (TCP) | 5.76 | NOT VALID IANA PROTOCOL
+TCP | 1.0 | 1.0 | -
+Min | 66.0 | 66.02 | -
+Max | 11650.0 | 11653.71 | -
+AVG | 2672.4 | 2675.96 | -
+Variance | 11089234.0 | 11089255.0 | -
+Std | 3330.05 | 3328.31 | -
+[CNN-LSTM | C&W | Sample 3/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=15010.86 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 5.85 | NOT VALID IANA PROTOCOL
+TCP | 1.0 | 0.89 | FRACTIONAL BINARY
+Min | 60.0 | 59.92 | MIN>MAX, MIN>MAX (Max=52.05)
+Max | 60.0 | 52.05 | MIN>MAX, MIN>MAX (Min=59.92)
+AVG | 60.0 | 71.74 | AVG OUTSIDE RANGE
+Variance | 0.0 | -15010.86 | NEGATIVE, VAR!=STD^2
+Std | 0.0 | 1.57 | VAR!=STD^2
+[CNN-LSTM | C&W | Sample 4/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=33341.6 | Violations: 29 | Frozen: 19/19 | Shown: 6/29
+Protocol Type | 47.0 | 47.9 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 0.0 | 0.78 | FRACTIONAL BINARY, PROTO MISMATCH
+UDP | 0.0 | 0.03 | FRACTIONAL BINARY
+Min | 78.0 | 76.46 | -
+Max | 578.0 | 453.75 | -
+AVG | 568.45 | 526.42 | AVG OUTSIDE RANGE
+Variance | 4524.29 | -28817.31 | NEGATIVE, VAR!=STD^2
+Std | 67.26 | 11.57 | VAR!=STD^2
+[CNN-LSTM | C&W | Sample 5/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=16869.74 | Violations: 32 | Frozen: 19/19 | Shown: 7/32
+Protocol Type | 6.0 (TCP) | 5.81 | NOT VALID IANA PROTOCOL
+TCP | 1.0 | 0.87 | FRACTIONAL BINARY
+Min | 60.0 | 59.79 | MIN>MAX, MIN>MAX (Max=35.05)
+Max | 60.0 | 35.05 | MIN>MAX, MIN>MAX (Min=59.79)
+AVG | 60.0 | 49.96 | AVG OUTSIDE RANGE
+Variance | 0.0 | -16869.74 | NEGATIVE, VAR!=STD^2
+Std | 0.0 | 1.29 | VAR!=STD^2
+--- LSTM + FGSM epsilon=0.30: ASR_raw=25.4%, Validity=0.0%, ASR_valid=0.0% (12304 flipped, 0 valid) ---
+[LSTM | FGSM epsilon=0.30 | Sample 1/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 17.0 (UDP) | 20.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 1.3 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 50.0 | 51.8 | MIN>MAX, MIN>MAX (Max=-117.2)
+Max | 187.0 | -117.2 | MIN>MAX, MIN>MAX (Min=51.8), NEGATIVE
+AVG | 118.9 | -36.5 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 2685.66 | -10608.94 | NEGATIVE, VAR!=STD^2
+Std | 51.82 | -11.33 | NEGATIVE, VAR!=STD^2
+[LSTM | FGSM epsilon=0.30 | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 33 | Frozen: 19/19 | Shown: 7/33
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 1.3 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 66.0 | 67.8 | MIN>MAX, MIN>MAX (Max=-90.2)
+Max | 214.0 | -90.2 | MIN>MAX, MIN>MAX (Min=67.8), NEGATIVE
+AVG | 131.4 | -24.0 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3418.71 | -9875.89 | NEGATIVE, VAR!=STD^2
+Std | 58.47 | 121.62 | VAR!=STD^2
+[LSTM | FGSM epsilon=0.30 | Sample 3/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 50.0 | 51.8 | MIN>MAX, MIN>MAX (Max=-90.2)
+Max | 214.0 | -90.2 | MIN>MAX, MIN>MAX (Min=51.8), NEGATIVE
+AVG | 77.2 | -78.2 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 2345.96 | -10948.64 | NEGATIVE, VAR!=STD^2
+Std | 48.44 | -14.72 | NEGATIVE, VAR!=STD^2
+[LSTM | FGSM epsilon=0.30 | Sample 4/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 6.0 (TCP) | 9.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 54.0 | 55.8 | MIN>MAX, MIN>MAX (Max=-206.2)
+Max | 98.0 | -206.2 | MIN>MAX, MIN>MAX (Min=55.8), NEGATIVE
+AVG | 67.6 | -87.8 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 288.71 | -13005.89 | NEGATIVE, VAR!=STD^2
+Std | 16.99 | -46.16 | NEGATIVE, VAR!=STD^2
+[LSTM | FGSM epsilon=0.30 | Sample 5/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 17.0 (UDP) | 20.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 1.3 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 50.0 | 51.8 | MIN>MAX, MIN>MAX (Max=-74.2)
+Max | 230.0 | -74.2 | MIN>MAX, MIN>MAX (Min=51.8), NEGATIVE
+AVG | 84.2 | -71.2 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3331.96 | -9962.64 | NEGATIVE, VAR!=STD^2
+Std | 57.72 | -5.43 | NEGATIVE, VAR!=STD^2
+--- LSTM + PGD epsilon=0.30: ASR_raw=41.8%, Validity=0.0%, ASR_valid=0.0% (20215 flipped, 0 valid) ---
+[LSTM | PGD epsilon=0.30 | Sample 1/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 34 | Frozen: 19/19 | Shown: 5/34
+Protocol Type | 17.0 (UDP) | 13.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+UDP | 1.0 | 1.3 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 61.8 | -
+Max | 214.0 | 518.2 | -
+AVG | 87.4 | -68.0 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 2200.93 | 15495.53 | VAR!=STD^2
+Std | 46.91 | -16.24 | NEGATIVE, VAR!=STD^2
+[LSTM | PGD epsilon=0.30 | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=14681.7 | Violations: 32 | Frozen: 19/19 | Shown: 7/32
+Protocol Type | 6.0 (TCP) | 9.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 66.0 | 67.8 | MIN>MAX, MIN>MAX (Max=-86.1)
+Max | 66.0 | -86.1 | MIN>MAX, MIN>MAX (Min=67.8), NEGATIVE
+AVG | 66.0 | 221.4 | AVG OUTSIDE RANGE
+Variance | 0.0 | 13294.6 | VAR!=STD^2
+Std | 0.0 | 63.15 | VAR!=STD^2
+[LSTM | PGD epsilon=0.30 | Sample 3/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 6.0 (TCP) | 2.7 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 61.8 | MIN>MAX, MIN>MAX (Max=-238.2)
+Max | 66.0 | -238.2 | MIN>MAX, MIN>MAX (Min=61.8), NEGATIVE
+AVG | 60.6 | -94.8 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3.6 | -13291.0 | NEGATIVE, VAR!=STD^2
+Std | 1.9 | -61.26 | NEGATIVE, VAR!=STD^2
+[LSTM | PGD epsilon=0.30 | Sample 4/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 6.0 (TCP) | 9.3 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 66.0 | 64.2 | MIN>MAX, MIN>MAX (Max=-238.2)
+Max | 66.0 | -238.2 | MIN>MAX, MIN>MAX (Min=64.2), NEGATIVE
+AVG | 66.0 | -89.4 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 0.0 | -3323.65 | NEGATIVE, VAR!=STD^2
+Std | 0.0 | -63.15 | NEGATIVE, VAR!=STD^2
+[LSTM | PGD epsilon=0.30 | Sample 5/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=14681.7 | Violations: 36 | Frozen: 19/19 | Shown: 7/36
+Protocol Type | 6.0 (TCP) | 5.03 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.7 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 54.0 | 55.8 | MIN>MAX, MIN>MAX (Max=-90.2)
+Max | 214.0 | -90.2 | MIN>MAX, MIN>MAX (Min=55.8), NEGATIVE
+AVG | 122.6 | -32.8 | AVG OUTSIDE RANGE, NEGATIVE
+Variance | 3495.38 | -9799.22 | NEGATIVE, VAR!=STD^2
+Std | 59.12 | -4.03 | NEGATIVE, VAR!=STD^2
+--- LSTM + C&W: ASR_raw=5.6%, Validity=0.0%, ASR_valid=0.0% (269 flipped, 0 valid) ---
+[LSTM | C&W | Sample 1/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=15365.87 | Violations: 30 | Frozen: 19/19 | Shown: 5/30
+Protocol Type | 17.0 (UDP) | 17.11 | NOT VALID IANA PROTOCOL
+UDP | 1.0 | 1.07 | FRACTIONAL BINARY
+Min | 60.0 | 59.99 | -
+Max | 60.0 | 166.79 | -
+AVG | 60.0 | 16.41 | AVG OUTSIDE RANGE
+Variance | 0.0 | 2112.62 | VAR!=STD^2
+Std | 0.0 | -4.83 | NEGATIVE, VAR!=STD^2
+[LSTM | C&W | Sample 2/5] True: Benign -> Pred: Attack (FLIPPED) | Linf=4388.97 | Violations: 27 | Frozen: 18/19 | Shown: 4/27
+Protocol Type | 6.0 (TCP) | 6.1 | NOT VALID IANA PROTOCOL
+TCP | 1.0 | 1.01 | FRACTIONAL BINARY
+Min | 66.0 | 66.34 | -
+Max | 230.0 | 245.26 | -
+AVG | 91.4 | 141.64 | -
+Variance | 3171.6 | 2972.12 | VAR!=STD^2
+Std | 56.32 | 61.44 | VAR!=STD^2
+[LSTM | C&W | Sample 3/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=10075.95 | Violations: 29 | Frozen: 19/19 | Shown: 4/29
+Protocol Type | 6.0 (TCP) | 6.57 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.95 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 60.21 | -
+Max | 95.0 | 199.36 | -
+AVG | 60.35 | 61.29 | -
+Variance | 12.25 | 519.49 | VAR!=STD^2
+Std | 3.5 | -6.33 | NEGATIVE, VAR!=STD^2
+[LSTM | C&W | Sample 4/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=9935.56 | Violations: 30 | Frozen: 19/19 | Shown: 4/30
+Protocol Type | 6.0 (TCP) | 6.63 | NOT VALID IANA PROTOCOL, PROTO MISMATCH
+TCP | 1.0 | 0.95 | FRACTIONAL BINARY, PROTO MISMATCH
+Min | 60.0 | 60.2 | -
+Max | 60.0 | 174.23 | -
+AVG | 60.0 | 71.9 | -
+Variance | 0.0 | 731.99 | VAR!=STD^2
+Std | 0.0 | -7.32 | NEGATIVE, VAR!=STD^2
+[LSTM | C&W | Sample 5/5] True: Attack -> Pred: Benign (FLIPPED) | Linf=17382.64 | Violations: 31 | Frozen: 19/19 | Shown: 6/31
+Protocol Type | 1.0 (ICMP) | 1.34 | NOT VALID IANA PROTOCOL
+TCP | 0.0 | -0.05 | FRACTIONAL BINARY
+UDP | 0.0 | 0.11 | FRACTIONAL BINARY
+Min | 60.0 | 60.52 | -
+Max | 60.0 | 228.56 | -
+AVG | 60.0 | 12.8 | AVG OUTSIDE RANGE
+Variance | 0.0 | 2754.45 | VAR!=STD^2
+Std | 0.0 | 1.99 | VAR!=STD^2
+SUMMARY
+MODEL | ATTACK | ASR_raw | Validity | ASR_valid | Avg_Violations | Avg_Frozen_Changed
+MLP | FGSM 0.30 | 28.1% | 0.0% | 0.0% | 35.4 | 19.0/19
+MLP | PGD 0.30 | 37.8% | 0.0% | 0.0% | 35.4 | 19.0/19
+MLP | C&W | 13.6% | 0.0% | 0.0% | 31.4 | 18.6/19
+CNN-LSTM | FGSM 0.30 | 1.9% | 0.0% | 0.0% | 33.0 | 19.0/19
+CNN-LSTM | PGD 0.30 | 4.1% | 0.0% | 0.0% | 34.2 | 18.8/19
+CNN-LSTM | C&W | 14.8% | 0.0% | 0.0% | 30.0 | 18.6/19
+LSTM | FGSM 0.30 | 25.4% | 0.0% | 0.0% | 35.4 | 19.0/19
+LSTM | PGD 0.30 | 41.8% | 0.0% | 0.0% | 34.8 | 19.0/19
+LSTM | C&W | 5.6% | 0.0% | 0.0% | 29.4 | 18.8/19

@@ -1,0 +1,255 @@
+FULL DATASET VALIDATION RUN
+================================================================================
+Features expected: 39
+Chunk size: 200000
+34-class labels: 34
+8-class labels: 8
+
+Split: train
+  X shape: (3100958, 39)
+  y_34 shape: (3100958,)
+  y_8 shape: (3100958,)
+  Valid all-rules: 3100958/3100958 (100.00%)
+  Failing rules in this split: none
+
+Split: val
+  X shape: (442994, 39)
+  y_34 shape: (442994,)
+  y_8 shape: (442994,)
+  Valid all-rules: 442994/442994 (100.00%)
+  Failing rules in this split: none
+
+Split: test
+  X shape: (885988, 39)
+  y_34 shape: (885988,)
+  y_8 shape: (885988,)
+  Valid all-rules: 885988/885988 (100.00%)
+  Failing rules in this split: none
+
+PER-RULE ANALYSIS (ALL SPLITS COMBINED)
+--------------------------------------------------------------------------------
+rule_name | total_checked | total_passing | total_failing | failure_rate
+R_avg_in_range | 4429940 | 4429940 | 0 | 0.00%
+R_binary_ARP | 4429940 | 4429940 | 0 | 0.00%
+R_binary_DHCP | 4429940 | 4429940 | 0 | 0.00%
+R_binary_DNS | 4429940 | 4429940 | 0 | 0.00%
+R_binary_HTTP | 4429940 | 4429940 | 0 | 0.00%
+R_binary_HTTPS | 4429940 | 4429940 | 0 | 0.00%
+R_binary_ICMP | 4429940 | 4429940 | 0 | 0.00%
+R_binary_IGMP | 4429940 | 4429940 | 0 | 0.00%
+R_binary_IPv | 4429940 | 4429940 | 0 | 0.00%
+R_binary_IRC | 4429940 | 4429940 | 0 | 0.00%
+R_binary_LLC | 4429940 | 4429940 | 0 | 0.00%
+R_binary_SMTP | 4429940 | 4429940 | 0 | 0.00%
+R_binary_SSH | 4429940 | 4429940 | 0 | 0.00%
+R_binary_TCP | 4429940 | 4429940 | 0 | 0.00%
+R_binary_Telnet | 4429940 | 4429940 | 0 | 0.00%
+R_binary_UDP | 4429940 | 4429940 | 0 | 0.00%
+R_min_leq_max | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_AVG | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Header_Length | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_IAT | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Max | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Min | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Number | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Rate | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Std | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Time_To_Live | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Tot size | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Tot sum | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_Variance | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_ack_count | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_ack_flag_number | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_cwr_flag_number | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_ece_flag_number | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_fin_count | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_fin_flag_number | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_psh_flag_number | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_rst_count | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_rst_flag_number | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_syn_count | 4429940 | 4429940 | 0 | 0.00%
+R_nonneg_syn_flag_number | 4429940 | 4429940 | 0 | 0.00%
+R_pkts_integer | 4429940 | 4429940 | 0 | 0.00%
+R_pkts_positive | 4429940 | 4429940 | 0 | 0.00%
+R_proto_icmp | 4429940 | 4429940 | 0 | 0.00%
+R_proto_igmp | 4429940 | 4429940 | 0 | 0.00%
+R_proto_tcp | 4429940 | 4429940 | 0 | 0.00%
+R_proto_udp | 4429940 | 4429940 | 0 | 0.00%
+R_protocol_valid | 4429940 | 4429940 | 0 | 0.00%
+R_ttl_range | 4429940 | 4429940 | 0 | 0.00%
+R_var_eq_std_sq | 4429940 | 4429940 | 0 | 0.00%
+All 49 rules pass on all 4429940 samples across all splits.
+
+PER-CLASS VALIDITY BREAKDOWN (34-CLASS)
+--------------------------------------------------------------------------------
+split | class_index | class_name | category_name | total | passing | validity_rate
+train | 0 | BACKDOOR_MALWARE | Web | 2155 | 2155 | 100.00%
+train | 1 | BENIGN | Benign | 139992 | 139992 | 100.00%
+train | 2 | BROWSERHIJACKING | Web | 3941 | 3941 | 100.00%
+train | 3 | COMMANDINJECTION | Web | 3617 | 3617 | 100.00%
+train | 4 | DDOS-ACK_FRAGMENTATION | DDoS | 139986 | 139986 | 100.00%
+train | 5 | DDOS-HTTP_FLOOD | DDoS | 19318 | 19318 | 100.00%
+train | 6 | DDOS-ICMP_FLOOD | DDoS | 139999 | 139999 | 100.00%
+train | 7 | DDOS-ICMP_FRAGMENTATION | DDoS | 139988 | 139988 | 100.00%
+train | 8 | DDOS-PSHACK_FLOOD | DDoS | 139998 | 139998 | 100.00%
+train | 9 | DDOS-RSTFINFLOOD | DDoS | 139999 | 139999 | 100.00%
+train | 10 | DDOS-SLOWLORIS | DDoS | 15679 | 15679 | 100.00%
+train | 11 | DDOS-SYNONYMOUSIP_FLOOD | DDoS | 139999 | 139999 | 100.00%
+train | 12 | DDOS-SYN_FLOOD | DDoS | 139997 | 139997 | 100.00%
+train | 13 | DDOS-TCP_FLOOD | DDoS | 139995 | 139995 | 100.00%
+train | 14 | DDOS-UDP_FLOOD | DDoS | 139998 | 139998 | 100.00%
+train | 15 | DDOS-UDP_FRAGMENTATION | DDoS | 139984 | 139984 | 100.00%
+train | 16 | DICTIONARYBRUTEFORCE | BruteForce | 8766 | 8766 | 100.00%
+train | 17 | DNS_SPOOFING | Spoofing | 120024 | 120024 | 100.00%
+train | 18 | DOS-HTTP_FLOOD | DoS | 48157 | 48157 | 100.00%
+train | 19 | DOS-SYN_FLOOD | DoS | 139996 | 139996 | 100.00%
+train | 20 | DOS-TCP_FLOOD | DoS | 139997 | 139997 | 100.00%
+train | 21 | DOS-UDP_FLOOD | DoS | 139994 | 139994 | 100.00%
+train | 22 | MIRAI-GREETH_FLOOD | Mirai | 139990 | 139990 | 100.00%
+train | 23 | MIRAI-GREIP_FLOOD | Mirai | 139993 | 139993 | 100.00%
+train | 24 | MIRAI-UDPPLAIN | Mirai | 139989 | 139989 | 100.00%
+train | 25 | MITM-ARPSPOOFING | Spoofing | 139991 | 139991 | 100.00%
+train | 26 | RECON-HOSTDISCOVERY | Recon | 90073 | 90073 | 100.00%
+train | 27 | RECON-OSSCAN | Recon | 65776 | 65776 | 100.00%
+train | 28 | RECON-PINGSWEEP | Recon | 1513 | 1513 | 100.00%
+train | 29 | RECON-PORTSCAN | Recon | 55110 | 55110 | 100.00%
+train | 30 | SQLINJECTION | Web | 3515 | 3515 | 100.00%
+train | 31 | UPLOADING_ATTACK | Web | 837 | 837 | 100.00%
+train | 32 | VULNERABILITYSCAN | Recon | 139998 | 139998 | 100.00%
+train | 33 | XSS | Web | 2594 | 2594 | 100.00%
+val | 0 | BACKDOOR_MALWARE | Web | 308 | 308 | 100.00%
+val | 1 | BENIGN | Benign | 19999 | 19999 | 100.00%
+val | 2 | BROWSERHIJACKING | Web | 563 | 563 | 100.00%
+val | 3 | COMMANDINJECTION | Web | 517 | 517 | 100.00%
+val | 4 | DDOS-ACK_FRAGMENTATION | DDoS | 19998 | 19998 | 100.00%
+val | 5 | DDOS-HTTP_FLOOD | DDoS | 2760 | 2760 | 100.00%
+val | 6 | DDOS-ICMP_FLOOD | DDoS | 20000 | 20000 | 100.00%
+val | 7 | DDOS-ICMP_FRAGMENTATION | DDoS | 19998 | 19998 | 100.00%
+val | 8 | DDOS-PSHACK_FLOOD | DDoS | 20000 | 20000 | 100.00%
+val | 9 | DDOS-RSTFINFLOOD | DDoS | 20000 | 20000 | 100.00%
+val | 10 | DDOS-SLOWLORIS | DDoS | 2240 | 2240 | 100.00%
+val | 11 | DDOS-SYNONYMOUSIP_FLOOD | DDoS | 20000 | 20000 | 100.00%
+val | 12 | DDOS-SYN_FLOOD | DDoS | 20000 | 20000 | 100.00%
+val | 13 | DDOS-TCP_FLOOD | DDoS | 19999 | 19999 | 100.00%
+val | 14 | DDOS-UDP_FLOOD | DDoS | 20000 | 20000 | 100.00%
+val | 15 | DDOS-UDP_FRAGMENTATION | DDoS | 19998 | 19998 | 100.00%
+val | 16 | DICTIONARYBRUTEFORCE | BruteForce | 1252 | 1252 | 100.00%
+val | 17 | DNS_SPOOFING | Spoofing | 17146 | 17146 | 100.00%
+val | 18 | DOS-HTTP_FLOOD | DoS | 6879 | 6879 | 100.00%
+val | 19 | DOS-SYN_FLOOD | DoS | 19999 | 19999 | 100.00%
+val | 20 | DOS-TCP_FLOOD | DoS | 19999 | 19999 | 100.00%
+val | 21 | DOS-UDP_FLOOD | DoS | 19999 | 19999 | 100.00%
+val | 22 | MIRAI-GREETH_FLOOD | Mirai | 19999 | 19999 | 100.00%
+val | 23 | MIRAI-GREIP_FLOOD | Mirai | 19999 | 19999 | 100.00%
+val | 24 | MIRAI-UDPPLAIN | Mirai | 19998 | 19998 | 100.00%
+val | 25 | MITM-ARPSPOOFING | Spoofing | 19999 | 19999 | 100.00%
+val | 26 | RECON-HOSTDISCOVERY | Recon | 12868 | 12868 | 100.00%
+val | 27 | RECON-OSSCAN | Recon | 9397 | 9397 | 100.00%
+val | 28 | RECON-PINGSWEEP | Recon | 216 | 216 | 100.00%
+val | 29 | RECON-PORTSCAN | Recon | 7873 | 7873 | 100.00%
+val | 30 | SQLINJECTION | Web | 502 | 502 | 100.00%
+val | 31 | UPLOADING_ATTACK | Web | 120 | 120 | 100.00%
+val | 32 | VULNERABILITYSCAN | Recon | 19999 | 19999 | 100.00%
+val | 33 | XSS | Web | 370 | 370 | 100.00%
+test | 0 | BACKDOOR_MALWARE | Web | 615 | 615 | 100.00%
+test | 1 | BENIGN | Benign | 39998 | 39998 | 100.00%
+test | 2 | BROWSERHIJACKING | Web | 1126 | 1126 | 100.00%
+test | 3 | COMMANDINJECTION | Web | 1034 | 1034 | 100.00%
+test | 4 | DDOS-ACK_FRAGMENTATION | DDoS | 39996 | 39996 | 100.00%
+test | 5 | DDOS-HTTP_FLOOD | DDoS | 5519 | 5519 | 100.00%
+test | 6 | DDOS-ICMP_FLOOD | DDoS | 40000 | 40000 | 100.00%
+test | 7 | DDOS-ICMP_FRAGMENTATION | DDoS | 39996 | 39996 | 100.00%
+test | 8 | DDOS-PSHACK_FLOOD | DDoS | 40000 | 40000 | 100.00%
+test | 9 | DDOS-RSTFINFLOOD | DDoS | 40000 | 40000 | 100.00%
+test | 10 | DDOS-SLOWLORIS | DDoS | 4480 | 4480 | 100.00%
+test | 11 | DDOS-SYNONYMOUSIP_FLOOD | DDoS | 40000 | 40000 | 100.00%
+test | 12 | DDOS-SYN_FLOOD | DDoS | 39999 | 39999 | 100.00%
+test | 13 | DDOS-TCP_FLOOD | DDoS | 39999 | 39999 | 100.00%
+test | 14 | DDOS-UDP_FLOOD | DDoS | 39999 | 39999 | 100.00%
+test | 15 | DDOS-UDP_FRAGMENTATION | DDoS | 39996 | 39996 | 100.00%
+test | 16 | DICTIONARYBRUTEFORCE | BruteForce | 2504 | 2504 | 100.00%
+test | 17 | DNS_SPOOFING | Spoofing | 34293 | 34293 | 100.00%
+test | 18 | DOS-HTTP_FLOOD | DoS | 13759 | 13759 | 100.00%
+test | 19 | DOS-SYN_FLOOD | DoS | 39999 | 39999 | 100.00%
+test | 20 | DOS-TCP_FLOOD | DoS | 39999 | 39999 | 100.00%
+test | 21 | DOS-UDP_FLOOD | DoS | 39998 | 39998 | 100.00%
+test | 22 | MIRAI-GREETH_FLOOD | Mirai | 39997 | 39997 | 100.00%
+test | 23 | MIRAI-GREIP_FLOOD | Mirai | 39998 | 39998 | 100.00%
+test | 24 | MIRAI-UDPPLAIN | Mirai | 39997 | 39997 | 100.00%
+test | 25 | MITM-ARPSPOOFING | Spoofing | 39998 | 39998 | 100.00%
+test | 26 | RECON-HOSTDISCOVERY | Recon | 25735 | 25735 | 100.00%
+test | 27 | RECON-OSSCAN | Recon | 18793 | 18793 | 100.00%
+test | 28 | RECON-PINGSWEEP | Recon | 432 | 432 | 100.00%
+test | 29 | RECON-PORTSCAN | Recon | 15746 | 15746 | 100.00%
+test | 30 | SQLINJECTION | Web | 1004 | 1004 | 100.00%
+test | 31 | UPLOADING_ATTACK | Web | 239 | 239 | 100.00%
+test | 32 | VULNERABILITYSCAN | Recon | 39999 | 39999 | 100.00%
+test | 33 | XSS | Web | 741 | 741 | 100.00%
+
+PER-CATEGORY VALIDITY BREAKDOWN (8-CLASS)
+--------------------------------------------------------------------------------
+split | category_index | category_name | total | passing | validity_rate
+train | 0 | Benign | 139992 | 139992 | 100.00%
+train | 1 | BruteForce | 8766 | 8766 | 100.00%
+train | 2 | DDoS | 1434940 | 1434940 | 100.00%
+train | 3 | DoS | 468144 | 468144 | 100.00%
+train | 4 | Mirai | 419972 | 419972 | 100.00%
+train | 5 | Recon | 352470 | 352470 | 100.00%
+train | 6 | Spoofing | 260015 | 260015 | 100.00%
+train | 7 | Web | 16659 | 16659 | 100.00%
+val | 0 | Benign | 19999 | 19999 | 100.00%
+val | 1 | BruteForce | 1252 | 1252 | 100.00%
+val | 2 | DDoS | 204993 | 204993 | 100.00%
+val | 3 | DoS | 66876 | 66876 | 100.00%
+val | 4 | Mirai | 59996 | 59996 | 100.00%
+val | 5 | Recon | 50353 | 50353 | 100.00%
+val | 6 | Spoofing | 37145 | 37145 | 100.00%
+val | 7 | Web | 2380 | 2380 | 100.00%
+test | 0 | Benign | 39998 | 39998 | 100.00%
+test | 1 | BruteForce | 2504 | 2504 | 100.00%
+test | 2 | DDoS | 409984 | 409984 | 100.00%
+test | 3 | DoS | 133755 | 133755 | 100.00%
+test | 4 | Mirai | 119992 | 119992 | 100.00%
+test | 5 | Recon | 100705 | 100705 | 100.00%
+test | 6 | Spoofing | 74291 | 74291 | 100.00%
+test | 7 | Web | 4759 | 4759 | 100.00%
+
+FLOAT PRECISION DIAGNOSTICS (AFTER INVERSE TRANSFORM)
+--------------------------------------------------------------------------------
+Protocol Type deviation from nearest integer: min=0, max=0
+Binary feature deviation from nearest of {0,1}: min=0, max=0
+Validator behavior note: protocol/binary/integer checks round values before rule tests.
+
+INDEPENDENT INTER-FEATURE CONSISTENCY CHECKS
+--------------------------------------------------------------------------------
+min_le_avg_le_max: 4429940/4429940 (100.00%)
+var_eq_std_sq_5pct: 4429940/4429940 (100.00%)
+binary_within_0p01: 4429940/4429940 (100.00%)
+integer_within_0p01: 4429940/4429940 (100.00%)
+protocol_allowlist_within_0p01: 4429940/4429940 (100.00%)
+nonneg_ge_neg0p01: 4429940/4429940 (100.00%)
+
+SYNTHETIC CORRUPTION TESTS
+--------------------------------------------------------------------------------
+T1 | Protocol Type = 5.7 (non-integer) | expected=[R_protocol_valid] | actual=[R_protocol_valid] | PASS
+T2 | Protocol Type = 4 (not in allowlist) | expected=[R_protocol_valid] | actual=[R_proto_tcp; R_protocol_valid] | PASS
+T3 | TCP = 0.5 (fractional binary) | expected=[R_binary_TCP] | actual=[R_binary_TCP] | PASS
+T4 | fin_flag_number = -1 (negative count) | expected=[R_nonneg_fin_flag_number] | actual=[R_nonneg_fin_flag_number] | PASS
+T5 | Min = 100, Max = 50 (Min > Max) | expected=[R_min_leq_max] | actual=[R_avg_in_range; R_min_leq_max] | PASS
+T6 | Variance=100, Std=5 (Var != Std^2) | expected=[R_var_eq_std_sq] | actual=[R_var_eq_std_sq] | PASS
+T7 | Number = -3 (negative packet count) | expected=[R_pkts_positive] | actual=[R_nonneg_Number; R_pkts_positive] | PASS
+T8 | AVG = 200 while Min=60, Max=100 | expected=[R_avg_in_range] | actual=[R_avg_in_range] | PASS
+T9 | Multiple: Protocol=5.7, TCP=0.3, Min>Max | expected=[R_binary_TCP; R_min_leq_max; R_protocol_valid] | actual=[R_avg_in_range; R_binary_TCP; R_min_leq_max; R_protocol_valid] | PASS
+
+FULL DATASET VALIDATION SUMMARY
+================================================================================
+Train: 3,100,958 samples - 3,100,958/3,100,958 valid (100.00%)
+Val:   442,994 samples - 442,994/442,994 valid (100.00%)
+Test:  885,988 samples - 885,988/885,988 valid (100.00%)
+Total: 4,429,940 samples - 4,429,940/4,429,940 valid (100.00%)
+
+Validator rules checked: 49
+Rules with zero failures: 49/49
+Synthetic corruption tests passed: 9/9
+
+VERDICT: [PASS - all clean data valid, validator catches all synthetic corruptions]

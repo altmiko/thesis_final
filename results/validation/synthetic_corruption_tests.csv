@@ -1,0 +1,10 @@
+test_id,corruption_description,expected_rules,actual_rules,status
+T1,Protocol Type = 5.7 (non-integer),R_protocol_valid,R_protocol_valid,PASS
+T2,Protocol Type = 4 (not in allowlist),R_protocol_valid,R_proto_tcp; R_protocol_valid,PASS
+T3,TCP = 0.5 (fractional binary),R_binary_TCP,R_binary_TCP,PASS
+T4,fin_flag_number = -1 (negative count),R_nonneg_fin_flag_number,R_nonneg_fin_flag_number,PASS
+T5,"Min = 100, Max = 50 (Min > Max)",R_min_leq_max,R_avg_in_range; R_min_leq_max,PASS
+T6,"Variance=100, Std=5 (Var != Std^2)",R_var_eq_std_sq,R_var_eq_std_sq,PASS
+T7,Number = -3 (negative packet count),R_pkts_positive,R_nonneg_Number; R_pkts_positive,PASS
+T8,"AVG = 200 while Min=60, Max=100",R_avg_in_range,R_avg_in_range,PASS
+T9,"Multiple: Protocol=5.7, TCP=0.3, Min>Max",R_binary_TCP; R_min_leq_max; R_protocol_valid,R_avg_in_range; R_binary_TCP; R_min_leq_max; R_protocol_valid,PASS

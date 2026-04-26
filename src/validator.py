@@ -5,6 +5,7 @@ from typing import Dict, List
 
 
 VALID_PROTOCOLS = {0, 1, 2, 6, 17, 47}
+FLOAT_TOL = 0.01
 
 
 @dataclass
@@ -49,24 +50,32 @@ def validate_batch(X: np.ndarray, feature_names: List[str]) -> ValidationResult:
               'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 'IAT',
               'Number', 'Variance']:
         if has(c):
-            V[f'R_nonneg_{c}'] = df[c].values < 0
+            V[f'R_nonneg_{c}'] = df[c].values < -FLOAT_TOL
     for c in ['fin_flag_number', 'syn_flag_number', 'rst_flag_number',
               'psh_flag_number', 'ack_flag_number', 'ece_flag_number',
               'cwr_flag_number',
               'ack_count', 'syn_count', 'fin_count', 'rst_count']:
         if has(c):
-            V[f'R_nonneg_{c}'] = df[c].values < 0
+            V[f'R_nonneg_{c}'] = df[c].values < -FLOAT_TOL
 
     # G2 — Protocol Type in valid IP protocol numbers
     if has('Protocol Type'):
-        proto = np.round(df['Protocol Type'].values).astype(int)
-        V['R_protocol_valid'] = ~np.isin(proto, list(VALID_PROTOCOLS))
+        proto_raw = df['Protocol Type'].values
+        proto_rounded = np.round(proto_raw)
+        proto_int = proto_rounded.astype(int)
+        non_integer = np.abs(proto_raw - proto_rounded) > FLOAT_TOL
+        not_allowed = ~np.isin(proto_int, list(VALID_PROTOCOLS))
+        V['R_protocol_valid'] = non_integer | not_allowed
 
     # G3 — Binary features in {0, 1}
     for c in ['HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 'SSH', 'IRC',
               'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IGMP', 'IPv', 'LLC']:
         if has(c):
-            V[f'R_binary_{c}'] = ~np.isin(np.round(df[c].values).astype(int), [0, 1])
+            raw = df[c].values
+            rounded = np.round(raw)
+            not_integer_like = np.abs(raw - rounded) > FLOAT_TOL
+            not_binary = ~np.isin(rounded.astype(int), [0, 1])
+            V[f'R_binary_{c}'] = not_integer_like | not_binary
 
     # G4 — Protocol-indicator consistency (indicator implies protocol)
     # Note: for this CICIoT2023 release, protocol-indicator columns may carry
@@ -91,10 +100,10 @@ def validate_batch(X: np.ndarray, feature_names: List[str]) -> ValidationResult:
 
     # G5 — Statistical ordering Min <= AVG <= Max
     if has('Min') and has('Max'):
-        V['R_min_leq_max'] = df['Min'].values > df['Max'].values
+        V['R_min_leq_max'] = df['Min'].values > (df['Max'].values + FLOAT_TOL)
     if has('Min') and has('AVG') and has('Max'):
-        V['R_avg_in_range'] = (df['AVG'].values < df['Min'].values) | \
-                              (df['AVG'].values > df['Max'].values)
+        V['R_avg_in_range'] = (df['AVG'].values < (df['Min'].values - FLOAT_TOL)) | \
+                              (df['AVG'].values > (df['Max'].values + FLOAT_TOL))
 
     # G6 — Variance = Std^2 (5% tolerance)
     if has('Std') and has('Variance'):
@@ -104,13 +113,13 @@ def validate_batch(X: np.ndarray, feature_names: List[str]) -> ValidationResult:
 
     # G7 — TTL / Time_To_Live range [0, 255]
     if has('Time_To_Live'):
-        V['R_ttl_range'] = (df['Time_To_Live'].values < 0) | \
-                           (df['Time_To_Live'].values > 255)
+        V['R_ttl_range'] = (df['Time_To_Live'].values < -FLOAT_TOL) | \
+                           (df['Time_To_Live'].values > (255 + FLOAT_TOL))
 
     # G8 — Packet count positive integer
     if has('Number'):
-        V['R_pkts_positive'] = df['Number'].values < 1
+        V['R_pkts_positive'] = df['Number'].values < (1 - FLOAT_TOL)
         V['R_pkts_integer'] = np.abs(df['Number'].values -
-                                      np.round(df['Number'].values)) > 0.5
+                                      np.round(df['Number'].values)) > FLOAT_TOL
 
     return ValidationResult(n_samples=n, violations_per_rule=V)
