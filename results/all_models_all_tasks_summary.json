@@ -1,0 +1,94 @@
+{
+  "loss_weighting": "excluded",
+  "loss_weighting_decision": "Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.",
+  "models": [
+    "mlp",
+    "cnn",
+    "lstm",
+    "serial",
+    "dualpath"
+  ],
+  "tasks": {
+    "binary": {
+      "mlp": {
+        "accuracy": 0.9672444773518377,
+        "macro_f1": 0.7872539888575446,
+        "weighted_f1": 0.9652697199697862
+      },
+      "cnn": {
+        "accuracy": 0.9659408479573087,
+        "macro_f1": 0.7640477489311794,
+        "weighted_f1": 0.9626004004655152
+      },
+      "lstm": {
+        "accuracy": 0.9674182946044416,
+        "macro_f1": 0.7840276081522322,
+        "weighted_f1": 0.9650743228676802
+      },
+      "serial": {
+        "accuracy": 0.9658245935610866,
+        "macro_f1": 0.7498179403368168,
+        "weighted_f1": 0.9612956202791135
+      },
+      "dualpath": {
+        "accuracy": 0.9677715725269417,
+        "macro_f1": 0.7845176135198921,
+        "weighted_f1": 0.9652914032855244
+      }
+    },
+    "8class": {
+      "mlp": {
+        "accuracy": 0.8448974478209638,
+        "macro_f1": 0.6468898990592755,
+        "weighted_f1": 0.8396747047397414
+      },
+      "cnn": {
+        "accuracy": 0.834941331033829,
+        "macro_f1": 0.590679333861831,
+        "weighted_f1": 0.8287802657551097
+      },
+      "lstm": {
+        "accuracy": 0.8456830115080566,
+        "macro_f1": 0.6469770238706491,
+        "weighted_f1": 0.8413494577785293
+      },
+      "serial": {
+        "accuracy": 0.8393510973060583,
+        "macro_f1": 0.6069390614904718,
+        "weighted_f1": 0.8358410631832733
+      },
+      "dualpath": {
+        "accuracy": 0.8458557000772019,
+        "macro_f1": 0.6398572561218749,
+        "weighted_f1": 0.8391259476571663
+      }
+    },
+    "34class": {
+      "mlp": {
+        "accuracy": 0.7495022505948162,
+        "macro_f1": 0.5678795035777818,
+        "weighted_f1": 0.7322681100875664
+      },
+      "cnn": {
+        "accuracy": 0.7023910030384158,
+        "macro_f1": 0.5239159996141466,
+        "weighted_f1": 0.6887830054062255
+      },
+      "lstm": {
+        "accuracy": 0.7557585430050971,
+        "macro_f1": 0.5747345001690133,
+        "weighted_f1": 0.7416493928610329
+      },
+      "serial": {
+        "accuracy": 0.744403987412922,
+        "macro_f1": 0.5628458710079544,
+        "weighted_f1": 0.729295828317415
+      },
+      "dualpath": {
+        "accuracy": 0.7535011760881637,
+        "macro_f1": 0.5711541011470055,
+        "weighted_f1": 0.7381248983710399
+      }
+    }
+  }
+}

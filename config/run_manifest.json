@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-04-19T21:15:18.100928",
-  "git_commit": "62f6b1fe33e43fc56e11d7fbe0b8119919adf0fe",
+  "timestamp": "2026-04-19T21:20:07.683345",
+  "git_commit": "4b852806f984579e0f5fb72870a6fb0983de537c",
   "python_version": "3.10.20 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:42:35) [MSC v.1942 64 bit (AMD64)]",
   "package_versions": {
     "numpy": "2.2.6",
@@ -166,6 +166,19 @@
       "rst_flag_number",
       "syn_flag_number"
     ],
+    "full_override_features": [
+      "AVG",
+      "Header_Length",
+      "IAT",
+      "Max",
+      "Min",
+      "Number",
+      "Rate",
+      "Std",
+      "Tot size",
+      "Tot sum",
+      "Variance"
+    ],
     "manual_review_features": [
       "ack_flag_number",
       "fin_count",
@@ -184,6 +197,6 @@
       "rst_flag_number": "allow_mutable",
       "syn_flag_number": "allow_mutable"
     },
-    "decision_timestamp": "2026-04-19T21:15:18.100928"
+    "decision_timestamp": "2026-04-19T21:20:07.683345"
   }
 }

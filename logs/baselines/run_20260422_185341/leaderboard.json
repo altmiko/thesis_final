@@ -1,0 +1,80 @@
+[
+  {
+    "model": "mlp",
+    "best_epoch": 2,
+    "best_val_macro_f1": 0.32487049921460565,
+    "test_accuracy": 0.5464,
+    "test_macro_precision": 0.3690734115924512,
+    "test_macro_recall": 0.4237617699065419,
+    "test_macro_f1": 0.33187653512772963,
+    "test_weighted_precision": 0.6027124322465862,
+    "test_weighted_recall": 0.5464,
+    "test_weighted_f1": 0.5378942292560123,
+    "runtime_sec": 1.4526493549346924
+  },
+  {
+    "model": "dualpath",
+    "best_epoch": 1,
+    "best_val_macro_f1": 0.2520371032475154,
+    "test_accuracy": 0.3758,
+    "test_macro_precision": 0.27792597814056585,
+    "test_macro_recall": 0.36662385900224403,
+    "test_macro_f1": 0.2561578742045037,
+    "test_weighted_precision": 0.5110935129354955,
+    "test_weighted_recall": 0.3758,
+    "test_weighted_f1": 0.4137395261647935,
+    "runtime_sec": 1.3306052684783936
+  },
+  {
+    "model": "lstm",
+    "best_epoch": 2,
+    "best_val_macro_f1": 0.25052513079847205,
+    "test_accuracy": 0.3312,
+    "test_macro_precision": 0.35317286481230387,
+    "test_macro_recall": 0.3553737240424454,
+    "test_macro_f1": 0.2423943166586737,
+    "test_weighted_precision": 0.6301939923846377,
+    "test_weighted_recall": 0.3312,
+    "test_weighted_f1": 0.3245328060278948,
+    "runtime_sec": 1.225621223449707
+  },
+  {
+    "model": "cnn",
+    "best_epoch": 2,
+    "best_val_macro_f1": 0.22581670304867502,
+    "test_accuracy": 0.272,
+    "test_macro_precision": 0.30084763974633183,
+    "test_macro_recall": 0.34553584368075374,
+    "test_macro_f1": 0.21977394086711077,
+    "test_weighted_precision": 0.25823723062725373,
+    "test_weighted_recall": 0.272,
+    "test_weighted_f1": 0.1971999926898761,
+    "runtime_sec": 1.2886369228363037
+  },
+  {
+    "model": "serial",
+    "best_epoch": 2,
+    "best_val_macro_f1": 0.22484248019307038,
+    "test_accuracy": 0.308,
+    "test_macro_precision": 0.23019158389521716,
+    "test_macro_recall": 0.359281642186135,
+    "test_macro_f1": 0.2178540164695393,
+    "test_weighted_precision": 0.19519065467010033,
+    "test_weighted_recall": 0.308,
+    "test_weighted_f1": 0.19071730661538427,
+    "runtime_sec": 1.30263090133667
+  },
+  {
+    "model": "attn_serial",
+    "best_epoch": 2,
+    "best_val_macro_f1": 0.15387196871752354,
+    "test_accuracy": 0.244,
+    "test_macro_precision": 0.1304852805454415,
+    "test_macro_recall": 0.28367858990201367,
+    "test_macro_f1": 0.14772047235384647,
+    "test_weighted_precision": 0.12067866134744855,
+    "test_weighted_recall": 0.244,
+    "test_weighted_f1": 0.14709971636844013,
+    "runtime_sec": 1.384626865386963
+  }
+]

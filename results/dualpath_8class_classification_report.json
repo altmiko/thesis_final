@@ -1,0 +1,94 @@
+{
+  "model": "dualpath",
+  "task": "8class",
+  "num_classes": 8,
+  "loss_weighting": "excluded",
+  "loss_weighting_decision": "Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.",
+  "provided_class_weights_for_reference": [
+    2.7688708305358887,
+    44.218544006347656,
+    0.27012959122657776,
+    0.8279925584793091,
+    0.9229657053947449,
+    1.0997240543365479,
+    1.4907591342926025,
+    23.26788902282715
+  ],
+  "test_loss": 0.33262720579916344,
+  "accuracy": 0.8458557000772019,
+  "macro_f1": 0.6398572561218749,
+  "weighted_f1": 0.8391259476571663,
+  "per_class_f1": {
+    "0": 0.5983882260876728,
+    "1": 0.2579972183588317,
+    "2": 0.8935799591016624,
+    "3": 0.6376418191866324,
+    "4": 0.997893577706127,
+    "5": 0.8278525127204294,
+    "6": 0.8602724619750131,
+    "7": 0.04523227383863081
+  },
+  "classification_report": {
+    "0": {
+      "precision": 0.6635912426539996,
+      "recall": 0.5448522426121306,
+      "f1-score": 0.5983882260876728,
+      "support": 39998.0
+    },
+    "1": {
+      "precision": 0.9973118279569892,
+      "recall": 0.1481629392971246,
+      "f1-score": 0.2579972183588317,
+      "support": 2504.0
+    },
+    "2": {
+      "precision": 0.8711884434044229,
+      "recall": 0.9171528645020294,
+      "f1-score": 0.8935799591016624,
+      "support": 409984.0
+    },
+    "3": {
+      "precision": 0.6984412416654056,
+      "recall": 0.5865799409367874,
+      "f1-score": 0.6376418191866324,
+      "support": 133755.0
+    },
+    "4": {
+      "precision": 0.9988977127539644,
+      "recall": 0.9968914594306287,
+      "f1-score": 0.997893577706127,
+      "support": 119992.0
+    },
+    "5": {
+      "precision": 0.7779825327510917,
+      "recall": 0.8845538950399682,
+      "f1-score": 0.8278525127204294,
+      "support": 100705.0
+    },
+    "6": {
+      "precision": 0.8594864766818493,
+      "recall": 0.8610598861234874,
+      "f1-score": 0.8602724619750131,
+      "support": 74291.0
+    },
+    "7": {
+      "precision": 0.7449664429530202,
+      "recall": 0.023324227778945158,
+      "f1-score": 0.04523227383863081,
+      "support": 4759.0
+    },
+    "accuracy": 0.8458557000772019,
+    "macro avg": {
+      "precision": 0.8264832401025928,
+      "recall": 0.6203221819651377,
+      "f1-score": 0.6398572561218749,
+      "support": 885988.0
+    },
+    "weighted avg": {
+      "precision": 0.8411364407319414,
+      "recall": 0.8458557000772019,
+      "f1-score": 0.8391259476571663,
+      "support": 885988.0
+    }
+  }
+}

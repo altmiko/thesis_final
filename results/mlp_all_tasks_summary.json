@@ -1,0 +1,21 @@
+{
+  "loss_weighting": "excluded",
+  "loss_weighting_decision": "Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.",
+  "tasks": {
+    "binary": {
+      "accuracy": 0.9672444773518377,
+      "macro_f1": 0.7872539888575446,
+      "weighted_f1": 0.9652697199697862
+    },
+    "8class": {
+      "accuracy": 0.8440215894571935,
+      "macro_f1": 0.6452833900897064,
+      "weighted_f1": 0.8389504824299573
+    },
+    "34class": {
+      "accuracy": 0.7299083057558342,
+      "macro_f1": 0.5523733420813844,
+      "weighted_f1": 0.7103071835146161
+    }
+  }
+}

@@ -44,8 +44,6 @@ QUASI_IMMUTABLE_FEATURES = [
     'DHCP', 'ARP', 'IPv', 'LLC', 'IGMP',
     # TTL is OS/network-stack dominated and should not be freely perturbed.
     'Time_To_Live',
-    # Header_Length is a derived flow aggregate tied to packet structure/count.
-    'Header_Length',
 ]
 
 # ── Binary features (protocol indicators, values in {0, 1}) ────────────────
@@ -68,7 +66,7 @@ INTEGER_FEATURES = [
 # ── Mutable features (attacker can influence via packet crafting) ───────────
 
 BASE_MUTABLE = [
-    'Rate', 'Variance',
+    'Rate', 'Header_Length', 'Variance',
     'fin_flag_number', 'syn_flag_number', 'rst_flag_number',
     'psh_flag_number', 'ack_flag_number', 'ece_flag_number',
     'cwr_flag_number',
@@ -79,6 +77,22 @@ BASE_MUTABLE = [
 MUTABLE_FEATURES = BASE_MUTABLE + [
     'ack_count', 'syn_count', 'fin_count', 'rst_count',
     'Number',
+]
+
+# Explicit full-perturbation override for high-IQR, attacker-controllable
+# continuous/aggregate features used in baseline attacks.
+FULL_PERTURBABLE_OVERRIDE_FEATURES = [
+    'Header_Length',
+    'Rate',
+    'Tot sum',
+    'Min',
+    'Max',
+    'AVG',
+    'Std',
+    'Tot size',
+    'IAT',
+    'Number',
+    'Variance',
 ]
 
 # ── Near-zero-IQR governance for perturbation policy ───────────────────────

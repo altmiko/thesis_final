@@ -19,7 +19,8 @@ from feature_groups import (FEATURE_NAMES, BINARY_FEATURES, INTEGER_FEATURES,
                             NEAR_ZERO_IQR_THRESHOLD,
                             RARE_SIGNAL_NONZERO_THRESHOLD,
                             NEAR_ZERO_FREEZE_POLICY,
-                            MANUAL_CONCENTRATED_DECISIONS)
+                            MANUAL_CONCENTRATED_DECISIONS,
+                            FULL_PERTURBABLE_OVERRIDE_FEATURES)
 from validator import validate_batch
 
 PROC_DIR = 'D:/thesis_final/data/processed'
@@ -388,6 +389,7 @@ for feat in manual_review_mutable:
         )
 
 mutable_set = set(MUTABLE_FEATURES)
+full_override_set = set(FULL_PERTURBABLE_OVERRIDE_FEATURES)
 cap_partial_features = {
     feat
     for feat, item in near_zero_by_feature.items()
@@ -405,6 +407,9 @@ for i, feat in enumerate(FEATURE_NAMES):
         mask[i] = 0.0
         n_frozen += 1
         n_auto_frozen += 1
+    elif feat in mutable_set and feat in full_override_set:
+        mask[i] = 1.0
+        n_full += 1
     elif feat in cap_partial_features:
         mask[i] = 0.3
         n_partial += 1
@@ -499,6 +504,7 @@ manifest = {
         'counts_by_kind': kind_counts,
         'auto_frozen_features': sorted(list(auto_freeze_features)),
         'capped_partial_features': sorted(list(cap_partial_features)),
+        'full_override_features': sorted(list(full_override_set)),
         'manual_review_features': sorted(manual_review_mutable),
         'manual_decisions': {
             feat: MANUAL_CONCENTRATED_DECISIONS[feat]

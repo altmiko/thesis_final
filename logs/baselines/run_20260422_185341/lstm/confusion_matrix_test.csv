@@ -1,0 +1,9 @@
+true\pred,Benign,BruteForce,DDoS,DoS,Mirai,Recon,Spoofing,Web
+Benign,247,5,0,1,0,16,46,123
+BruteForce,7,0,0,0,0,2,9,14
+DDoS,48,0,1132,213,3144,36,52,43
+DoS,12,0,84,140,1235,34,24,15
+Mirai,4,0,0,0,1358,2,1,1
+Recon,314,12,0,0,0,149,144,457
+Spoofing,252,3,0,1,60,65,255,178
+Web,14,1,0,0,0,2,14,31
