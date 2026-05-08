@@ -30,9 +30,16 @@ def parse_attack_filename(npz_path: str) -> Dict[str, Any]:
     if len(parts) < 4 or parts[0] != "attack":
         raise ValueError(f"Unexpected attack file name format: {Path(npz_path).name}")
 
-    model_name = parts[1]
-    attack_name = parts[2].lower()
-    eps_str = parts[3]
+    # Support model tags that include underscores by taking the last two tokens
+    # as attack and eps, with the rest forming the model name.
+    if len(parts) < 4:
+        raise ValueError(f"Unexpected attack file name format: {Path(npz_path).name}")
+
+    eps_str = parts[-1]
+    attack_name = parts[-2].lower()
+    model_name = "_".join(parts[1:-2])
+    if not model_name:
+        raise ValueError(f"Missing model name in attack file: {Path(npz_path).name}")
     eps = float(eps_str) if eps_str.upper() != "N/A" else 0.0
 
     return {

@@ -304,6 +304,111 @@ def run_attack(
     return result
 
 
+def run_attack_with_restarts(
+    model: nn.Module,
+    X: np.ndarray,
+    y: np.ndarray,
+    attack_name: str,
+    num_restarts: int,
+    perturbation_mask: Optional[np.ndarray] = None,
+    eps: float = 0.3,
+    batch_size: int = 1024,
+    device: str = "cuda",
+    base_seed: Optional[int] = None,
+    **attack_kwargs,
+) -> dict:
+    """
+    Run an attack with multiple restarts and select best adversarial sample per row.
+
+    Selection policy:
+    1) Successful flips (clean-correct and adv-wrong) always beat unsuccessful restarts.
+    2) Among successful restarts, prefer lower L2 perturbation in scaled space.
+
+    FGSM has no random restart mechanism in this implementation; for FGSM or
+    num_restarts <= 1, this function falls back to a single run.
+    """
+    if num_restarts < 1:
+        raise ValueError(f"num_restarts must be >= 1, got {num_restarts}")
+
+    attack_name_l = attack_name.lower()
+    if attack_name_l == "fgsm" or num_restarts == 1:
+        single = run_attack(
+            model=model,
+            X=X,
+            y=y,
+            attack_name=attack_name,
+            perturbation_mask=perturbation_mask,
+            eps=eps,
+            batch_size=batch_size,
+            device=device,
+            **attack_kwargs,
+        )
+        single["num_restarts"] = 1
+        single["selected_restart"] = np.zeros(len(X), dtype=np.int32)
+        single["restart_samples_flipped"] = np.array([int(((single["y_pred_clean"] == single["y_true"]) & (single["y_pred_adv"] != single["y_true"])).sum())], dtype=np.int64)
+        return single
+
+    # Initialize with first restart.
+    if base_seed is not None:
+        torch.manual_seed(int(base_seed))
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(int(base_seed))
+
+    best = run_attack(
+        model=model,
+        X=X,
+        y=y,
+        attack_name=attack_name,
+        perturbation_mask=perturbation_mask,
+        eps=eps,
+        batch_size=batch_size,
+        device=device,
+        **attack_kwargs,
+    )
+
+    clean_correct = best["y_pred_clean"] == best["y_true"]
+    best_success = clean_correct & (best["y_pred_adv"] != best["y_true"])
+    best_l2 = np.linalg.norm(best["X_adv"] - best["X_clean"], ord=2, axis=1)
+    selected_restart = np.zeros(len(X), dtype=np.int32)
+    restart_flipped_counts: List[int] = [int(best_success.sum())]
+
+    for restart_idx in range(1, num_restarts):
+        if base_seed is not None:
+            seed = int(base_seed) + restart_idx
+            torch.manual_seed(seed)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(seed)
+
+        cand = run_attack(
+            model=model,
+            X=X,
+            y=y,
+            attack_name=attack_name,
+            perturbation_mask=perturbation_mask,
+            eps=eps,
+            batch_size=batch_size,
+            device=device,
+            **attack_kwargs,
+        )
+
+        cand_success = clean_correct & (cand["y_pred_adv"] != cand["y_true"])
+        cand_l2 = np.linalg.norm(cand["X_adv"] - cand["X_clean"], ord=2, axis=1)
+        restart_flipped_counts.append(int(cand_success.sum()))
+
+        improve_mask = cand_success & ((~best_success) | (cand_l2 < best_l2))
+        if np.any(improve_mask):
+            best["X_adv"][improve_mask] = cand["X_adv"][improve_mask]
+            best["y_pred_adv"][improve_mask] = cand["y_pred_adv"][improve_mask]
+            best_success[improve_mask] = cand_success[improve_mask]
+            best_l2[improve_mask] = cand_l2[improve_mask]
+            selected_restart[improve_mask] = restart_idx
+
+    best["num_restarts"] = int(num_restarts)
+    best["selected_restart"] = selected_restart
+    best["restart_samples_flipped"] = np.array(restart_flipped_counts, dtype=np.int64)
+    return best
+
+
 def compute_attack_metrics(result: dict, class_names: Optional[List[str]] = None) -> dict:
     """Compute aggregate and per-class adversarial effectiveness metrics."""
     x_adv = np.asarray(result["X_adv"], dtype=np.float32)

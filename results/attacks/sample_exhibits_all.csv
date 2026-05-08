@@ -189,6 +189,82 @@ attack_binary_fgsm_0.30,1776,ICMP,0.0,-0.30000001192092896,-0.30000001192092896,
 attack_binary_fgsm_0.30,1776,IGMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
 attack_binary_fgsm_0.30,1776,IPv,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
 attack_binary_fgsm_0.30,1776,LLC,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Tot sum,868.0,-13813.701171875,-14681.701171875,1.0,Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Variance,102.4000015258789,-13192.2001953125,-13294.600196838379,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Rate,338.4443359375,-7087.12255859375,-7425.56689453125,1.0,Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Max,90.0,-214.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,AVG,86.80000305175781,-68.59999084472656,-155.39999389648438,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Tot size,86.80000305175781,-68.59999084472656,-155.39999389648438,1.0,Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Std,10.119287490844727,-53.03433609008789,-63.15362358093262,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Number,10.0,-3.4999847412109375,-13.499984741210938,1.0,Integer constraint violated | Non-negative constraint violated | Packet count must be >= 1,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Header_Length,8.0,11.624000549316406,3.6240005493164062,1.0,-,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Protocol Type,17.0,20.299999237060547,3.299999237060547,0.0,"Protocol clean=17, adv=INVALID (non-integer: 20.3000) | Protocol invalid: non-integer",Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,ack_count,0.0,-2.1000001430511475,-2.1000001430511475,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Time_To_Live,68.69999694824219,68.12699890136719,-0.572998046875,0.0,-,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Min,58.0,58.34843063354492,0.3484306335449219,1.0,Min > Max,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,fin_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,syn_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,rst_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,psh_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,ack_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,ece_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,cwr_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,syn_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,rst_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,HTTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,HTTPS,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,DNS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,Telnet,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,SMTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,SSH,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,IRC,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,TCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,DHCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,ICMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,IGMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,UDP,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,LLC,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,2865,IPv,1.0,1.225000023841858,0.2250000238418579,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_pgd_0.30,3255,Tot sum,754.0,15435.701171875,14681.701171875,1.0,-,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Variance,436.26666259765625,-9534.6845703125,-9970.951232910156,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Rate,104.80322265625,-5464.37158203125,-5569.1748046875,1.0,Non-negative constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Max,127.0,-177.19998168945312,-304.1999816894531,1.0,Non-negative constraint violated | Min > Max,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Std,20.88699722290039,84.0406265258789,63.153629302978516,1.0,Variance mismatch vs Std^2,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,AVG,75.4000015258789,114.25,38.849998474121094,1.0,"AVG outside [Min, Max]",Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Tot size,75.4000015258789,63.27130126953125,-12.128700256347656,1.0,-,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Number,10.0,0.915435791015625,-9.084564208984375,1.0,Integer constraint violated | Packet count must be >= 1,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Header_Length,32.0,35.624000549316406,3.6240005493164062,1.0,-,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Protocol Type,6.0,2.6999998092651367,-3.3000001907348633,0.0,"Protocol clean=6, adv=INVALID (non-integer: 2.7000) | Protocol invalid: non-integer",Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,ack_count,10.0,12.100000381469727,2.1000003814697266,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Min,66.0,67.80000305175781,1.8000030517578125,1.0,Min > Max,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Time_To_Live,164.39999389648438,163.82699584960938,-0.572998046875,0.0,-,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,psh_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,ece_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,cwr_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,rst_count,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,HTTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,SMTP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,SSH,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,IRC,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,ARP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,ICMP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,ack_flag_number,1.0,1.2999999523162842,0.2999999523162842,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,HTTPS,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,TCP,1.0,0.7749999761581421,-0.2250000238418579,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,IPv,1.0,1.225000023841858,0.2250000238418579,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,LLC,1.0,1.225000023841858,0.2250000238418579,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,rst_flag_number,0.0,-0.22500000894069672,-0.22500000894069672,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,DNS,0.0,-0.22500000894069672,-0.22500000894069672,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,UDP,0.0,0.22500000894069672,0.22500000894069672,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,DHCP,0.0,-0.22500000894069672,-0.22500000894069672,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,IGMP,0.0,0.22500000894069672,0.22500000894069672,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,syn_flag_number,0.0,-0.2191966325044632,-0.2191966325044632,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,fin_flag_number,0.0,0.15000000596046448,0.15000000596046448,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,syn_count,0.0,0.15000000596046448,0.15000000596046448,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_pgd_0.30,3255,Telnet,0.0,-0.15000000596046448,-0.15000000596046448,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
 attack_binary_pgd_0.30,9479,Tot sum,874.0,-13807.701171875,-14681.701171875,1.0,Non-negative constraint violated,Attack,Attack,Benign
 attack_binary_pgd_0.30,9479,Variance,2200.933349609375,-11093.6669921875,-13294.600341796875,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
 attack_binary_pgd_0.30,9479,Rate,20.2978515625,-7405.27001953125,-7425.56787109375,1.0,Non-negative constraint violated,Attack,Attack,Benign
@@ -227,42 +303,6 @@ attack_binary_pgd_0.30,9479,IPv,1.0,1.2999999523162842,0.2999999523162842,0.0,Bi
 attack_binary_pgd_0.30,9479,LLC,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
 attack_binary_pgd_0.30,9479,SMTP,0.0,-0.22500000894069672,-0.22500000894069672,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
 attack_binary_pgd_0.30,9479,IGMP,0.0,-0.14541342854499817,-0.14541342854499817,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,23713,Tot sum,1102.0,15783.701171875,14681.701171875,1.0,-,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Variance,5073.95556640625,-8220.6455078125,-13294.60107421875,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Rate,154.470703125,-3558.31201171875,-3712.78271484375,1.0,Non-negative constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Max,217.0,-87.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Tot size,110.19999694824219,-45.20001220703125,-155.40000915527344,1.0,Non-negative constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,AVG,110.19999694824219,-6.350006103515625,-116.55000305175781,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Std,71.23170471191406,134.3853302001953,63.15362548828125,1.0,Variance mismatch vs Std^2,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Number,10.0,-16.99999237060547,-26.99999237060547,1.0,Non-negative constraint violated | Packet count must be >= 1,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Header_Length,32.0,35.624000549316406,3.6240005493164062,1.0,-,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Protocol Type,6.0,3.5249998569488525,-2.4750001430511475,0.0,"Protocol clean=6, adv=INVALID (non-integer: 3.5250) | Protocol invalid: non-integer",Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,ack_count,10.0,12.100000381469727,2.1000003814697266,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Min,66.0,67.80000305175781,1.8000030517578125,1.0,Min > Max,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Time_To_Live,164.39999389648438,163.82699584960938,-0.572998046875,0.0,-,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,fin_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,syn_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,rst_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,psh_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,ece_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,cwr_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,rst_count,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,HTTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,SSH,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,IRC,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,DHCP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,ICMP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,IGMP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,ack_flag_number,1.0,1.2999999523162842,0.2999999523162842,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,HTTPS,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,IPv,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,LLC,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,TCP,1.0,0.7749999761581421,-0.2250000238418579,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,fin_count,0.0,-0.22500000894069672,-0.22500000894069672,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,Telnet,0.0,-0.22500000894069672,-0.22500000894069672,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,syn_count,0.0,0.07501447200775146,0.07501447200775146,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,DNS,0.0,0.07500000298023224,0.07500000298023224,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_pgd_0.30,23713,UDP,0.0,-0.07500000298023224,-0.07500000298023224,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
 attack_binary_pgd_0.30,35460,Tot sum,1137.0,-13544.701171875,-14681.701171875,1.0,Non-negative constraint violated,Attack,Attack,Benign
 attack_binary_pgd_0.30,35460,Variance,3947.3447265625,-9347.255859375,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
 attack_binary_pgd_0.30,35460,Rate,59.5927734375,-7365.97412109375,-7425.56689453125,1.0,Non-negative constraint violated,Attack,Attack,Benign
@@ -339,115 +379,81 @@ attack_binary_pgd_0.30,38662,IGMP,0.0,-0.30000001192092896,-0.30000001192092896,
 attack_binary_pgd_0.30,38662,IPv,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
 attack_binary_pgd_0.30,38662,LLC,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
 attack_binary_pgd_0.30,38662,Min,60.0,60.07967758178711,0.07967758178710938,1.0,Min > Max,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Tot sum,1018.0,-13663.701171875,-14681.701171875,1.0,Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Variance,3156.844482421875,-10137.755859375,-13294.600341796875,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Rate,17.3818359375,-7408.18505859375,-7425.56689453125,1.0,Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Max,214.0,-90.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,AVG,101.80000305175781,-53.600006103515625,-155.40000915527344,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Tot size,101.80000305175781,-53.600006103515625,-155.40000915527344,1.0,Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Std,56.18580627441406,-6.967817306518555,-63.15362358093262,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Number,10.0,-16.99999237060547,-26.99999237060547,1.0,Non-negative constraint violated | Packet count must be >= 1,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Header_Length,10.0,13.624000549316406,3.6240005493164062,1.0,-,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Protocol Type,17.0,13.699999809265137,-3.3000001907348633,0.0,"Protocol clean=17, adv=INVALID (non-integer: 13.7000) | Protocol invalid: non-integer",Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,ack_count,2.0,-0.09999999403953552,-2.0999999940395355,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Min,60.0,61.79999923706055,1.7999992370605469,1.0,Min > Max,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Time_To_Live,119.5999984741211,120.17300415039062,0.5730056762695312,0.0,-,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,fin_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,syn_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,rst_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,psh_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,ack_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,ece_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,cwr_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,syn_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,rst_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,HTTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,HTTPS,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,DNS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,Telnet,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,SMTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,SSH,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,IRC,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,TCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,UDP,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,DHCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,ICMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,IPv,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_pgd_0.30,42808,LLC,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,Tot sum,6219.0,-22261.66796875,-28480.66796875,1.0,Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,Variance,738.4988403320312,-3816.67578125,-4555.174621582031,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
-attack_binary_cw_0,2974,Rate,63.17919921875,-3101.02685546875,-3164.2060546875,1.0,Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,Tot size,62.189998626708984,-108.15803527832031,-170.3480339050293,1.0,Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,AVG,62.189998626708984,-61.54716491699219,-123.73716354370117,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",Attack,Attack,Benign
-attack_binary_cw_0,2974,Number,100.0,52.91626739501953,-47.08373260498047,1.0,Integer constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,Max,218.0,199.1856689453125,-18.8143310546875,1.0,-,Attack,Attack,Benign
-attack_binary_cw_0,2974,Std,27.175336837768555,8.793296813964844,-18.38204002380371,1.0,Variance mismatch vs Std^2,Attack,Attack,Benign
-attack_binary_cw_0,2974,Header_Length,9.84000015258789,17.621540069580078,7.7815399169921875,1.0,-,Attack,Attack,Benign
-attack_binary_cw_0,2974,Min,50.0,54.734928131103516,4.734928131103516,1.0,-,Attack,Attack,Benign
-attack_binary_cw_0,2974,ack_count,9.0,5.422255516052246,-3.577744483947754,0.30000001192092896,Integer constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,Protocol Type,17.0,17.763078689575195,0.7630786895751953,0.0,"Protocol clean=17, adv=INVALID (non-integer: 17.7631) | Protocol invalid: non-integer",Attack,Attack,Benign
-attack_binary_cw_0,2974,syn_flag_number,0.0,-0.6914411783218384,-0.6914411783218384,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,SSH,0.0,-0.5955878496170044,-0.5955878496170044,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,ICMP,0.0,-0.5905473828315735,-0.5905473828315735,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,HTTP,0.0,-0.5581327080726624,-0.5581327080726624,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,syn_count,0.0,-0.5383049845695496,-0.5383049845695496,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,psh_flag_number,0.0,-0.5280494689941406,-0.5280494689941406,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,rst_count,0.0,-0.47618505358695984,-0.47618505358695984,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,rst_flag_number,0.0,-0.4331851005554199,-0.4331851005554199,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,fin_flag_number,0.0,-0.3885085880756378,-0.3885085880756378,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,ARP,0.0,-0.3261401355266571,-0.3261401355266571,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,fin_count,0.0,-0.2833632826805115,-0.2833632826805115,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,LLC,1.0,1.1984423398971558,0.19844233989715576,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,ack_flag_number,0.0,-0.18683786690235138,-0.18683786690235138,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,DNS,0.0,-0.15118829905986786,-0.15118829905986786,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,HTTPS,0.0,0.09962192922830582,0.09962192922830582,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,IPv,1.0,1.0763061046600342,0.07630610466003418,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,TCP,0.0,-0.051752686500549316,-0.051752686500549316,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,DHCP,0.0,-0.0441402867436409,-0.0441402867436409,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,cwr_flag_number,0.0,0.03562932834029198,0.03562932834029198,0.0,Integer constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,SMTP,0.0,0.016605259850621223,0.016605259850621223,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
-attack_binary_cw_0,2974,IRC,0.0,-0.008553871884942055,-0.008553871884942055,0.0,-,Attack,Attack,Benign
-attack_binary_cw_0,2974,UDP,1.0,0.9922651052474976,-0.007734894752502441,0.0,-,Attack,Attack,Benign
-attack_binary_cw_0,2974,Time_To_Live,65.5199966430664,65.51444244384766,-0.00555419921875,0.0,-,Attack,Attack,Benign
-attack_binary_cw_0,2974,IGMP,0.0,-0.0036171332467347383,-0.0036171332467347383,0.0,-,Attack,Attack,Benign
-attack_binary_cw_0,2974,ece_flag_number,0.0,-0.002500873524695635,-0.002500873524695635,0.0,Non-negative constraint violated,Attack,Attack,Benign
-attack_binary_cw_0,2974,Telnet,0.0,-0.0010396369034424424,-0.0010396369034424424,0.0,-,Attack,Attack,Benign
-attack_binary_cw_0,7560,Tot sum,650.0,1939.649169921875,1289.649169921875,1.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,Rate,206.3515625,383.11767578125,176.76611328125,1.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,Variance,4.6666669845581055,-78.93999481201172,-83.60666179656982,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Benign,Benign,Attack
-attack_binary_cw_0,7560,Tot size,65.0,74.76925659179688,9.769256591796875,1.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,AVG,65.0,70.87620544433594,5.8762054443359375,1.0,"AVG outside [Min, Max]",Benign,Benign,Attack
-attack_binary_cw_0,7560,Max,66.0,63.42051696777344,-2.5794830322265625,1.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,Number,10.0,11.252105712890625,1.252105712890625,1.0,Integer constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,Min,60.0,59.229007720947266,-0.7709922790527344,1.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,Std,2.1602468490600586,2.901559352874756,0.7413125038146973,1.0,Variance mismatch vs Std^2,Benign,Benign,Attack
-attack_binary_cw_0,7560,Header_Length,26.399999618530273,26.12567138671875,-0.27432823181152344,1.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,SSH,0.0,0.10849568247795105,0.10849568247795105,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_cw_0,7560,ack_count,8.0,8.063016891479492,0.06301689147949219,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,ICMP,0.0,0.04056980088353157,0.04056980088353157,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
-attack_binary_cw_0,7560,Protocol Type,6.0,5.960864543914795,-0.03913545608520508,0.0,"Protocol clean=6, adv=INVALID (non-integer: 5.9609) | Protocol invalid: non-integer",Benign,Benign,Attack
-attack_binary_cw_0,7560,psh_flag_number,0.0,0.03680230677127838,0.03680230677127838,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,syn_flag_number,0.0,0.03618219122290611,0.03618219122290611,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,syn_count,0.0,0.031032705679535866,0.031032705679535866,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,rst_count,0.0,0.022578265517950058,0.022578265517950058,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,cwr_flag_number,0.0,-0.009338424541056156,-0.009338424541056156,0.0,Non-negative constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,IRC,0.0,-0.008904525078833103,-0.008904525078833103,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,DHCP,0.0,0.006356236524879932,0.006356236524879932,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,rst_flag_number,0.0,0.005765224806964397,0.005765224806964397,0.30000001192092896,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,IGMP,0.0,0.004988553933799267,0.004988553933799267,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,ack_flag_number,1.0,1.004371166229248,0.004371166229248047,0.30000001192092896,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,ARP,0.0,0.004289023578166962,0.004289023578166962,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,SMTP,0.0,0.00315720122307539,0.00315720122307539,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,LLC,1.0,0.9968708753585815,-0.003129124641418457,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,Time_To_Live,154.0,153.99703979492188,-0.002960205078125,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,HTTPS,1.0,1.0024935007095337,0.0024935007095336914,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,Telnet,0.0,0.0024755930062383413,0.0024755930062383413,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,fin_flag_number,0.0,-0.0021853926591575146,-0.0021853926591575146,0.30000001192092896,Non-negative constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,fin_count,0.0,-0.0020662120077759027,-0.0020662120077759027,0.30000001192092896,Non-negative constraint violated,Benign,Benign,Attack
-attack_binary_cw_0,7560,IPv,1.0,1.001701831817627,0.0017018318176269531,0.0,-,Benign,Benign,Attack
-attack_binary_cw_0,7560,TCP,1.0,0.9985253810882568,-0.001474618911743164,0.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2281,Tot sum,774.0,-25130.298828125,-25904.298828125,1.0,Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,Variance,2582.933349609375,-453.5888977050781,-3036.522247314453,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
+attack_binary_cw_0,2281,Rate,99.8662109375,-1299.28076171875,-1399.14697265625,1.0,Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,Tot size,77.4000015258789,-75.13536071777344,-152.53536224365234,1.0,Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,AVG,77.4000015258789,-32.12187194824219,-109.5218734741211,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",Attack,Attack,Benign
+attack_binary_cw_0,2281,Number,10.0,-32.71131896972656,-42.71131896972656,1.0,Integer constraint violated | Non-negative constraint violated | Packet count must be >= 1,Attack,Attack,Benign
+attack_binary_cw_0,2281,Max,214.0,186.39662170410156,-27.603378295898438,1.0,-,Attack,Attack,Benign
+attack_binary_cw_0,2281,Std,50.822566986083984,40.01021957397461,-10.812347412109375,1.0,Variance mismatch vs Std^2,Attack,Attack,Benign
+attack_binary_cw_0,2281,Header_Length,11.600000381469727,18.408649444580078,6.808649063110352,1.0,-,Attack,Attack,Benign
+attack_binary_cw_0,2281,Min,50.0,54.290626525878906,4.290626525878906,1.0,-,Attack,Attack,Benign
+attack_binary_cw_0,2281,ack_count,3.0,0.2527580261230469,-2.747241973876953,0.30000001192092896,Integer constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,syn_flag_number,0.0,-0.6132820248603821,-0.6132820248603821,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,SSH,0.0,-0.550121009349823,-0.550121009349823,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,ICMP,0.0,-0.5250918865203857,-0.5250918865203857,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,Protocol Type,17.0,17.494525909423828,0.4945259094238281,0.0,"Protocol clean=17, adv=INVALID (non-integer: 17.4945) | Protocol invalid: non-integer",Attack,Attack,Benign
+attack_binary_cw_0,2281,syn_count,0.0,-0.4817718267440796,-0.4817718267440796,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,psh_flag_number,0.0,-0.4598689377307892,-0.4598689377307892,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,rst_count,0.0,-0.3899599611759186,-0.3899599611759186,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,rst_flag_number,0.0,-0.3588283061981201,-0.3588283061981201,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,HTTP,0.0,-0.34488242864608765,-0.34488242864608765,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,fin_flag_number,0.0,-0.2874416410923004,-0.2874416410923004,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,ARP,0.0,-0.23747096955776215,-0.23747096955776215,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,fin_count,0.0,-0.205356627702713,-0.205356627702713,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,LLC,1.0,1.0877808332443237,0.08778083324432373,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,IRC,0.0,-0.06532370299100876,-0.06532370299100876,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,DNS,0.0,-0.06268004328012466,-0.06268004328012466,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,ack_flag_number,0.0,-0.057516179978847504,-0.057516179978847504,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,SMTP,0.0,-0.03997216746211052,-0.03997216746211052,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,cwr_flag_number,0.0,0.031404606997966766,0.031404606997966766,0.0,Integer constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,HTTPS,0.0,0.02472594939172268,0.02472594939172268,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,UDP,1.0,1.0239311456680298,0.023931145668029785,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,TCP,0.0,-0.02340090274810791,-0.02340090274810791,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,DHCP,0.0,-0.02163400501012802,-0.02163400501012802,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,Telnet,0.0,-0.0190570205450058,-0.0190570205450058,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,IGMP,0.0,-0.01775212027132511,-0.01775212027132511,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,IPv,1.0,1.0173662900924683,0.01736629009246826,0.0,Binary constraint violated (must be 0/1),Attack,Attack,Benign
+attack_binary_cw_0,2281,ece_flag_number,0.0,-0.011314130388200283,-0.011314130388200283,0.0,Integer constraint violated | Non-negative constraint violated,Attack,Attack,Benign
+attack_binary_cw_0,2281,Time_To_Live,78.0,78.00508117675781,0.0050811767578125,0.0,-,Attack,Attack,Benign
+attack_binary_cw_0,2403,Tot sum,15625.0,21899.67578125,6274.67578125,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,Rate,2166.47900390625,2819.150634765625,652.671630859375,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,Variance,333394.5,332864.59375,-529.90625,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,Max,2962.0,2907.39697265625,-54.60302734375,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,AVG,1562.5,1579.03173828125,16.53173828125,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,Tot size,1562.5,1573.99267578125,11.49267578125,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,Std,577.4032592773438,582.1558227539062,4.7525634765625,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,Header_Length,32.0,30.213409423828125,-1.786590576171875,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,Number,10.0,11.3206787109375,1.3206787109375,1.0,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,Protocol Type,6.0,6.55700159072876,0.5570015907287598,0.0,"Protocol clean=6, adv=INVALID (non-integer: 6.5570) | Protocol invalid: non-integer",Benign,Benign,Attack
+attack_binary_cw_0,2403,ack_count,10.0,10.296260833740234,0.2962608337402344,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,SSH,0.0,0.14070388674736023,0.14070388674736023,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,HTTP,0.0,0.13927727937698364,0.13927727937698364,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,ICMP,0.0,0.12905417382717133,0.12905417382717133,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,psh_flag_number,0.0,0.11397778242826462,0.11397778242826462,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,HTTPS,1.0,0.9174088835716248,-0.08259111642837524,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,syn_count,0.0,0.0556359700858593,0.0556359700858593,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,UDP,0.0,0.049128077924251556,0.049128077924251556,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,rst_count,0.0,0.04888414591550827,0.04888414591550827,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,fin_count,0.0,0.0479612834751606,0.0479612834751606,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,fin_flag_number,0.0,0.04092203825712204,0.04092203825712204,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,TCP,1.0,0.9613361358642578,-0.03866386413574219,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,Min,551.0,550.9774780273438,-0.02252197265625,1.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,DNS,0.0,-0.01996593549847603,-0.01996593549847603,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,syn_flag_number,0.0,0.017355505377054214,0.017355505377054214,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,rst_flag_number,0.0,0.0171500276774168,0.0171500276774168,0.30000001192092896,Integer constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,Time_To_Live,64.0,64.01583862304688,0.015838623046875,0.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,IPv,1.0,1.0157285928726196,0.01572859287261963,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,Telnet,0.0,0.014448577538132668,0.014448577538132668,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,IGMP,0.0,0.01339638326317072,0.01339638326317072,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,DHCP,0.0,-0.010516892187297344,-0.010516892187297344,0.0,Binary constraint violated (must be 0/1),Benign,Benign,Attack
+attack_binary_cw_0,2403,ece_flag_number,0.0,-0.010195175185799599,-0.010195175185799599,0.0,Integer constraint violated | Non-negative constraint violated,Benign,Benign,Attack
+attack_binary_cw_0,2403,LLC,1.0,1.0070332288742065,0.007033228874206543,0.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,IRC,0.0,0.0047554150223731995,0.0047554150223731995,0.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,ARP,0.0,-0.0046537392772734165,-0.0046537392772734165,0.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,SMTP,0.0,0.002721139695495367,0.002721139695495367,0.0,-,Benign,Benign,Attack
+attack_binary_cw_0,2403,ack_flag_number,1.0,1.001747965812683,0.0017479658126831055,0.30000001192092896,-,Benign,Benign,Attack
 attack_binary_cw_0,5968,Tot sum,662.0,-25178.857421875,-25840.857421875,1.0,Non-negative constraint violated,Attack,Attack,Benign
 attack_binary_cw_0,5968,Variance,1502.622314453125,-922.1784057617188,-2424.8007202148438,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
 attack_binary_cw_0,5968,Rate,78.16845703125,-1170.388671875,-1248.55712890625,1.0,Non-negative constraint violated,Attack,Attack,Benign
@@ -789,81 +795,6 @@ attack_8class_pgd_0.30,30514,DNS,0.0,-0.22500000894069672,-0.22500000894069672,0
 attack_8class_pgd_0.30,30514,cwr_flag_number,0.0,-0.15000000596046448,-0.15000000596046448,0.0,Integer constraint violated | Non-negative constraint violated,Recon,Recon,Benign
 attack_8class_pgd_0.30,30514,ICMP,0.0,-0.11077472567558289,-0.11077472567558289,0.0,Binary constraint violated (must be 0/1),Recon,Recon,Benign
 attack_8class_pgd_0.30,30514,IRC,0.0,-0.045104801654815674,-0.045104801654815674,0.0,Binary constraint violated (must be 0/1),Recon,Recon,Benign
-attack_8class_pgd_0.30,12454,Tot sum,7400.0,-7281.7001953125,-14681.7001953125,1.0,Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Variance,0.0,-13294.6005859375,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Rate,4084.98974609375,-3340.57763671875,-7425.5673828125,1.0,Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Max,74.0,-230.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,AVG,74.0,-81.40000915527344,-155.40000915527344,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Tot size,74.0,-81.40000915527344,-155.40000915527344,1.0,Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Std,0.0,-63.153621673583984,-63.153621673583984,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Number,100.0,73.0,-27.0,1.0,-,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Header_Length,40.0,36.375999450683594,-3.6240005493164062,1.0,-,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Protocol Type,6.0,9.300000190734863,3.3000001907348633,0.0,"Protocol clean=6, adv=INVALID (non-integer: 9.3000) | Protocol invalid: non-integer",DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,ack_count,0.0,-2.1000001430511475,-2.1000001430511475,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Min,74.0,72.19999694824219,-1.8000030517578125,1.0,Min > Max,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Time_To_Live,64.0,63.426998138427734,-0.5730018615722656,0.0,-,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,syn_count,100.0,100.30000305175781,0.3000030517578125,0.30000001192092896,Integer constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,fin_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,syn_flag_number,1.0,0.699999988079071,-0.30000001192092896,0.30000001192092896,Integer constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,psh_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,ack_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,ece_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,cwr_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,rst_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,HTTP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,HTTPS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,DNS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,Telnet,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,SMTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,SSH,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,IRC,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,TCP,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,UDP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,DHCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,ICMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,IGMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,IPv,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,LLC,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),DoS,DoS,DDoS
-attack_8class_pgd_0.30,12454,rst_flag_number,0.0,-0.07500000298023224,-0.07500000298023224,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,DDoS
-attack_8class_pgd_0.30,46908,Tot sum,740.0,-13941.701171875,-14681.701171875,1.0,Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Rate,1036.14208984375,8461.708984375,7425.56689453125,1.0,-,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Variance,135.11111450195312,-6512.18896484375,-6647.300079345703,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,AVG,74.0,-81.40000915527344,-155.40000915527344,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Tot size,74.0,-81.40000915527344,-155.40000915527344,1.0,Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Max,94.0,-58.100006103515625,-152.10000610351562,1.0,Non-negative constraint violated | Min > Max,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Std,11.623730659484863,-51.52989196777344,-63.1536226272583,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Number,10.0,37.0,27.0,1.0,-,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Header_Length,40.0,36.375999450683594,-3.6240005493164062,1.0,-,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Protocol Type,6.0,9.300000190734863,3.3000001907348633,0.0,"Protocol clean=6, adv=INVALID (non-integer: 9.3000) | Protocol invalid: non-integer",Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,ack_count,10.0,7.90000057220459,-2.09999942779541,0.30000001192092896,Integer constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Min,66.0,64.19999694824219,-1.8000030517578125,1.0,Min > Max,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Time_To_Live,161.8000030517578,162.3730010986328,0.572998046875,0.0,-,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,fin_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,syn_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,rst_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,psh_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,ack_flag_number,1.0,0.699999988079071,-0.30000001192092896,0.30000001192092896,Integer constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,ece_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,syn_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,rst_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,HTTPS,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,DNS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,Telnet,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,SSH,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,IRC,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,DHCP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,ICMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,IPv,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,LLC,1.0,1.225000023841858,0.2250000238418579,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,cwr_flag_number,0.0,-0.22500000894069672,-0.22500000894069672,0.0,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,SMTP,0.0,-0.163670614361763,-0.163670614361763,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,TCP,1.0,1.0999152660369873,0.0999152660369873,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,HTTP,0.0,-0.018717914819717407,-0.018717914819717407,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,Benign
-attack_8class_pgd_0.30,46908,UDP,0.0,0.0013907402753829956,0.0013907402753829956,0.0,-,Spoofing,Spoofing,Benign
 attack_8class_pgd_0.30,15342,Variance,0.0,-13294.6005859375,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DDoS,DDoS,DoS
 attack_8class_pgd_0.30,15342,Rate,37677.90234375,30252.3359375,-7425.56640625,1.0,-,DDoS,DDoS,DoS
 attack_8class_pgd_0.30,15342,Tot sum,6000.0,12423.392578125,6423.392578125,1.0,-,DDoS,DDoS,DoS
@@ -902,6 +833,44 @@ attack_8class_pgd_0.30,15342,HTTP,0.0,0.07500000298023224,0.07500000298023224,0.
 attack_8class_pgd_0.30,15342,SMTP,0.0,-0.07500000298023224,-0.07500000298023224,0.0,Binary constraint violated (must be 0/1),DDoS,DDoS,DoS
 attack_8class_pgd_0.30,15342,SSH,0.0,0.07500000298023224,0.07500000298023224,0.0,Binary constraint violated (must be 0/1),DDoS,DDoS,DoS
 attack_8class_pgd_0.30,15342,LLC,1.0,0.925000011920929,-0.07499998807907104,0.0,Binary constraint violated (must be 0/1),DDoS,DDoS,DoS
+attack_8class_pgd_0.30,40106,Tot sum,18200.0,32881.703125,14681.703125,1.0,-,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Variance,0.0,-13294.6005859375,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Rate,16857.45703125,9431.8896484375,-7425.5673828125,1.0,-,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Max,182.0,-122.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,AVG,182.0,337.4000244140625,155.4000244140625,1.0,"AVG outside [Min, Max]",DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Tot size,182.0,337.4000244140625,155.4000244140625,1.0,-,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Std,0.0,-63.153621673583984,-63.153621673583984,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Number,100.0,120.25,20.25,1.0,Integer constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Header_Length,8.0,4.375999450683594,-3.6240005493164062,1.0,-,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Protocol Type,17.0,20.299999237060547,3.299999237060547,0.0,"Protocol clean=17, adv=INVALID (non-integer: 20.3000) | Protocol invalid: non-integer",DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Min,182.0,182.4815673828125,0.4815673828125,1.0,Min > Max,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Time_To_Live,64.0,64.42974853515625,0.42974853515625,0.0,-,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,fin_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,syn_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,rst_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,psh_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,ece_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,cwr_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,syn_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,HTTPS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,DNS,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,SMTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,UDP,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,ARP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,IGMP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,LLC,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,ack_flag_number,0.0,-0.29734817147254944,-0.29734817147254944,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,IPv,1.0,0.7749999761581421,-0.2250000238418579,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,rst_count,0.0,-0.22500000894069672,-0.22500000894069672,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,Telnet,0.0,0.22500000894069672,0.22500000894069672,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,ICMP,0.0,0.22500000894069672,0.22500000894069672,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,DHCP,0.0,-0.21186646819114685,-0.21186646819114685,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,IRC,0.0,0.17531071603298187,0.17531071603298187,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,SSH,0.0,-0.15000000596046448,-0.15000000596046448,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,TCP,0.0,0.07500004768371582,0.07500004768371582,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,ack_count,0.0,-0.07299566268920898,-0.07299566268920898,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DoS,DoS,Mirai
+attack_8class_pgd_0.30,40106,HTTP,0.0,0.029512479901313782,0.029512479901313782,0.0,Binary constraint violated (must be 0/1),DoS,DoS,Mirai
 attack_8class_pgd_0.30,41947,Tot sum,1132.0,-13549.701171875,-14681.701171875,1.0,Non-negative constraint violated,BruteForce,BruteForce,Benign
 attack_8class_pgd_0.30,41947,Variance,2427.7333984375,-10866.8671875,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,BruteForce,BruteForce,Benign
 attack_8class_pgd_0.30,41947,Rate,164.0234375,7589.5908203125,7425.5673828125,1.0,-,BruteForce,BruteForce,Benign
@@ -940,6 +909,44 @@ attack_8class_pgd_0.30,41947,IPv,1.0,0.699999988079071,-0.30000001192092896,0.0,
 attack_8class_pgd_0.30,41947,LLC,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),BruteForce,BruteForce,Benign
 attack_8class_pgd_0.30,41947,fin_flag_number,0.0,0.15000000596046448,0.15000000596046448,0.30000001192092896,Integer constraint violated,BruteForce,BruteForce,Benign
 attack_8class_pgd_0.30,41947,ece_flag_number,0.0,-0.07500000298023224,-0.07500000298023224,0.0,Integer constraint violated | Non-negative constraint violated,BruteForce,BruteForce,Benign
+attack_8class_pgd_0.30,10672,Tot sum,900.0,-13781.701171875,-14681.701171875,1.0,Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Variance,160.0,-13134.6005859375,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Rate,1277.77734375,-2715.12548828125,-3992.90283203125,1.0,Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Max,94.0,-210.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,AVG,90.0,-65.40000915527344,-155.40000915527344,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Tot size,90.0,-65.40000915527344,-155.40000915527344,1.0,Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Std,12.649110794067383,-50.5045166015625,-63.15362739562988,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Number,10.0,37.0,27.0,1.0,-,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Header_Length,9.199999809265137,5.576000213623047,-3.62399959564209,1.0,-,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Protocol Type,17.0,13.699999809265137,-3.3000001907348633,0.0,"Protocol clean=17, adv=INVALID (non-integer: 13.7000) | Protocol invalid: non-integer",Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,ack_count,1.0,-1.100000023841858,-2.100000023841858,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Min,54.0,55.79999923706055,1.7999992370605469,1.0,Min > Max,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,fin_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,syn_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,rst_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,psh_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,ack_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,ece_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,cwr_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,syn_count,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,fin_count,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,rst_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,HTTP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,DNS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,SSH,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,IRC,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,TCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,DHCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,ICMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,IGMP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,UDP,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,IPv,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,LLC,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,SMTP,0.0,-0.22500000894069672,-0.22500000894069672,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,HTTPS,0.0,-0.2235567271709442,-0.2235567271709442,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Telnet,0.0,0.21456928551197052,0.21456928551197052,0.0,Binary constraint violated (must be 0/1),Spoofing,Spoofing,DDoS
+attack_8class_pgd_0.30,10672,Time_To_Live,63.5,63.380611419677734,-0.11938858032226562,0.0,-,Spoofing,Spoofing,DDoS
 attack_34class_pgd_0.30,23260,Tot sum,940.0,-13741.701171875,-14681.701171875,1.0,Non-negative constraint violated,DNS_SPOOFING,DNS_SPOOFING,MITM-ARPSPOOFING
 attack_34class_pgd_0.30,23260,Variance,0.0,-13294.6005859375,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DNS_SPOOFING,DNS_SPOOFING,MITM-ARPSPOOFING
 attack_34class_pgd_0.30,23260,Rate,67108.8671875,59683.3046875,-7425.5625,1.0,-,DNS_SPOOFING,DNS_SPOOFING,MITM-ARPSPOOFING
@@ -978,6 +985,82 @@ attack_34class_pgd_0.30,23260,TCP,0.0,-0.2999999523162842,-0.2999999523162842,0.
 attack_34class_pgd_0.30,23260,ece_flag_number,0.0,-0.22021766006946564,-0.22021766006946564,0.0,Integer constraint violated | Non-negative constraint violated,DNS_SPOOFING,DNS_SPOOFING,MITM-ARPSPOOFING
 attack_34class_pgd_0.30,23260,SSH,0.0,-0.07500000298023224,-0.07500000298023224,0.0,Binary constraint violated (must be 0/1),DNS_SPOOFING,DNS_SPOOFING,MITM-ARPSPOOFING
 attack_34class_pgd_0.30,23260,syn_flag_number,0.0,0.06993438303470612,0.06993438303470612,0.30000001192092896,Integer constraint violated,DNS_SPOOFING,DNS_SPOOFING,MITM-ARPSPOOFING
+attack_34class_pgd_0.30,12618,Tot sum,1249.0,-13432.701171875,-14681.701171875,1.0,Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Variance,4296.322265625,-8998.2783203125,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Rate,38.73046875,-7386.83740234375,-7425.56787109375,1.0,Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Max,218.0,-86.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,AVG,124.9000015258789,-30.50000762939453,-155.40000915527344,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Tot size,124.9000015258789,-30.50000762939453,-155.40000915527344,1.0,Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Std,65.54633331298828,2.392709255218506,-63.153624057769775,1.0,Variance mismatch vs Std^2,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Number,10.0,-16.99999237060547,-26.99999237060547,1.0,Non-negative constraint violated | Packet count must be >= 1,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Header_Length,16.399999618530273,20.02400016784668,3.6240005493164062,1.0,-,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,ack_count,4.0,6.100000381469727,2.1000003814697266,0.30000001192092896,Integer constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Min,66.0,64.19999694824219,-1.8000030517578125,1.0,Min > Max,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Protocol Type,17.0,15.431746482849121,-1.568253517150879,0.0,"Protocol clean=17, adv=INVALID (non-integer: 15.4317) | Protocol invalid: non-integer",VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Time_To_Live,206.39999389648438,206.97299194335938,0.572998046875,0.0,-,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,syn_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,psh_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,ack_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,ece_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,syn_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,rst_count,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,HTTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,HTTPS,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,DNS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,Telnet,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,SMTP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,SSH,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,IRC,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,UDP,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,DHCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,ICMP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,IGMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,fin_flag_number,0.0,-0.22500000894069672,-0.22500000894069672,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,TCP,0.0,-0.20046496391296387,-0.20046496391296387,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,cwr_flag_number,0.0,-0.15000000596046448,-0.15000000596046448,0.0,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,IPv,1.0,1.1121020317077637,0.11210203170776367,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,LLC,1.0,0.9476248025894165,-0.052375197410583496,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,12618,rst_flag_number,0.0,-0.027055010199546814,-0.027055010199546814,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
+attack_34class_pgd_0.30,10528,Tot sum,6170.0,-8511.701171875,-14681.701171875,1.0,Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Variance,289.0,-13005.6005859375,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Rate,4837.21875,11422.998046875,6585.779296875,1.0,-,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Max,230.0,-74.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,AVG,61.70000076293945,-93.70001220703125,-155.4000129699707,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Tot size,61.70000076293945,-93.70001220703125,-155.4000129699707,1.0,Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Std,17.0,-46.15362548828125,-63.15362548828125,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Number,100.0,95.7822036743164,-4.217796325683594,1.0,Integer constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Header_Length,19.8799991607666,16.255998611450195,-3.6240005493164062,1.0,-,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Protocol Type,6.0,2.6999998092651367,-3.3000001907348633,0.0,"Protocol clean=6, adv=INVALID (non-integer: 2.7000) | Protocol invalid: non-integer",DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,ack_count,0.0,-2.1000001430511475,-2.1000001430511475,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Min,60.0,58.20000076293945,-1.7999992370605469,1.0,Min > Max,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Time_To_Live,65.91000366210938,65.33700561523438,-0.572998046875,0.0,-,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,syn_count,99.0,99.30000305175781,0.3000030517578125,0.30000001192092896,Integer constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,fin_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,rst_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,psh_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,ack_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,ece_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,rst_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,Telnet,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,SMTP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,SSH,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,UDP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,DHCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,ICMP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,LLC,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,TCP,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,HTTPS,0.0,0.298126220703125,0.298126220703125,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,HTTP,0.0,0.22500000894069672,0.22500000894069672,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,IGMP,0.0,-0.22500000894069672,-0.22500000894069672,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,syn_flag_number,1.0,1.2249999046325684,0.22499990463256836,0.30000001192092896,Integer constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,IPv,1.0,0.8527799844741821,-0.14722001552581787,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,DNS,0.0,-0.10549850761890411,-0.10549850761890411,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,cwr_flag_number,0.0,-0.07500000298023224,-0.07500000298023224,0.0,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
+attack_34class_pgd_0.30,10528,IRC,0.0,-0.032263606786727905,-0.032263606786727905,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
 attack_34class_pgd_0.30,6667,Tot sum,6000.0,-8681.7001953125,-14681.7001953125,1.0,Non-negative constraint violated,DDOS-ICMP_FLOOD,DDOS-ICMP_FLOOD,DDOS-UDP_FLOOD
 attack_34class_pgd_0.30,6667,Variance,0.0,-13294.6005859375,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DDOS-ICMP_FLOOD,DDOS-ICMP_FLOOD,DDOS-UDP_FLOOD
 attack_34class_pgd_0.30,6667,Rate,4788.12744140625,-2637.43994140625,-7425.5673828125,1.0,Non-negative constraint violated,DDOS-ICMP_FLOOD,DDOS-ICMP_FLOOD,DDOS-UDP_FLOOD
@@ -1054,82 +1137,6 @@ attack_34class_pgd_0.30,42036,LLC,1.0,0.699999988079071,-0.30000001192092896,0.0
 attack_34class_pgd_0.30,42036,TCP,0.0,-0.2999999523162842,-0.2999999523162842,0.0,Binary constraint violated (must be 0/1),MIRAI-UDPPLAIN,MIRAI-UDPPLAIN,MITM-ARPSPOOFING
 attack_34class_pgd_0.30,42036,UDP,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),MIRAI-UDPPLAIN,MIRAI-UDPPLAIN,MITM-ARPSPOOFING
 attack_34class_pgd_0.30,42036,SMTP,0.0,0.07500000298023224,0.07500000298023224,0.0,Binary constraint violated (must be 0/1),MIRAI-UDPPLAIN,MIRAI-UDPPLAIN,MITM-ARPSPOOFING
-attack_34class_pgd_0.30,12005,Tot sum,6176.0,-8505.701171875,-14681.701171875,1.0,Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Variance,289.1539306640625,-13005.447265625,-13294.601196289062,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Rate,3933.143310546875,11358.7109375,7425.567626953125,1.0,-,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Max,230.0,-74.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,AVG,61.7599983215332,-93.63999938964844,-155.39999771118164,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Tot size,61.7599983215332,-93.63999938964844,-155.39999771118164,1.0,Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Std,17.00452423095703,-46.14909744262695,-63.153621673583984,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Number,100.0,73.0,-27.0,1.0,-,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Header_Length,19.799999237060547,16.17599868774414,-3.6240005493164062,1.0,-,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Protocol Type,6.0,2.6999998092651367,-3.3000001907348633,0.0,"Protocol clean=6, adv=INVALID (non-integer: 2.7000) | Protocol invalid: non-integer",DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,ack_count,1.0,-1.100000023841858,-2.100000023841858,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Min,60.0,58.20000076293945,-1.7999992370605469,1.0,Min > Max,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Time_To_Live,65.2699966430664,64.6969985961914,-0.572998046875,0.0,-,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,syn_count,97.0,97.30000305175781,0.3000030517578125,0.30000001192092896,Integer constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,fin_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,rst_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,psh_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,ack_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,cwr_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,rst_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,Telnet,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,SMTP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,SSH,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,IRC,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,UDP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,IGMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,TCP,1.0,1.2999999523162842,0.2999999523162842,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,LLC,1.0,0.7376005053520203,-0.26239949464797974,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,ICMP,0.0,0.22500000894069672,0.22500000894069672,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,IPv,1.0,0.8096423745155334,-0.19035762548446655,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,DNS,0.0,0.1858096718788147,0.1858096718788147,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,DHCP,0.0,0.15000000596046448,0.15000000596046448,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,syn_flag_number,1.0,1.1499998569488525,0.14999985694885254,0.30000001192092896,Integer constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,ece_flag_number,0.0,-0.13957032561302185,-0.13957032561302185,0.0,Integer constraint violated | Non-negative constraint violated,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,HTTPS,0.0,-0.0145588219165802,-0.0145588219165802,0.0,Binary constraint violated (must be 0/1),DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12005,HTTP,0.0,0.003268033266067505,0.003268033266067505,0.0,-,DOS-SYN_FLOOD,DOS-SYN_FLOOD,DDOS-SYNONYMOUSIP_FLOOD
-attack_34class_pgd_0.30,12618,Tot sum,1249.0,-13432.701171875,-14681.701171875,1.0,Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Variance,4296.322265625,-8998.2783203125,-13294.6005859375,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Rate,38.73046875,-7386.83740234375,-7425.56787109375,1.0,Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Max,218.0,-86.20001220703125,-304.20001220703125,1.0,Non-negative constraint violated | Min > Max,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,AVG,124.9000015258789,-30.50000762939453,-155.40000915527344,1.0,"Non-negative constraint violated | AVG outside [Min, Max]",VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Tot size,124.9000015258789,-30.50000762939453,-155.40000915527344,1.0,Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Std,65.54633331298828,2.392709255218506,-63.153624057769775,1.0,Variance mismatch vs Std^2,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Number,10.0,-16.99999237060547,-26.99999237060547,1.0,Non-negative constraint violated | Packet count must be >= 1,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Header_Length,16.399999618530273,20.02400016784668,3.6240005493164062,1.0,-,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,ack_count,4.0,6.100000381469727,2.1000003814697266,0.30000001192092896,Integer constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Min,66.0,64.19999694824219,-1.8000030517578125,1.0,Min > Max,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Protocol Type,17.0,15.431746482849121,-1.568253517150879,0.0,"Protocol clean=17, adv=INVALID (non-integer: 15.4317) | Protocol invalid: non-integer",VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Time_To_Live,206.39999389648438,206.97299194335938,0.572998046875,0.0,-,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,syn_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,psh_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,ack_flag_number,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,ece_flag_number,0.0,0.30000001192092896,0.30000001192092896,0.0,Integer constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,syn_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,fin_count,0.0,-0.30000001192092896,-0.30000001192092896,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,rst_count,0.0,0.30000001192092896,0.30000001192092896,0.30000001192092896,Integer constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,HTTP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,HTTPS,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,DNS,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,Telnet,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,SMTP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,SSH,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,IRC,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,UDP,1.0,0.699999988079071,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,DHCP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,ARP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,ICMP,0.0,0.30000001192092896,0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,IGMP,0.0,-0.30000001192092896,-0.30000001192092896,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,fin_flag_number,0.0,-0.22500000894069672,-0.22500000894069672,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,TCP,0.0,-0.20046496391296387,-0.20046496391296387,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,cwr_flag_number,0.0,-0.15000000596046448,-0.15000000596046448,0.0,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,IPv,1.0,1.1121020317077637,0.11210203170776367,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,LLC,1.0,0.9476248025894165,-0.052375197410583496,0.0,Binary constraint violated (must be 0/1),VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
-attack_34class_pgd_0.30,12618,rst_flag_number,0.0,-0.027055010199546814,-0.027055010199546814,0.30000001192092896,Integer constraint violated | Non-negative constraint violated,VULNERABILITYSCAN,VULNERABILITYSCAN,BENIGN
 attack_binary_fgsm_0.05,38026,Tot sum,624.0,-1822.9501953125,-2446.9501953125,1.0,Non-negative constraint violated,Attack,Attack,Benign
 attack_binary_fgsm_0.05,38026,Variance,9.600000381469727,-2206.166748046875,-2215.7667484283447,1.0,Non-negative constraint violated | Variance mismatch vs Std^2,Attack,Attack,Benign
 attack_binary_fgsm_0.05,38026,Rate,86.66650390625,-1150.9287109375,-1237.59521484375,1.0,Non-negative constraint violated,Attack,Attack,Benign
