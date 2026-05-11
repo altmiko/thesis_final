@@ -3,7 +3,8 @@
     "allow": [
       "Bash(where python *)",
       "Bash(where python3 *)",
-      "Bash(/c/Users/T2530985/.conda/envs/thesis/python *)"
+      "Bash(/c/Users/T2530985/.conda/envs/thesis/python *)",
+      "Bash(python -c ' *)"
     ]
   }
 }
