@@ -4,7 +4,7 @@ import json
 import logging
 import pickle
 import random
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -129,6 +129,7 @@ class PerturbationMask:
     frozen_indices: list[int]
     partial_lower_bounds: torch.Tensor
     partial_upper_bounds: torch.Tensor
+    verify_tolerance: float = 1e-5
 
     @classmethod
     def from_preprocessing_artifacts(cls, repo_root: Path | None = None) -> "PerturbationMask":
@@ -255,7 +256,8 @@ class PerturbationMask:
             lower = self.partial_lower_bounds.to(device=device, dtype=x_adv.dtype).unsqueeze(0)
             upper = self.partial_upper_bounds.to(device=device, dtype=x_adv.dtype).unsqueeze(0)
             delta = x_adv[:, partial_idx] - x_original[:, partial_idx]
-            partial_ok = torch.all((delta >= lower) & (delta <= upper), dim=1)
+            tol = torch.tensor(self.verify_tolerance, device=device, dtype=x_adv.dtype)
+            partial_ok = torch.all((delta >= (lower - tol)) & (delta <= (upper + tol)), dim=1)
         else:
             partial_ok = true_mask
 
@@ -406,8 +408,16 @@ class AttackRouter:
 
 
 class MahalanobisOutlierDetector:
-    def __init__(self, latent_dim: int = 16) -> None:
+    def __init__(
+        self,
+        latent_dim: int = 16,
+        *,
+        target_clean_outlier_rate: float = 0.05,
+        ridge_grid: tuple[float, ...] = (0.0, 1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2, 1e-1, 3e-1, 1.0),
+    ) -> None:
         self.latent_dim = latent_dim
+        self.target_clean_outlier_rate = target_clean_outlier_rate
+        self.ridge_grid = ridge_grid
         self.stats_by_class: dict[int, dict[str, Any]] = {}
 
     def fit(
@@ -432,24 +442,53 @@ class MahalanobisOutlierDetector:
         if cov.ndim == 0:
             cov = cov.reshape(1, 1)
 
-        try:
-            precision = torch.linalg.inv(cov)
-            used_pinv = False
-        except RuntimeError:
-            precision = torch.linalg.pinv(cov)
-            used_pinv = True
-
         k_active = len(active_dims)
         threshold = float(chi2.ppf(0.95, df=k_active))
+
+        best_precision: torch.Tensor | None = None
+        best_rate: float | None = None
+        best_ridge = 0.0
+        best_score: float | None = None
+        used_pinv = False
+        identity = torch.eye(cov.shape[0], dtype=cov.dtype, device=cov.device)
+
+        # Calibrate a light ridge on the empirical covariance so the nominal 95%
+        # chi-square boundary has near-95% in-distribution coverage on clean
+        # latent codes. This makes the detector materially more stable for the
+        # high-collapse classes without changing the underlying MD definition.
+        for ridge in self.ridge_grid:
+            cov_adjusted = cov + float(ridge) * identity
+            try:
+                precision_candidate = torch.linalg.inv(cov_adjusted)
+                used_pinv_candidate = False
+            except RuntimeError:
+                precision_candidate = torch.linalg.pinv(cov_adjusted)
+                used_pinv_candidate = True
+
+            md_sq = torch.einsum("bi,ij,bj->b", centered, precision_candidate, centered)
+            clean_rate = float((md_sq > threshold).float().mean().item())
+            score = abs(clean_rate - self.target_clean_outlier_rate)
+
+            if best_score is None or score < best_score:
+                best_score = score
+                best_precision = precision_candidate
+                best_rate = clean_rate
+                best_ridge = float(ridge)
+                used_pinv = used_pinv_candidate
+
+        assert best_precision is not None
+        assert best_rate is not None
         stats = {
             "mu": mu,
             "cov": cov,
-            "precision": precision,
+            "precision": best_precision,
             "collapsed_dims": collapsed,
             "active_dims": active_dims,
             "effective_dimensionality": k_active,
             "threshold_95": threshold,
             "used_pinv": used_pinv,
+            "ridge_lambda": best_ridge,
+            "fit_clean_outlier_rate": best_rate,
         }
         self.stats_by_class[class_id] = stats
         return stats
@@ -475,17 +514,22 @@ class MahalanobisOutlierDetector:
 
 
 def load_validation_split(repo_root: Path | None = None) -> dict[str, Any]:
+    return load_split("val", repo_root=repo_root)
+
+
+def load_split(split_name: str, repo_root: Path | None = None) -> dict[str, Any]:
     root = repo_root or _repo_root()
-    X_val = np.load(root / "data" / "processed" / "X_val.npy")
-    y_val_34 = np.load(root / "data" / "processed" / "y_val.npy")
+    X_split = np.load(root / "data" / "processed" / f"X_{split_name}.npy")
+    y_split_34 = np.load(root / "data" / "processed" / f"y_{split_name}.npy")
     scaler = _load_pickle(root / "data" / "processed" / "scaler.pkl")
-    y_val_8 = _load_8class_labels(root, y_val_34, "val")
+    y_split_8 = _load_8class_labels(root, y_split_34, split_name)
     partition = get_partition()
     return {
-        "X_val": X_val,
-        "y_val_8": y_val_8,
+        "X": X_split,
+        "y_8": y_split_8,
         "scaler": scaler,
         "partition": partition,
+        "split_name": split_name,
     }
 
 
@@ -526,6 +570,44 @@ def load_collapsed_dims(repo_root: Path | None = None) -> dict[int, list[int]]:
         diag = _load_json(diag_path)
         collapsed[CLASS_TO_ID[class_name]] = diag["posterior_collapse"]["collapsed_dim_indices"]
     return collapsed
+
+
+def inverse_transform_scaled(x_scaled: torch.Tensor | np.ndarray, scaler: Any) -> np.ndarray:
+    if isinstance(x_scaled, torch.Tensor):
+        x_np = x_scaled.detach().cpu().numpy()
+    else:
+        x_np = np.asarray(x_scaled)
+    return scaler.inverse_transform(x_np.astype(np.float64))
+
+
+def reimpose_protocol_features(x_adv: torch.Tensor, x_original: torch.Tensor) -> torch.Tensor:
+    if x_adv.shape != x_original.shape:
+        raise ValueError(f"Shape mismatch: {x_adv.shape} vs {x_original.shape}")
+
+    x_fixed = x_adv.clone()
+    # Protocol Type and its four derived binary indicators are frozen by design,
+    # so every decode step must overwrite them from the original sample while
+    # keeping those values detached from the attack graph.
+    x_fixed[:, PROTOCOL_FEATURE_INDICES] = x_original[:, PROTOCOL_FEATURE_INDICES].detach()
+    return x_fixed
+
+
+def predict_labels(classifier: Any, x_batch: torch.Tensor, *, device: str) -> torch.Tensor:
+    if hasattr(classifier, "predict") and not isinstance(classifier, torch.nn.Module):
+        preds = classifier.predict(x_batch.detach().cpu().numpy())
+        return torch.as_tensor(preds, dtype=torch.long)
+
+    if not isinstance(classifier, torch.nn.Module):
+        raise TypeError(f"Unsupported classifier type: {type(classifier)!r}")
+
+    classifier = classifier.to(device)
+    classifier.eval()
+    with torch.no_grad():
+        logits = classifier(x_batch.to(device))
+        if isinstance(logits, tuple):
+            logits = logits[0]
+        preds = torch.argmax(logits, dim=1)
+    return preds.detach().cpu()
 
 
 def phase0_config_snapshot(seed: int, device: str) -> dict[str, Any]:

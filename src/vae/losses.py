@@ -95,6 +95,13 @@ def compute_elbo(
     continuous_logvar_floor: float = -4.0,
     continuous_logvar_ceiling: float = 2.0,
     continuous_nll_per_sample_cap: float | None = None,
+    free_bits_lambda: float = 0.0,
+    continuous_target_raw: torch.Tensor | None = None,
+    raw_relative_continuous_loss_weight: float = 0.0,
+    raw_relative_feature_weights: torch.Tensor | None = None,
+    raw_relative_epsilon: float = 1.0,
+    raw_relative_tail_focus_quantile: float | None = None,
+    raw_relative_tail_focus_weight: float = 0.0,
 ) -> dict:
     """Compute the β-VAE ELBO for a MixedInputBetaVAE forward pass.
 
@@ -130,6 +137,11 @@ def compute_elbo(
         Upper clamp used in the continuous Gaussian NLL for stability.
     continuous_nll_per_sample_cap:
         Optional cap on each sample's summed continuous NLL before batch averaging.
+    continuous_target_raw:
+        Optional raw-space continuous target tensor aligned with
+        ``model_out['continuous_mu_raw']``. When provided together with a positive
+        ``raw_relative_continuous_loss_weight``, an auxiliary raw relative error
+        term is added to the loss.
 
     Returns
     -------
@@ -174,6 +186,33 @@ def compute_elbo(
         )
     recon_continuous = per_sample_continuous_nll.mean()
 
+    if (
+        continuous_mu_raw is not None
+        and continuous_target_raw is not None
+        and raw_relative_continuous_loss_weight > 0.0
+    ):
+        denom = continuous_target_raw.abs() + float(raw_relative_epsilon)
+        per_feature_raw_relative = torch.abs(continuous_mu_raw - continuous_target_raw) / denom
+        if raw_relative_feature_weights is not None:
+            per_feature_raw_relative = (
+                per_feature_raw_relative
+                * raw_relative_feature_weights.to(per_feature_raw_relative.device).unsqueeze(0)
+            )
+        recon_continuous_raw_relative = per_feature_raw_relative.sum(dim=1).mean()
+        if raw_relative_tail_focus_weight > 0.0 and raw_relative_tail_focus_quantile is not None:
+            per_sample_raw_relative = per_feature_raw_relative.sum(dim=1)
+            threshold = torch.quantile(
+                per_sample_raw_relative.detach(),
+                float(raw_relative_tail_focus_quantile),
+            )
+            tail_mask = per_sample_raw_relative >= threshold
+            recon_continuous_raw_relative_tail = per_sample_raw_relative[tail_mask].mean()
+        else:
+            recon_continuous_raw_relative_tail = torch.tensor(0.0, device=mu.device)
+    else:
+        recon_continuous_raw_relative = torch.tensor(0.0, device=mu.device)
+        recon_continuous_raw_relative_tail = torch.tensor(0.0, device=mu.device)
+
     # Independent binary reconstruction: BCE with logits
     # reduction='none' → (N, 11), sum over features, mean over batch
     per_feature_binary_bce = F.binary_cross_entropy_with_logits(
@@ -205,12 +244,11 @@ def compute_elbo(
 
     # KL divergence to N(0, I): -0.5 * sum_latent(1 + logvar - mu^2 - exp(logvar))
     # sum over latent dim, mean over batch
-    kl = (
-        -0.5
-        * (1.0 + logvar - mu.pow(2) - logvar.exp())
-        .sum(dim=1)
-        .mean()
-    )
+    per_dim_kl = -0.5 * (1.0 + logvar - mu.pow(2) - logvar.exp())
+    if free_bits_lambda > 0.0:
+        kl = per_dim_kl.clamp(min=float(free_bits_lambda)).sum(dim=1).mean()
+    else:
+        kl = per_dim_kl.sum(dim=1).mean()
 
     if continuous_mu_raw is not None and constraint_loss_weight > 0.0:
         constraint_terms = _compute_constraint_loss(continuous_mu_raw, partition)
@@ -234,6 +272,8 @@ def compute_elbo(
         + protocol_loss_weight * recon_protocol
         + beta * kl
         + constraint_loss_weight * constraint_loss
+        + raw_relative_continuous_loss_weight * recon_continuous_raw_relative
+        + raw_relative_tail_focus_weight * recon_continuous_raw_relative_tail
     )
     if pseudo_binary_sigmoid is not None and pseudo_binary_sigmoid.numel() > 0:
         loss = loss + recon_pseudo_binary
@@ -241,9 +281,12 @@ def compute_elbo(
     return {
         "recon_continuous": recon_continuous,
         "recon_independent_binary": recon_independent_binary,
+        "recon_continuous_raw_relative": recon_continuous_raw_relative,
+        "recon_continuous_raw_relative_tail": recon_continuous_raw_relative_tail,
         "recon_pseudo_binary": recon_pseudo_binary,
         "recon_protocol": recon_protocol,
         "kl": kl,
+        "per_dim_kl_mean": per_dim_kl.mean(dim=0),
         "constraint_loss": constraint_loss,
         "constraint_nonneg": constraint_terms["nonneg"],
         "constraint_ttl": constraint_terms["ttl"],

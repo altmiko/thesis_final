@@ -14,7 +14,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, WeightedRandomSampler
 
 from preprocessing.feature_groups import FEATURE_NAMES
 from vae.dataset import PerClassDataset
@@ -23,6 +23,32 @@ from vae.model import MixedInputBetaVAE
 from vae.schema import PROTOCOL_ALLOWLIST, get_partition
 
 logger = logging.getLogger(__name__)
+
+
+def _compute_reconstruction_metric(
+    model: MixedInputBetaVAE,
+    data_loader: DataLoader,
+    scaler,
+    device: str,
+    quantile: float | None = None,
+) -> float:
+    """Deterministic reconstruction error used for early stopping."""
+    errs: list[torch.Tensor] = []
+    model.eval()
+    with torch.no_grad():
+        for batch in data_loader:
+            x = batch["x_scaled"].to(device)
+            mu, _ = model.encode(x)
+            x_recon, _ = model.decode_to_39(mu, scaler, mode="hard")
+            num = torch.linalg.norm(x - x_recon, dim=1)
+            den = torch.linalg.norm(x, dim=1).clamp_min(1e-12)
+            errs.append((num / den).cpu())
+    if not errs:
+        return float("inf")
+    err_all = torch.cat(errs, dim=0)
+    if quantile is None:
+        return float(err_all.mean().item())
+    return float(torch.quantile(err_all, float(quantile)).item())
 
 
 def _build_feature_weight_tensor(
@@ -42,6 +68,38 @@ def _build_feature_weight_tensor(
 
     if normalize:
         weights = weights / weights.mean().clamp_min(1e-8)
+
+    return weights
+
+
+def _build_sample_weight_array(
+    x_scaled: torch.Tensor,
+    sample_weight_rules: list[dict[str, Any]] | None,
+) -> np.ndarray | None:
+    if not sample_weight_rules:
+        return None
+
+    x_np = x_scaled.detach().cpu().numpy()
+    weights = np.ones(x_np.shape[0], dtype=np.float64)
+
+    for rule in sample_weight_rules:
+        feature = str(rule["feature"])
+        idx = FEATURE_NAMES.index(feature)
+        mode = str(rule.get("mode", "high_quantile"))
+        bonus = float(rule.get("bonus", 0.0))
+
+        if mode == "high_quantile":
+            threshold = np.quantile(x_np[:, idx], float(rule["quantile"]))
+            mask = x_np[:, idx] >= threshold
+        elif mode == "low_quantile":
+            threshold = np.quantile(x_np[:, idx], float(rule["quantile"]))
+            mask = x_np[:, idx] <= threshold
+        elif mode == "binary_on":
+            mask = x_np[:, idx] > 0.5
+        else:
+            raise ValueError(f"Unknown sample weight rule mode: {mode}")
+
+        weights[mask] += bonus
 
     return weights
 
@@ -190,13 +248,40 @@ def train_one_vae(
     train_ds = PerClassDataset(X_train, y_train_8, class_id, scaler, partition)
     val_ds = PerClassDataset(X_val, y_val_8, class_id, scaler, partition)
 
-    train_loader = DataLoader(
-        train_ds,
-        batch_size=config["batch_size"],
-        shuffle=True,
-        num_workers=config.get("num_workers", 0),
-        pin_memory=(device == "cuda"),
+    sample_weight_array = _build_sample_weight_array(
+        train_ds.x_scaled,
+        config.get("train_sample_weight_rules"),
     )
+    if sample_weight_array is not None:
+        sampler = WeightedRandomSampler(
+            weights=torch.as_tensor(sample_weight_array, dtype=torch.double),
+            num_samples=len(train_ds),
+            replacement=True,
+        )
+        train_loader = DataLoader(
+            train_ds,
+            batch_size=config["batch_size"],
+            shuffle=False,
+            sampler=sampler,
+            num_workers=config.get("num_workers", 0),
+            pin_memory=(device == "cuda"),
+        )
+        logger.info(
+            "[Class %d/%s] Weighted sampling enabled: min=%.3f mean=%.3f max=%.3f",
+            class_id,
+            class_name,
+            float(sample_weight_array.min()),
+            float(sample_weight_array.mean()),
+            float(sample_weight_array.max()),
+        )
+    else:
+        train_loader = DataLoader(
+            train_ds,
+            batch_size=config["batch_size"],
+            shuffle=True,
+            num_workers=config.get("num_workers", 0),
+            pin_memory=(device == "cuda"),
+        )
     val_loader = DataLoader(
         val_ds,
         batch_size=config["batch_size"] * 2,
@@ -235,6 +320,12 @@ def train_one_vae(
         device,
         normalize=bool(config.get("normalize_feature_loss_weights", True)),
     )
+    raw_relative_feature_weights_t = _build_feature_weight_tensor(
+        partition["continuous_idx"],
+        config.get("raw_relative_feature_loss_weights"),
+        device,
+        normalize=bool(config.get("normalize_feature_loss_weights", True)),
+    )
 
     if continuous_feature_weights_t is not None:
         logger.info(
@@ -264,6 +355,21 @@ def train_one_vae(
                 )
                 for pos, full_idx in enumerate(partition["independent_binary_idx"])
                 if FEATURE_NAMES[full_idx] in config.get("binary_feature_loss_weights", {})
+            ],
+        )
+    if raw_relative_feature_weights_t is not None:
+        logger.info(
+            "[Class %d/%s] Raw-relative continuous weights (normalized=%s): %s",
+            class_id,
+            class_name,
+            bool(config.get("normalize_feature_loss_weights", True)),
+            [
+                (
+                    FEATURE_NAMES[full_idx],
+                    round(float(raw_relative_feature_weights_t[pos].detach().cpu()), 4),
+                )
+                for pos, full_idx in enumerate(partition["continuous_idx"])
+                if FEATURE_NAMES[full_idx] in config.get("raw_relative_feature_loss_weights", {})
             ],
         )
 
@@ -351,7 +457,8 @@ def train_one_vae(
     # Per-metric history lists for plotting
     _metric_keys = [
         "loss", "recon_continuous", "recon_independent_binary",
-        "recon_protocol", "kl", "constraint_loss", "beta",
+        "recon_protocol", "recon_continuous_raw_relative",
+        "kl", "constraint_loss", "beta", "recon_metric",
     ]
     train_history: dict[str, list[float]] = {k: [] for k in _metric_keys}
     val_history: dict[str, list[float]] = {
@@ -361,7 +468,15 @@ def train_one_vae(
     # Directory for checkpoints
     checkpoint_dir = root / "models" / "vae"
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
-    checkpoint_path = checkpoint_dir / f"vae_class_{class_id}_{class_name}.pt"
+    checkpoint_name = str(
+        config.get("checkpoint_name_override", f"vae_class_{class_id}_{class_name}.pt")
+    )
+    checkpoint_path = checkpoint_dir / checkpoint_name
+    early_stop_metric = str(config.get("early_stop_metric", "val_loss"))
+    recon_metric_every = int(config.get("recon_metric_every_n_epochs", 1))
+    recon_metric_quantile = config.get("recon_metric_quantile")
+    best_monitor_value: float = float("inf")
+    best_epoch: int = 0
 
     for epoch in range(1, max_epochs + 1):
         epoch_count = epoch
@@ -376,6 +491,9 @@ def train_one_vae(
             optimizer.zero_grad(set_to_none=True)
 
             out = model(batch["x_scaled"])
+            x_cont_target_raw = model.continuous_scaled_to_raw(
+                batch["x_scaled"][:, partition["continuous_idx"]]
+            ).detach()
 
             beta = beta_scheduler.step()
             elbo = compute_elbo(
@@ -393,6 +511,17 @@ def train_one_vae(
                 continuous_logvar_floor=float(config.get("continuous_logvar_floor", -4.0)),
                 continuous_logvar_ceiling=float(config.get("continuous_logvar_ceiling", 2.0)),
                 continuous_nll_per_sample_cap=config.get("continuous_nll_per_sample_cap"),
+                free_bits_lambda=float(config.get("free_bits_lambda", 0.0)),
+                continuous_target_raw=x_cont_target_raw,
+                raw_relative_continuous_loss_weight=float(
+                    config.get("raw_relative_continuous_loss_weight", 0.0)
+                ),
+                raw_relative_feature_weights=raw_relative_feature_weights_t,
+                raw_relative_epsilon=float(config.get("raw_relative_epsilon", 1.0)),
+                raw_relative_tail_focus_quantile=config.get("raw_relative_tail_focus_quantile"),
+                raw_relative_tail_focus_weight=float(
+                    config.get("raw_relative_tail_focus_weight", 0.0)
+                ),
             )
 
             loss = elbo["loss"]
@@ -416,16 +545,23 @@ def train_one_vae(
             for k in _metric_keys:
                 if k == "beta":
                     train_accum[k] += beta
+                elif k == "recon_metric":
+                    continue
                 else:
                     train_accum[k] += elbo[k].item()
             n_train_batches += 1
 
         for k in _metric_keys:
-            train_history[k].append(train_accum[k] / max(n_train_batches, 1))
+            if k == "recon_metric":
+                train_history[k].append(float("nan"))
+            else:
+                train_history[k].append(train_accum[k] / max(n_train_batches, 1))
 
         # ---- Validation ----
         model.eval()
-        val_accum: dict[str, float] = {k: 0.0 for k in _metric_keys if k != "beta"}
+        val_accum: dict[str, float] = {
+            k: 0.0 for k in _metric_keys if k not in {"beta", "recon_metric"}
+        }
         n_val_batches = 0
         current_beta = beta_scheduler.current_beta
 
@@ -433,6 +569,9 @@ def train_one_vae(
             for batch in val_loader:
                 batch = {k: v.to(device) for k, v in batch.items()}
                 out = model(batch["x_scaled"])
+                x_cont_target_raw = model.continuous_scaled_to_raw(
+                    batch["x_scaled"][:, partition["continuous_idx"]]
+                ).detach()
                 elbo = compute_elbo(
                     batch["x_scaled"],
                     out,
@@ -448,6 +587,17 @@ def train_one_vae(
                     continuous_logvar_floor=float(config.get("continuous_logvar_floor", -4.0)),
                     continuous_logvar_ceiling=float(config.get("continuous_logvar_ceiling", 2.0)),
                     continuous_nll_per_sample_cap=config.get("continuous_nll_per_sample_cap"),
+                    free_bits_lambda=float(config.get("free_bits_lambda", 0.0)),
+                    continuous_target_raw=x_cont_target_raw,
+                    raw_relative_continuous_loss_weight=float(
+                        config.get("raw_relative_continuous_loss_weight", 0.0)
+                    ),
+                    raw_relative_feature_weights=raw_relative_feature_weights_t,
+                    raw_relative_epsilon=float(config.get("raw_relative_epsilon", 1.0)),
+                    raw_relative_tail_focus_quantile=config.get("raw_relative_tail_focus_quantile"),
+                    raw_relative_tail_focus_weight=float(
+                        config.get("raw_relative_tail_focus_weight", 0.0)
+                    ),
                 )
                 if not torch.isfinite(elbo["loss"]):
                     logger.warning(
@@ -465,23 +615,40 @@ def train_one_vae(
         for k in val_accum:
             val_history[k].append(val_accum[k] / max(n_val_batches, 1))
 
+        if epoch % recon_metric_every == 0:
+            recon_metric = _compute_reconstruction_metric(
+                model=model,
+                data_loader=val_loader,
+                scaler=scaler,
+                device=device,
+                quantile=float(recon_metric_quantile) if recon_metric_quantile is not None else None,
+            )
+        else:
+            recon_metric = val_history["recon_metric"][-1] if val_history["recon_metric"] else float("inf")
+        val_history["recon_metric"].append(recon_metric)
+
         train_loss = train_history["loss"][-1]
         val_loss = val_history["loss"][-1]
         current_kl = val_history["kl"][-1]
+        current_recon_metric = val_history["recon_metric"][-1]
         current_lr = optimizer.param_groups[0]["lr"]
 
         logger.info(
             "[Class %d/%s] Epoch %d/%d | train_loss=%.4f val_loss=%.4f"
-            " constraint=%.4f beta=%.4f lr=%.2e",
+            " recon_metric=%.4f constraint=%.4f beta=%.4f lr=%.2e",
             class_id, class_name, epoch, max_epochs,
-            train_loss, val_loss, val_history["constraint_loss"][-1], current_beta, current_lr,
+            train_loss, val_loss, current_recon_metric,
+            val_history["constraint_loss"][-1], current_beta, current_lr,
         )
 
         # ---- LR scheduler step ----
         lr_scheduler.step()
 
         # ---- Early stopping and checkpoint ----
-        if val_loss < best_val_loss:
+        monitor_value = current_recon_metric if early_stop_metric == "recon_metric" else val_loss
+        if monitor_value < best_monitor_value:
+            best_monitor_value = monitor_value
+            best_epoch = epoch
             best_val_loss = val_loss
             final_kl = current_kl
             patience_counter = 0
@@ -494,6 +661,9 @@ def train_one_vae(
                     "protocol_allowlist": PROTOCOL_ALLOWLIST,
                     "val_history": val_history,
                     "best_val_loss": best_val_loss,
+                    "best_monitor_value": best_monitor_value,
+                    "best_epoch": best_epoch,
+                    "early_stop_metric": early_stop_metric,
                     "epoch": epoch,
                     "class_id": class_id,
                     "class_name": class_name,
@@ -501,8 +671,8 @@ def train_one_vae(
                 str(checkpoint_path),
             )
             logger.info(
-                "[Class %d/%s] New best val_loss=%.4f — checkpoint saved.",
-                class_id, class_name, best_val_loss,
+                "[Class %d/%s] New best %s=%.4f — checkpoint saved.",
+                class_id, class_name, early_stop_metric, best_monitor_value,
             )
         else:
             patience_counter += 1
@@ -518,9 +688,10 @@ def train_one_vae(
     # ------------------------------------------------------------------
     curves_dir = root / "results" / "vae"
     curves_dir.mkdir(parents=True, exist_ok=True)
-    curves_path = curves_dir / f"curves_{class_name}.png"
+    curves_name = str(config.get("curves_name_override", f"curves_{class_name}.png"))
+    curves_path = curves_dir / curves_name
 
-    fig, axes = plt.subplots(1, 5, figsize=(20, 4))
+    fig, axes = plt.subplots(1, 6, figsize=(24, 4))
     fig.suptitle(f"VAE Training Curves — Class {class_id} ({class_name})", fontsize=12)
 
     # Subplot 0: total loss
@@ -576,6 +747,12 @@ def train_one_vae(
     ax.set_xlabel("Epoch")
     ax.legend()
 
+    ax = axes[5]
+    ax.plot(val_history["recon_metric"], label="val")
+    ax.set_title("Recon Metric")
+    ax.set_xlabel("Epoch")
+    ax.legend()
+
     fig.tight_layout()
     fig.savefig(str(curves_path), dpi=120)
     plt.close(fig)
@@ -593,6 +770,9 @@ def train_one_vae(
         "best_val_loss": best_val_loss,
         "epochs_trained": epoch_count,
         "final_kl": final_kl,
+        "best_monitor_value": best_monitor_value,
+        "best_epoch": best_epoch,
+        "early_stop_metric": early_stop_metric,
         "train_history": train_history,
         "val_history": val_history,
         "checkpoint_path": str(checkpoint_path),

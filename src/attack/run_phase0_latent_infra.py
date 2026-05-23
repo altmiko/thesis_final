@@ -24,12 +24,6 @@ from attack.latent_infra import (  # noqa: E402
 from vae.config import CLASSES  # noqa: E402
 
 
-def _format_group(indices: list[int]) -> str:
-    parts = [f"{idx}:{name}" for idx, name in zip(indices, [CLASSES[0]] * 0)]
-    _ = parts
-    return ", ".join(f"{idx}:{name}" for idx, name in zip(indices, []))
-
-
 def _feature_listing(indices: list[int]) -> list[str]:
     from preprocessing.feature_groups import FEATURE_NAMES
 
@@ -93,8 +87,8 @@ def main() -> None:
     for class_id, class_name in enumerate(CLASSES):
         dataset = build_per_class_dataset(
             class_id,
-            X_val=split["X_val"],
-            y_val_8=split["y_val_8"],
+            X_val=split["X"],
+            y_val_8=split["y_8"],
             scaler=split["scaler"],
             partition=split["partition"],
         )
@@ -106,12 +100,14 @@ def main() -> None:
             f"  {class_name:10s} outlier_rate={outlier_rate * 100.0:6.2f}% "
             f"threshold95={stats['threshold_95']:.3f} "
             f"active_k={stats['effective_dimensionality']:2d} "
+            f"ridge={stats['ridge_lambda']:.4g} "
             f"pinv={'yes' if stats['used_pinv'] else 'no'}"
         )
         run_logger.log(
             f"{class_name}: outlier_rate={outlier_rate:.6f} "
             f"threshold95={stats['threshold_95']:.6f} "
             f"active_k={stats['effective_dimensionality']} "
+            f"ridge_lambda={stats['ridge_lambda']:.6g} "
             f"pinv={stats['used_pinv']}"
         )
 
