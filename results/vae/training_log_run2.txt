@@ -1,0 +1,580 @@
+2026-05-22 18:33:31 [INFO] __main__ — === VAE Orchestrator starting ===
+2026-05-22 18:33:31 [INFO] __main__ — Device: cuda
+2026-05-22 18:33:31 [INFO] __main__ — Classes to train (in order): ['Mirai', 'Recon', 'Spoofing', 'Web']
+2026-05-22 18:33:31 [INFO] __main__ — Loading shared val arrays ...
+2026-05-22 18:33:32 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_val_cat.npy
+2026-05-22 18:33:32 [INFO] __main__ — ========== Training class 4/Mirai ==========
+2026-05-22 18:33:32 [INFO] vae.train — [Class 4/Mirai] Loading split arrays from D:\thesis_final
+2026-05-22 18:33:32 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_train_cat.npy
+2026-05-22 18:33:32 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_val_cat.npy
+2026-05-22 18:33:32 [INFO] vae.train — [Class 4/Mirai] 8-class split: train=419972, val=59996
+2026-05-22 18:33:33 [INFO] vae.dataset — Class 4: 419972 samples loaded
+2026-05-22 18:33:33 [INFO] vae.dataset — Class 4: 59996 samples loaded
+2026-05-22 18:33:33 [INFO] vae.train — [Class 4/Mirai] Model: latent_dim=16, beta_target=1.0000, params=32887
+2026-05-22 18:33:38 [INFO] vae.train — [Class 4/Mirai] Epoch 1/200 | train_loss=186.9710 val_loss=-9.6720 beta=0.0167 lr=1.00e-03
+2026-05-22 18:33:38 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-9.6720 — checkpoint saved.
+2026-05-22 18:33:43 [INFO] vae.train — [Class 4/Mirai] Epoch 2/200 | train_loss=-29.2296 val_loss=-37.3025 beta=0.0333 lr=1.00e-03
+2026-05-22 18:33:43 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-37.3025 — checkpoint saved.
+2026-05-22 18:33:48 [INFO] vae.train — [Class 4/Mirai] Epoch 3/200 | train_loss=-39.0591 val_loss=-41.1223 beta=0.0500 lr=1.00e-03
+2026-05-22 18:33:48 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-41.1223 — checkpoint saved.
+2026-05-22 18:33:53 [INFO] vae.train — [Class 4/Mirai] Epoch 4/200 | train_loss=-42.7387 val_loss=-44.8651 beta=0.0667 lr=9.99e-04
+2026-05-22 18:33:53 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-44.8651 — checkpoint saved.
+2026-05-22 18:33:58 [INFO] vae.train — [Class 4/Mirai] Epoch 5/200 | train_loss=-44.6729 val_loss=-46.4550 beta=0.0833 lr=9.99e-04
+2026-05-22 18:33:58 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-46.4550 — checkpoint saved.
+2026-05-22 18:34:03 [INFO] vae.train — [Class 4/Mirai] Epoch 6/200 | train_loss=-45.5772 val_loss=-46.8315 beta=0.1000 lr=9.98e-04
+2026-05-22 18:34:03 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-46.8315 — checkpoint saved.
+2026-05-22 18:34:09 [INFO] vae.train — [Class 4/Mirai] Epoch 7/200 | train_loss=-45.7699 val_loss=-46.5344 beta=0.1167 lr=9.98e-04
+2026-05-22 18:34:15 [INFO] vae.train — [Class 4/Mirai] Epoch 8/200 | train_loss=-13.0086 val_loss=-47.0173 beta=0.1333 lr=9.97e-04
+2026-05-22 18:34:15 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-47.0173 — checkpoint saved.
+2026-05-22 18:34:21 [INFO] vae.train — [Class 4/Mirai] Epoch 9/200 | train_loss=-45.6677 val_loss=-47.4138 beta=0.1500 lr=9.96e-04
+2026-05-22 18:34:21 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-47.4138 — checkpoint saved.
+2026-05-22 18:34:27 [INFO] vae.train — [Class 4/Mirai] Epoch 10/200 | train_loss=-46.1097 val_loss=-47.1468 beta=0.1667 lr=9.95e-04
+2026-05-22 18:34:33 [INFO] vae.train — [Class 4/Mirai] Epoch 11/200 | train_loss=-46.1973 val_loss=-45.9421 beta=0.1833 lr=9.94e-04
+2026-05-22 18:34:39 [INFO] vae.train — [Class 4/Mirai] Epoch 12/200 | train_loss=-46.1946 val_loss=-47.6727 beta=0.2000 lr=9.93e-04
+2026-05-22 18:34:39 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-47.6727 — checkpoint saved.
+2026-05-22 18:34:45 [INFO] vae.train — [Class 4/Mirai] Epoch 13/200 | train_loss=-46.3878 val_loss=-47.7990 beta=0.2167 lr=9.91e-04
+2026-05-22 18:34:45 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-47.7990 — checkpoint saved.
+2026-05-22 18:34:52 [INFO] vae.train — [Class 4/Mirai] Epoch 14/200 | train_loss=-46.5728 val_loss=-47.7761 beta=0.2333 lr=9.90e-04
+2026-05-22 18:34:58 [INFO] vae.train — [Class 4/Mirai] Epoch 15/200 | train_loss=-46.7780 val_loss=-47.7040 beta=0.2500 lr=9.88e-04
+2026-05-22 18:35:04 [INFO] vae.train — [Class 4/Mirai] Epoch 16/200 | train_loss=-46.8262 val_loss=-47.9823 beta=0.2667 lr=9.86e-04
+2026-05-22 18:35:04 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-47.9823 — checkpoint saved.
+2026-05-22 18:35:10 [INFO] vae.train — [Class 4/Mirai] Epoch 17/200 | train_loss=-46.9773 val_loss=-47.8600 beta=0.2833 lr=9.84e-04
+2026-05-22 18:35:16 [INFO] vae.train — [Class 4/Mirai] Epoch 18/200 | train_loss=65456.1443 val_loss=-48.1068 beta=0.3000 lr=9.82e-04
+2026-05-22 18:35:16 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-48.1068 — checkpoint saved.
+2026-05-22 18:35:22 [INFO] vae.train — [Class 4/Mirai] Epoch 19/200 | train_loss=-46.9870 val_loss=-47.9064 beta=0.3167 lr=9.80e-04
+2026-05-22 18:35:29 [INFO] vae.train — [Class 4/Mirai] Epoch 20/200 | train_loss=-46.9282 val_loss=-47.9956 beta=0.3333 lr=9.78e-04
+2026-05-22 18:35:35 [INFO] vae.train — [Class 4/Mirai] Epoch 21/200 | train_loss=-46.9859 val_loss=-47.8876 beta=0.3500 lr=9.76e-04
+2026-05-22 18:35:40 [INFO] vae.train — [Class 4/Mirai] Epoch 22/200 | train_loss=-46.9642 val_loss=-47.7928 beta=0.3667 lr=9.73e-04
+2026-05-22 18:35:45 [INFO] vae.train — [Class 4/Mirai] Epoch 23/200 | train_loss=-46.9581 val_loss=-48.1891 beta=0.3833 lr=9.70e-04
+2026-05-22 18:35:45 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-48.1891 — checkpoint saved.
+2026-05-22 18:35:51 [INFO] vae.train — [Class 4/Mirai] Epoch 24/200 | train_loss=305.1955 val_loss=-48.1617 beta=0.4000 lr=9.68e-04
+2026-05-22 18:35:56 [INFO] vae.train — [Class 4/Mirai] Epoch 25/200 | train_loss=-47.0005 val_loss=-48.0665 beta=0.4167 lr=9.65e-04
+2026-05-22 18:36:01 [INFO] vae.train — [Class 4/Mirai] Epoch 26/200 | train_loss=21453.2491 val_loss=-48.0955 beta=0.4333 lr=9.62e-04
+2026-05-22 18:36:07 [INFO] vae.train — [Class 4/Mirai] Epoch 27/200 | train_loss=-46.9754 val_loss=-48.2251 beta=0.4500 lr=9.59e-04
+2026-05-22 18:36:07 [INFO] vae.train — [Class 4/Mirai] New best val_loss=-48.2251 — checkpoint saved.
+2026-05-22 18:36:13 [INFO] vae.train — [Class 4/Mirai] Epoch 28/200 | train_loss=-47.0091 val_loss=-48.2035 beta=0.4667 lr=9.56e-04
+2026-05-22 18:36:19 [INFO] vae.train — [Class 4/Mirai] Epoch 29/200 | train_loss=-46.9425 val_loss=-47.9766 beta=0.4833 lr=9.52e-04
+2026-05-22 18:36:26 [INFO] vae.train — [Class 4/Mirai] Epoch 30/200 | train_loss=-46.8583 val_loss=-48.0054 beta=0.5000 lr=9.49e-04
+2026-05-22 18:36:32 [INFO] vae.train — [Class 4/Mirai] Epoch 31/200 | train_loss=-46.8628 val_loss=-47.8352 beta=0.5167 lr=9.46e-04
+2026-05-22 18:36:37 [INFO] vae.train — [Class 4/Mirai] Epoch 32/200 | train_loss=-46.7187 val_loss=-47.9986 beta=0.5333 lr=9.42e-04
+2026-05-22 18:36:43 [INFO] vae.train — [Class 4/Mirai] Epoch 33/200 | train_loss=-46.7052 val_loss=-47.4869 beta=0.5500 lr=9.38e-04
+2026-05-22 18:36:49 [INFO] vae.train — [Class 4/Mirai] Epoch 34/200 | train_loss=-46.5728 val_loss=-47.5271 beta=0.5667 lr=9.34e-04
+2026-05-22 18:36:55 [INFO] vae.train — [Class 4/Mirai] Epoch 35/200 | train_loss=-46.4127 val_loss=-47.6888 beta=0.5833 lr=9.30e-04
+2026-05-22 18:37:01 [INFO] vae.train — [Class 4/Mirai] Epoch 36/200 | train_loss=-46.4218 val_loss=-47.4476 beta=0.6000 lr=9.26e-04
+2026-05-22 18:37:07 [INFO] vae.train — [Class 4/Mirai] Epoch 37/200 | train_loss=-46.2932 val_loss=-47.4234 beta=0.6167 lr=9.22e-04
+2026-05-22 18:37:07 [INFO] vae.train — [Class 4/Mirai] Early stop after 37 epochs (patience=10).
+2026-05-22 18:37:07 [INFO] vae.train — [Class 4/Mirai] Curves saved to D:\thesis_final\results\vae\curves_Mirai.png
+2026-05-22 18:37:07 [INFO] __main__ — Reloading checkpoint from D:\thesis_final\models\vae\vae_class_4_Mirai.pt
+2026-05-22 18:37:07 [INFO] vae.dataset — Class 4: 59996 samples loaded
+2026-05-22 18:37:07 [INFO] vae.diagnostics — === Running diagnostics for class 4 (Mirai) ===
+2026-05-22 18:37:07 [INFO] vae.diagnostics — Loaded validator via attack.validator.validate_batch
+2026-05-22 18:37:07 [INFO] vae.diagnostics — [1/4] Posterior collapse check ...
+2026-05-22 18:37:08 [INFO] vae.diagnostics — Posterior collapse: 6/16 dims below threshold 0.010
+2026-05-22 18:37:08 [INFO] vae.diagnostics — [2/4] Per-feature reconstruction error ...
+2026-05-22 18:37:08 [INFO] vae.diagnostics — Per-feature recon: protocol top-1=0.9986, worst feature=HTTPS (0.0017)
+2026-05-22 18:37:08 [INFO] vae.diagnostics — [3/4] Unconditional sample validity (n=1000) ...
+2026-05-22 18:37:08 [INFO] vae.diagnostics — Unconditional validity: 0.3870 overall (387/1000 valid)
+2026-05-22 18:37:08 [INFO] vae.diagnostics — Protocol-binary consistency: 1.0 (as expected)
+2026-05-22 18:37:08 [INFO] vae.diagnostics — [4/4] Conditional reconstruction validity ...
+2026-05-22 18:37:08 [INFO] vae.diagnostics — Conditional validity: 0.4700 overall (470/1000 valid)
+2026-05-22 18:37:08 [INFO] vae.diagnostics — Diagnostics written to D:\thesis_final\results\vae\diagnostics_Mirai.json
+2026-05-22 18:37:08 [INFO] __main__ — Manifest updated for class Mirai
+2026-05-22 18:37:08 [INFO] __main__ — Class Mirai done: best_val_loss=-48.2251 epochs=37 collapsed=6 uncond_validity=38.70% cond_validity=47.00% proto_acc=99.86%
+2026-05-22 18:37:08 [INFO] __main__ — ========== Training class 5/Recon ==========
+2026-05-22 18:37:08 [INFO] vae.train — [Class 5/Recon] Loading split arrays from D:\thesis_final
+2026-05-22 18:37:08 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_train_cat.npy
+2026-05-22 18:37:08 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_val_cat.npy
+2026-05-22 18:37:08 [INFO] vae.train — [Class 5/Recon] 8-class split: train=352470, val=50353
+2026-05-22 18:37:09 [INFO] vae.dataset — Class 5: 352470 samples loaded
+2026-05-22 18:37:09 [INFO] vae.dataset — Class 5: 50353 samples loaded
+2026-05-22 18:37:09 [INFO] vae.train — [Class 5/Recon] Model: latent_dim=16, beta_target=1.0000, params=32887
+2026-05-22 18:37:14 [INFO] vae.train — [Class 5/Recon] Epoch 1/200 | train_loss=58.3928 val_loss=11.2748 beta=0.0167 lr=1.00e-03
+2026-05-22 18:37:14 [INFO] vae.train — [Class 5/Recon] New best val_loss=11.2748 — checkpoint saved.
+2026-05-22 18:37:19 [INFO] vae.train — [Class 5/Recon] Epoch 2/200 | train_loss=-4.3167 val_loss=-14.0672 beta=0.0333 lr=1.00e-03
+2026-05-22 18:37:19 [INFO] vae.train — [Class 5/Recon] New best val_loss=-14.0672 — checkpoint saved.
+2026-05-22 18:37:23 [INFO] vae.train — [Class 5/Recon] Epoch 3/200 | train_loss=-16.8340 val_loss=-20.7182 beta=0.0500 lr=1.00e-03
+2026-05-22 18:37:23 [INFO] vae.train — [Class 5/Recon] New best val_loss=-20.7182 — checkpoint saved.
+2026-05-22 18:37:28 [INFO] vae.train — [Class 5/Recon] Epoch 4/200 | train_loss=-21.7330 val_loss=-23.4726 beta=0.0667 lr=9.99e-04
+2026-05-22 18:37:28 [INFO] vae.train — [Class 5/Recon] New best val_loss=-23.4726 — checkpoint saved.
+2026-05-22 18:37:33 [INFO] vae.train — [Class 5/Recon] Epoch 5/200 | train_loss=-23.2583 val_loss=-24.5130 beta=0.0833 lr=9.99e-04
+2026-05-22 18:37:33 [INFO] vae.train — [Class 5/Recon] New best val_loss=-24.5130 — checkpoint saved.
+2026-05-22 18:37:38 [INFO] vae.train — [Class 5/Recon] Epoch 6/200 | train_loss=-23.9106 val_loss=-25.2709 beta=0.1000 lr=9.98e-04
+2026-05-22 18:37:38 [INFO] vae.train — [Class 5/Recon] New best val_loss=-25.2709 — checkpoint saved.
+2026-05-22 18:37:42 [INFO] vae.train — [Class 5/Recon] Epoch 7/200 | train_loss=-24.2008 val_loss=-25.0990 beta=0.1167 lr=9.98e-04
+2026-05-22 18:37:47 [INFO] vae.train — [Class 5/Recon] Epoch 8/200 | train_loss=-24.2158 val_loss=-23.9529 beta=0.1333 lr=9.97e-04
+2026-05-22 18:37:51 [INFO] vae.train — [Class 5/Recon] Epoch 9/200 | train_loss=-24.3895 val_loss=-25.9392 beta=0.1500 lr=9.96e-04
+2026-05-22 18:37:51 [INFO] vae.train — [Class 5/Recon] New best val_loss=-25.9392 — checkpoint saved.
+2026-05-22 18:37:55 [INFO] vae.train — [Class 5/Recon] Epoch 10/200 | train_loss=-24.4125 val_loss=-26.2021 beta=0.1667 lr=9.95e-04
+2026-05-22 18:37:55 [INFO] vae.train — [Class 5/Recon] New best val_loss=-26.2021 — checkpoint saved.
+2026-05-22 18:38:00 [INFO] vae.train — [Class 5/Recon] Epoch 11/200 | train_loss=-24.6259 val_loss=-25.6464 beta=0.1833 lr=9.94e-04
+2026-05-22 18:38:04 [INFO] vae.train — [Class 5/Recon] Epoch 12/200 | train_loss=-24.7859 val_loss=-26.9212 beta=0.2000 lr=9.93e-04
+2026-05-22 18:38:04 [INFO] vae.train — [Class 5/Recon] New best val_loss=-26.9212 — checkpoint saved.
+2026-05-22 18:38:09 [INFO] vae.train — [Class 5/Recon] Epoch 13/200 | train_loss=-25.1709 val_loss=-26.7963 beta=0.2167 lr=9.91e-04
+2026-05-22 18:38:15 [INFO] vae.train — [Class 5/Recon] Epoch 14/200 | train_loss=-25.3200 val_loss=-26.7005 beta=0.2333 lr=9.90e-04
+2026-05-22 18:38:19 [INFO] vae.train — [Class 5/Recon] Epoch 15/200 | train_loss=-25.4567 val_loss=-27.4302 beta=0.2500 lr=9.88e-04
+2026-05-22 18:38:20 [INFO] vae.train — [Class 5/Recon] New best val_loss=-27.4302 — checkpoint saved.
+2026-05-22 18:38:25 [INFO] vae.train — [Class 5/Recon] Epoch 16/200 | train_loss=-25.5336 val_loss=-27.7742 beta=0.2667 lr=9.86e-04
+2026-05-22 18:38:25 [INFO] vae.train — [Class 5/Recon] New best val_loss=-27.7742 — checkpoint saved.
+2026-05-22 18:38:30 [INFO] vae.train — [Class 5/Recon] Epoch 17/200 | train_loss=-25.5992 val_loss=-26.7187 beta=0.2833 lr=9.84e-04
+2026-05-22 18:38:35 [INFO] vae.train — [Class 5/Recon] Epoch 18/200 | train_loss=-25.6471 val_loss=-27.4103 beta=0.3000 lr=9.82e-04
+2026-05-22 18:38:40 [INFO] vae.train — [Class 5/Recon] Epoch 19/200 | train_loss=-25.9920 val_loss=-28.6113 beta=0.3167 lr=9.80e-04
+2026-05-22 18:38:40 [INFO] vae.train — [Class 5/Recon] New best val_loss=-28.6113 — checkpoint saved.
+2026-05-22 18:38:46 [INFO] vae.train — [Class 5/Recon] Epoch 20/200 | train_loss=-26.2424 val_loss=-28.6953 beta=0.3333 lr=9.78e-04
+2026-05-22 18:38:46 [INFO] vae.train — [Class 5/Recon] New best val_loss=-28.6953 — checkpoint saved.
+2026-05-22 18:38:51 [INFO] vae.train — [Class 5/Recon] Epoch 21/200 | train_loss=-26.3075 val_loss=-28.0203 beta=0.3500 lr=9.76e-04
+2026-05-22 18:38:56 [INFO] vae.train — [Class 5/Recon] Epoch 22/200 | train_loss=-26.3404 val_loss=-28.4641 beta=0.3667 lr=9.73e-04
+2026-05-22 18:39:01 [INFO] vae.train — [Class 5/Recon] Epoch 23/200 | train_loss=-26.5210 val_loss=-27.9676 beta=0.3833 lr=9.70e-04
+2026-05-22 18:39:06 [INFO] vae.train — [Class 5/Recon] Epoch 24/200 | train_loss=-26.3475 val_loss=-28.4671 beta=0.4000 lr=9.68e-04
+2026-05-22 18:39:11 [INFO] vae.train — [Class 5/Recon] Epoch 25/200 | train_loss=-26.2695 val_loss=-28.8423 beta=0.4167 lr=9.65e-04
+2026-05-22 18:39:11 [INFO] vae.train — [Class 5/Recon] New best val_loss=-28.8423 — checkpoint saved.
+2026-05-22 18:39:16 [INFO] vae.train — [Class 5/Recon] Epoch 26/200 | train_loss=-26.2967 val_loss=-28.6105 beta=0.4333 lr=9.62e-04
+2026-05-22 18:39:21 [INFO] vae.train — [Class 5/Recon] Epoch 27/200 | train_loss=-26.3972 val_loss=-28.7808 beta=0.4500 lr=9.59e-04
+2026-05-22 18:39:26 [INFO] vae.train — [Class 5/Recon] Epoch 28/200 | train_loss=-26.3032 val_loss=-27.7255 beta=0.4667 lr=9.56e-04
+2026-05-22 18:39:32 [INFO] vae.train — [Class 5/Recon] Epoch 29/200 | train_loss=-26.1232 val_loss=-27.8587 beta=0.4833 lr=9.52e-04
+2026-05-22 18:39:36 [INFO] vae.train — [Class 5/Recon] Epoch 30/200 | train_loss=-26.0333 val_loss=-27.8707 beta=0.5000 lr=9.49e-04
+2026-05-22 18:39:41 [INFO] vae.train — [Class 5/Recon] Epoch 31/200 | train_loss=-25.8944 val_loss=-27.4881 beta=0.5167 lr=9.46e-04
+2026-05-22 18:39:45 [INFO] vae.train — [Class 5/Recon] Epoch 32/200 | train_loss=-25.6274 val_loss=-28.1358 beta=0.5333 lr=9.42e-04
+2026-05-22 18:39:49 [INFO] vae.train — [Class 5/Recon] Epoch 33/200 | train_loss=-25.5351 val_loss=-27.7355 beta=0.5500 lr=9.38e-04
+2026-05-22 18:39:54 [INFO] vae.train — [Class 5/Recon] Epoch 34/200 | train_loss=-25.2744 val_loss=-27.7156 beta=0.5667 lr=9.34e-04
+2026-05-22 18:39:58 [INFO] vae.train — [Class 5/Recon] Epoch 35/200 | train_loss=-25.0076 val_loss=-27.8946 beta=0.5833 lr=9.30e-04
+2026-05-22 18:39:58 [INFO] vae.train — [Class 5/Recon] Early stop after 35 epochs (patience=10).
+2026-05-22 18:39:58 [INFO] vae.train — [Class 5/Recon] Curves saved to D:\thesis_final\results\vae\curves_Recon.png
+2026-05-22 18:39:58 [INFO] __main__ — Reloading checkpoint from D:\thesis_final\models\vae\vae_class_5_Recon.pt
+2026-05-22 18:39:58 [INFO] vae.dataset — Class 5: 50353 samples loaded
+2026-05-22 18:39:58 [INFO] vae.diagnostics — === Running diagnostics for class 5 (Recon) ===
+2026-05-22 18:39:58 [INFO] vae.diagnostics — Loaded validator via attack.validator.validate_batch
+2026-05-22 18:39:58 [INFO] vae.diagnostics — [1/4] Posterior collapse check ...
+2026-05-22 18:39:59 [INFO] vae.diagnostics — Posterior collapse: 2/16 dims below threshold 0.010
+2026-05-22 18:39:59 [INFO] vae.diagnostics — [2/4] Per-feature reconstruction error ...
+2026-05-22 18:39:59 [INFO] vae.diagnostics — Per-feature recon: protocol top-1=0.9847, worst feature=Time_To_Live (1.0561)
+2026-05-22 18:39:59 [INFO] vae.diagnostics — [3/4] Unconditional sample validity (n=1000) ...
+2026-05-22 18:39:59 [INFO] vae.diagnostics — Unconditional validity: 0.0810 overall (81/1000 valid)
+2026-05-22 18:39:59 [INFO] vae.diagnostics — Protocol-binary consistency: 1.0 (as expected)
+2026-05-22 18:39:59 [INFO] vae.diagnostics — [4/4] Conditional reconstruction validity ...
+2026-05-22 18:39:59 [INFO] vae.diagnostics — Conditional validity: 0.3420 overall (342/1000 valid)
+2026-05-22 18:39:59 [INFO] vae.diagnostics — Diagnostics written to D:\thesis_final\results\vae\diagnostics_Recon.json
+2026-05-22 18:39:59 [INFO] __main__ — Manifest updated for class Recon
+2026-05-22 18:39:59 [INFO] __main__ — Class Recon done: best_val_loss=-28.8423 epochs=35 collapsed=2 uncond_validity=8.10% cond_validity=34.20% proto_acc=98.47%
+2026-05-22 18:39:59 [INFO] __main__ — ========== Training class 6/Spoofing ==========
+2026-05-22 18:39:59 [INFO] vae.train — [Class 6/Spoofing] Loading split arrays from D:\thesis_final
+2026-05-22 18:39:59 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_train_cat.npy
+2026-05-22 18:39:59 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_val_cat.npy
+2026-05-22 18:39:59 [INFO] vae.train — [Class 6/Spoofing] 8-class split: train=260015, val=37145
+2026-05-22 18:39:59 [INFO] vae.dataset — Class 6: 260015 samples loaded
+2026-05-22 18:39:59 [INFO] vae.dataset — Class 6: 37145 samples loaded
+2026-05-22 18:39:59 [INFO] vae.train — [Class 6/Spoofing] Model: latent_dim=16, beta_target=1.0000, params=32887
+2026-05-22 18:40:03 [INFO] vae.train — [Class 6/Spoofing] Epoch 1/200 | train_loss=6778.9162 val_loss=21.2082 beta=0.0167 lr=1.00e-03
+2026-05-22 18:40:03 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=21.2082 — checkpoint saved.
+2026-05-22 18:40:07 [INFO] vae.train — [Class 6/Spoofing] Epoch 2/200 | train_loss=9.1009 val_loss=-4.2270 beta=0.0333 lr=1.00e-03
+2026-05-22 18:40:07 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-4.2270 — checkpoint saved.
+2026-05-22 18:40:10 [INFO] vae.train — [Class 6/Spoofing] Epoch 3/200 | train_loss=-6.4971 val_loss=-10.7737 beta=0.0500 lr=1.00e-03
+2026-05-22 18:40:10 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-10.7737 — checkpoint saved.
+2026-05-22 18:40:14 [INFO] vae.train — [Class 6/Spoofing] Epoch 4/200 | train_loss=-13.2440 val_loss=-18.5180 beta=0.0667 lr=9.99e-04
+2026-05-22 18:40:14 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-18.5180 — checkpoint saved.
+2026-05-22 18:40:18 [INFO] vae.train — [Class 6/Spoofing] Epoch 5/200 | train_loss=-17.1276 val_loss=-15.7374 beta=0.0833 lr=9.99e-04
+2026-05-22 18:40:22 [INFO] vae.train — [Class 6/Spoofing] Epoch 6/200 | train_loss=-18.8055 val_loss=-21.8713 beta=0.1000 lr=9.98e-04
+2026-05-22 18:40:22 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-21.8713 — checkpoint saved.
+2026-05-22 18:40:26 [INFO] vae.train — [Class 6/Spoofing] Epoch 7/200 | train_loss=-19.6756 val_loss=-21.9828 beta=0.1167 lr=9.98e-04
+2026-05-22 18:40:26 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-21.9828 — checkpoint saved.
+2026-05-22 18:40:29 [INFO] vae.train — [Class 6/Spoofing] Epoch 8/200 | train_loss=-20.5661 val_loss=-20.9115 beta=0.1333 lr=9.97e-04
+2026-05-22 18:40:33 [INFO] vae.train — [Class 6/Spoofing] Epoch 9/200 | train_loss=-20.8798 val_loss=-22.9847 beta=0.1500 lr=9.96e-04
+2026-05-22 18:40:33 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-22.9847 — checkpoint saved.
+2026-05-22 18:40:37 [INFO] vae.train — [Class 6/Spoofing] Epoch 10/200 | train_loss=-21.1241 val_loss=-22.0414 beta=0.1667 lr=9.95e-04
+2026-05-22 18:40:41 [INFO] vae.train — [Class 6/Spoofing] Epoch 11/200 | train_loss=-21.0997 val_loss=-23.2414 beta=0.1833 lr=9.94e-04
+2026-05-22 18:40:41 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-23.2414 — checkpoint saved.
+2026-05-22 18:40:44 [INFO] vae.train — [Class 6/Spoofing] Epoch 12/200 | train_loss=-21.5130 val_loss=-22.6134 beta=0.2000 lr=9.93e-04
+2026-05-22 18:40:48 [INFO] vae.train — [Class 6/Spoofing] Epoch 13/200 | train_loss=-21.2880 val_loss=-23.1649 beta=0.2167 lr=9.91e-04
+2026-05-22 18:40:52 [INFO] vae.train — [Class 6/Spoofing] Epoch 14/200 | train_loss=-21.2515 val_loss=-23.4558 beta=0.2333 lr=9.90e-04
+2026-05-22 18:40:52 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-23.4558 — checkpoint saved.
+2026-05-22 18:40:56 [INFO] vae.train — [Class 6/Spoofing] Epoch 15/200 | train_loss=-21.2560 val_loss=-23.9737 beta=0.2500 lr=9.88e-04
+2026-05-22 18:40:56 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-23.9737 — checkpoint saved.
+2026-05-22 18:40:59 [INFO] vae.train — [Class 6/Spoofing] Epoch 16/200 | train_loss=-21.5480 val_loss=-24.3808 beta=0.2667 lr=9.86e-04
+2026-05-22 18:40:59 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-24.3808 — checkpoint saved.
+2026-05-22 18:41:03 [INFO] vae.train — [Class 6/Spoofing] Epoch 17/200 | train_loss=-21.5154 val_loss=-23.9177 beta=0.2833 lr=9.84e-04
+2026-05-22 18:41:07 [INFO] vae.train — [Class 6/Spoofing] Epoch 18/200 | train_loss=-21.4438 val_loss=-23.8801 beta=0.3000 lr=9.82e-04
+2026-05-22 18:41:11 [INFO] vae.train — [Class 6/Spoofing] Epoch 19/200 | train_loss=-21.5397 val_loss=-23.6325 beta=0.3167 lr=9.80e-04
+2026-05-22 18:41:15 [INFO] vae.train — [Class 6/Spoofing] Epoch 20/200 | train_loss=-21.5714 val_loss=-23.3224 beta=0.3333 lr=9.78e-04
+2026-05-22 18:41:18 [INFO] vae.train — [Class 6/Spoofing] Epoch 21/200 | train_loss=-21.7278 val_loss=-24.2992 beta=0.3500 lr=9.76e-04
+2026-05-22 18:41:22 [INFO] vae.train — [Class 6/Spoofing] Epoch 22/200 | train_loss=-21.8202 val_loss=-24.7458 beta=0.3667 lr=9.73e-04
+2026-05-22 18:41:22 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-24.7458 — checkpoint saved.
+2026-05-22 18:41:26 [INFO] vae.train — [Class 6/Spoofing] Epoch 23/200 | train_loss=-22.1968 val_loss=-24.6652 beta=0.3833 lr=9.70e-04
+2026-05-22 18:41:29 [INFO] vae.train — [Class 6/Spoofing] Epoch 24/200 | train_loss=-22.6052 val_loss=-22.7101 beta=0.4000 lr=9.68e-04
+2026-05-22 18:41:33 [INFO] vae.train — [Class 6/Spoofing] Epoch 25/200 | train_loss=-22.6285 val_loss=-25.6070 beta=0.4167 lr=9.65e-04
+2026-05-22 18:41:33 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-25.6070 — checkpoint saved.
+2026-05-22 18:41:36 [INFO] vae.train — [Class 6/Spoofing] Epoch 26/200 | train_loss=-22.9855 val_loss=-25.3131 beta=0.4333 lr=9.62e-04
+2026-05-22 18:41:39 [INFO] vae.train — [Class 6/Spoofing] Epoch 27/200 | train_loss=-23.0648 val_loss=-23.7545 beta=0.4500 lr=9.59e-04
+2026-05-22 18:41:43 [INFO] vae.train — [Class 6/Spoofing] Epoch 28/200 | train_loss=-23.0926 val_loss=-25.2557 beta=0.4667 lr=9.56e-04
+2026-05-22 18:41:57 [INFO] vae.train — [Class 6/Spoofing] Epoch 29/200 | train_loss=-23.0250 val_loss=-25.4598 beta=0.4833 lr=9.52e-04
+2026-05-22 18:42:09 [INFO] vae.train — [Class 6/Spoofing] Epoch 30/200 | train_loss=-23.0999 val_loss=-25.8980 beta=0.5000 lr=9.49e-04
+2026-05-22 18:42:17 [INFO] vae.train — [Class 6/Spoofing] New best val_loss=-25.8980 — checkpoint saved.
+2026-05-22 18:42:20 [INFO] vae.train — [Class 6/Spoofing] Epoch 31/200 | train_loss=-23.0657 val_loss=-25.8679 beta=0.5167 lr=9.46e-04
+2026-05-22 18:42:32 [INFO] vae.train — [Class 6/Spoofing] Epoch 32/200 | train_loss=-22.8774 val_loss=-25.6647 beta=0.5333 lr=9.42e-04
+2026-05-22 18:42:40 [INFO] vae.train — [Class 6/Spoofing] Epoch 33/200 | train_loss=-22.8423 val_loss=-25.0761 beta=0.5500 lr=9.38e-04
+2026-05-22 18:42:44 [INFO] vae.train — [Class 6/Spoofing] Epoch 34/200 | train_loss=-22.6175 val_loss=-25.2711 beta=0.5667 lr=9.34e-04
+2026-05-22 18:42:47 [INFO] vae.train — [Class 6/Spoofing] Epoch 35/200 | train_loss=-17.2835 val_loss=-25.5224 beta=0.5833 lr=9.30e-04
+2026-05-22 18:42:51 [INFO] vae.train — [Class 6/Spoofing] Epoch 36/200 | train_loss=-22.4900 val_loss=-24.9473 beta=0.6000 lr=9.26e-04
+2026-05-22 18:42:54 [INFO] vae.train — [Class 6/Spoofing] Epoch 37/200 | train_loss=-22.3180 val_loss=-25.0131 beta=0.6167 lr=9.22e-04
+2026-05-22 18:42:58 [INFO] vae.train — [Class 6/Spoofing] Epoch 38/200 | train_loss=-22.0424 val_loss=-24.6465 beta=0.6333 lr=9.18e-04
+2026-05-22 18:43:01 [INFO] vae.train — [Class 6/Spoofing] Epoch 39/200 | train_loss=-21.9624 val_loss=-24.4169 beta=0.6500 lr=9.14e-04
+2026-05-22 18:43:05 [INFO] vae.train — [Class 6/Spoofing] Epoch 40/200 | train_loss=-21.7520 val_loss=-24.7880 beta=0.6667 lr=9.09e-04
+2026-05-22 18:43:05 [INFO] vae.train — [Class 6/Spoofing] Early stop after 40 epochs (patience=10).
+2026-05-22 18:43:05 [INFO] vae.train — [Class 6/Spoofing] Curves saved to D:\thesis_final\results\vae\curves_Spoofing.png
+2026-05-22 18:43:05 [INFO] __main__ — Reloading checkpoint from D:\thesis_final\models\vae\vae_class_6_Spoofing.pt
+2026-05-22 18:43:05 [INFO] vae.dataset — Class 6: 37145 samples loaded
+2026-05-22 18:43:05 [INFO] vae.diagnostics — === Running diagnostics for class 6 (Spoofing) ===
+2026-05-22 18:43:05 [INFO] vae.diagnostics — Loaded validator via attack.validator.validate_batch
+2026-05-22 18:43:05 [INFO] vae.diagnostics — [1/4] Posterior collapse check ...
+2026-05-22 18:43:05 [INFO] vae.diagnostics — Posterior collapse: 3/16 dims below threshold 0.010
+2026-05-22 18:43:05 [INFO] vae.diagnostics — [2/4] Per-feature reconstruction error ...
+2026-05-22 18:43:06 [INFO] vae.diagnostics — Per-feature recon: protocol top-1=0.9928, worst feature=Time_To_Live (1.0619)
+2026-05-22 18:43:06 [INFO] vae.diagnostics — [3/4] Unconditional sample validity (n=1000) ...
+2026-05-22 18:43:06 [INFO] vae.diagnostics — Unconditional validity: 0.0710 overall (71/1000 valid)
+2026-05-22 18:43:06 [INFO] vae.diagnostics — Protocol-binary consistency: 1.0 (as expected)
+2026-05-22 18:43:06 [INFO] vae.diagnostics — [4/4] Conditional reconstruction validity ...
+2026-05-22 18:43:06 [INFO] vae.diagnostics — Conditional validity: 0.3120 overall (312/1000 valid)
+2026-05-22 18:43:06 [INFO] vae.diagnostics — Diagnostics written to D:\thesis_final\results\vae\diagnostics_Spoofing.json
+2026-05-22 18:43:06 [INFO] __main__ — Manifest updated for class Spoofing
+2026-05-22 18:43:06 [INFO] __main__ — Class Spoofing done: best_val_loss=-25.8980 epochs=40 collapsed=3 uncond_validity=7.10% cond_validity=31.20% proto_acc=99.28%
+2026-05-22 18:43:06 [INFO] __main__ — ========== Training class 7/Web ==========
+2026-05-22 18:43:06 [INFO] vae.train — [Class 7/Web] Loading split arrays from D:\thesis_final
+2026-05-22 18:43:06 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_train_cat.npy
+2026-05-22 18:43:06 [INFO] vae.train — Loading 8-class labels from D:\thesis_final\data\processed\y_val_cat.npy
+2026-05-22 18:43:06 [INFO] vae.train — [Class 7/Web] 8-class split: train=16659, val=2380
+2026-05-22 18:43:06 [INFO] vae.dataset — Class 7: 16659 samples loaded
+2026-05-22 18:43:06 [INFO] vae.dataset — Class 7: 2380 samples loaded
+2026-05-22 18:43:06 [INFO] vae.train — [Class 7/Web] Model: latent_dim=16, beta_target=1.0000, params=32887
+2026-05-22 18:43:06 [INFO] vae.train — [Class 7/Web] Epoch 1/200 | train_loss=5901078.3490 val_loss=424.5477 beta=0.0167 lr=1.00e-03
+2026-05-22 18:43:06 [INFO] vae.train — [Class 7/Web] New best val_loss=424.5477 — checkpoint saved.
+2026-05-22 18:43:06 [INFO] vae.train — [Class 7/Web] Epoch 2/200 | train_loss=306.3821 val_loss=206.4985 beta=0.0333 lr=1.00e-03
+2026-05-22 18:43:06 [INFO] vae.train — [Class 7/Web] New best val_loss=206.4985 — checkpoint saved.
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] Epoch 3/200 | train_loss=161.1616 val_loss=151.4145 beta=0.0500 lr=1.00e-03
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] New best val_loss=151.4145 — checkpoint saved.
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] Epoch 4/200 | train_loss=123.6033 val_loss=118.9921 beta=0.0667 lr=9.99e-04
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] New best val_loss=118.9921 — checkpoint saved.
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] Epoch 5/200 | train_loss=109.3177 val_loss=104.7290 beta=0.0833 lr=9.99e-04
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] New best val_loss=104.7290 — checkpoint saved.
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] Epoch 6/200 | train_loss=96.7370 val_loss=93.9771 beta=0.1000 lr=9.98e-04
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] New best val_loss=93.9771 — checkpoint saved.
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] Epoch 7/200 | train_loss=86.7923 val_loss=86.3767 beta=0.1167 lr=9.98e-04
+2026-05-22 18:43:07 [INFO] vae.train — [Class 7/Web] New best val_loss=86.3767 — checkpoint saved.
+2026-05-22 18:43:08 [INFO] vae.train — [Class 7/Web] Epoch 8/200 | train_loss=79.3890 val_loss=78.5875 beta=0.1333 lr=9.97e-04
+2026-05-22 18:43:08 [INFO] vae.train — [Class 7/Web] New best val_loss=78.5875 — checkpoint saved.
+2026-05-22 18:43:08 [INFO] vae.train — [Class 7/Web] Epoch 9/200 | train_loss=70.3970 val_loss=68.2043 beta=0.1500 lr=9.96e-04
+2026-05-22 18:43:08 [INFO] vae.train — [Class 7/Web] New best val_loss=68.2043 — checkpoint saved.
+2026-05-22 18:43:08 [INFO] vae.train — [Class 7/Web] Epoch 10/200 | train_loss=59.4466 val_loss=55.5959 beta=0.1667 lr=9.95e-04
+2026-05-22 18:43:08 [INFO] vae.train — [Class 7/Web] New best val_loss=55.5959 — checkpoint saved.
+2026-05-22 18:43:08 [INFO] vae.train — [Class 7/Web] Epoch 11/200 | train_loss=50.0439 val_loss=46.3187 beta=0.1833 lr=9.94e-04
+2026-05-22 18:43:08 [INFO] vae.train — [Class 7/Web] New best val_loss=46.3187 — checkpoint saved.
+2026-05-22 18:43:09 [INFO] vae.train — [Class 7/Web] Epoch 12/200 | train_loss=41.5690 val_loss=40.3873 beta=0.2000 lr=9.93e-04
+2026-05-22 18:43:09 [INFO] vae.train — [Class 7/Web] New best val_loss=40.3873 — checkpoint saved.
+2026-05-22 18:43:09 [INFO] vae.train — [Class 7/Web] Epoch 13/200 | train_loss=37.3123 val_loss=38.1650 beta=0.2167 lr=9.91e-04
+2026-05-22 18:43:09 [INFO] vae.train — [Class 7/Web] New best val_loss=38.1650 — checkpoint saved.
+2026-05-22 18:43:09 [INFO] vae.train — [Class 7/Web] Epoch 14/200 | train_loss=35.3518 val_loss=29.5225 beta=0.2333 lr=9.90e-04
+2026-05-22 18:43:09 [INFO] vae.train — [Class 7/Web] New best val_loss=29.5225 — checkpoint saved.
+2026-05-22 18:43:09 [INFO] vae.train — [Class 7/Web] Epoch 15/200 | train_loss=30.3241 val_loss=25.3642 beta=0.2500 lr=9.88e-04
+2026-05-22 18:43:09 [INFO] vae.train — [Class 7/Web] New best val_loss=25.3642 — checkpoint saved.
+2026-05-22 18:43:10 [INFO] vae.train — [Class 7/Web] Epoch 16/200 | train_loss=27.6230 val_loss=23.7560 beta=0.2667 lr=9.86e-04
+2026-05-22 18:43:10 [INFO] vae.train — [Class 7/Web] New best val_loss=23.7560 — checkpoint saved.
+2026-05-22 18:43:10 [INFO] vae.train — [Class 7/Web] Epoch 17/200 | train_loss=25.9882 val_loss=26.9428 beta=0.2833 lr=9.84e-04
+2026-05-22 18:43:10 [INFO] vae.train — [Class 7/Web] Epoch 18/200 | train_loss=23.4663 val_loss=20.3811 beta=0.3000 lr=9.82e-04
+2026-05-22 18:43:10 [INFO] vae.train — [Class 7/Web] New best val_loss=20.3811 — checkpoint saved.
+2026-05-22 18:43:10 [INFO] vae.train — [Class 7/Web] Epoch 19/200 | train_loss=19.4299 val_loss=16.5754 beta=0.3167 lr=9.80e-04
+2026-05-22 18:43:10 [INFO] vae.train — [Class 7/Web] New best val_loss=16.5754 — checkpoint saved.
+2026-05-22 18:43:10 [INFO] vae.train — [Class 7/Web] Epoch 20/200 | train_loss=20.0287 val_loss=17.0588 beta=0.3333 lr=9.78e-04
+2026-05-22 18:43:11 [INFO] vae.train — [Class 7/Web] Epoch 21/200 | train_loss=18.0074 val_loss=13.6271 beta=0.3500 lr=9.76e-04
+2026-05-22 18:43:11 [INFO] vae.train — [Class 7/Web] New best val_loss=13.6271 — checkpoint saved.
+2026-05-22 18:43:11 [INFO] vae.train — [Class 7/Web] Epoch 22/200 | train_loss=14.2284 val_loss=10.3602 beta=0.3667 lr=9.73e-04
+2026-05-22 18:43:11 [INFO] vae.train — [Class 7/Web] New best val_loss=10.3602 — checkpoint saved.
+2026-05-22 18:43:11 [INFO] vae.train — [Class 7/Web] Epoch 23/200 | train_loss=12.7954 val_loss=10.4793 beta=0.3833 lr=9.70e-04
+2026-05-22 18:43:11 [INFO] vae.train — [Class 7/Web] Epoch 24/200 | train_loss=12.0005 val_loss=8.3194 beta=0.4000 lr=9.68e-04
+2026-05-22 18:43:11 [INFO] vae.train — [Class 7/Web] New best val_loss=8.3194 — checkpoint saved.
+2026-05-22 18:43:12 [INFO] vae.train — [Class 7/Web] Epoch 25/200 | train_loss=10.1476 val_loss=6.3728 beta=0.4167 lr=9.65e-04
+2026-05-22 18:43:12 [INFO] vae.train — [Class 7/Web] New best val_loss=6.3728 — checkpoint saved.
+2026-05-22 18:43:12 [INFO] vae.train — [Class 7/Web] Epoch 26/200 | train_loss=9.8683 val_loss=7.1225 beta=0.4333 lr=9.62e-04
+2026-05-22 18:43:12 [INFO] vae.train — [Class 7/Web] Epoch 27/200 | train_loss=8.8296 val_loss=5.0478 beta=0.4500 lr=9.59e-04
+2026-05-22 18:43:12 [INFO] vae.train — [Class 7/Web] New best val_loss=5.0478 — checkpoint saved.
+2026-05-22 18:43:12 [INFO] vae.train — [Class 7/Web] Epoch 28/200 | train_loss=8.9629 val_loss=5.0249 beta=0.4667 lr=9.56e-04
+2026-05-22 18:43:12 [INFO] vae.train — [Class 7/Web] New best val_loss=5.0249 — checkpoint saved.
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] Epoch 29/200 | train_loss=7.2904 val_loss=3.4196 beta=0.4833 lr=9.52e-04
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] New best val_loss=3.4196 — checkpoint saved.
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] Epoch 30/200 | train_loss=5.9845 val_loss=2.6805 beta=0.5000 lr=9.49e-04
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] New best val_loss=2.6805 — checkpoint saved.
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] Epoch 31/200 | train_loss=6.6437 val_loss=1.9401 beta=0.5167 lr=9.46e-04
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] New best val_loss=1.9401 — checkpoint saved.
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] Epoch 32/200 | train_loss=5.3379 val_loss=0.8647 beta=0.5333 lr=9.42e-04
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] New best val_loss=0.8647 — checkpoint saved.
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] Epoch 33/200 | train_loss=4.3947 val_loss=-0.0000 beta=0.5500 lr=9.38e-04
+2026-05-22 18:43:13 [INFO] vae.train — [Class 7/Web] New best val_loss=-0.0000 — checkpoint saved.
+2026-05-22 18:43:14 [INFO] vae.train — [Class 7/Web] Epoch 34/200 | train_loss=4.1806 val_loss=0.8346 beta=0.5667 lr=9.34e-04
+2026-05-22 18:43:14 [INFO] vae.train — [Class 7/Web] Epoch 35/200 | train_loss=5.5826 val_loss=2.7395 beta=0.5833 lr=9.30e-04
+2026-05-22 18:43:14 [INFO] vae.train — [Class 7/Web] Epoch 36/200 | train_loss=4.4913 val_loss=0.5509 beta=0.6000 lr=9.26e-04
+2026-05-22 18:43:14 [INFO] vae.train — [Class 7/Web] Epoch 37/200 | train_loss=3.8277 val_loss=-0.0973 beta=0.6167 lr=9.22e-04
+2026-05-22 18:43:14 [INFO] vae.train — [Class 7/Web] New best val_loss=-0.0973 — checkpoint saved.
+2026-05-22 18:43:15 [INFO] vae.train — [Class 7/Web] Epoch 38/200 | train_loss=3.6943 val_loss=0.0771 beta=0.6333 lr=9.18e-04
+2026-05-22 18:43:15 [INFO] vae.train — [Class 7/Web] Epoch 39/200 | train_loss=3.9408 val_loss=5.5963 beta=0.6500 lr=9.14e-04
+2026-05-22 18:43:15 [INFO] vae.train — [Class 7/Web] Epoch 40/200 | train_loss=4.8167 val_loss=-0.8234 beta=0.6667 lr=9.09e-04
+2026-05-22 18:43:15 [INFO] vae.train — [Class 7/Web] New best val_loss=-0.8234 — checkpoint saved.
+2026-05-22 18:43:15 [INFO] vae.train — [Class 7/Web] Epoch 41/200 | train_loss=3.3057 val_loss=-0.8084 beta=0.6833 lr=9.05e-04
+2026-05-22 18:43:16 [INFO] vae.train — [Class 7/Web] Epoch 42/200 | train_loss=4.0009 val_loss=-1.1186 beta=0.7000 lr=9.00e-04
+2026-05-22 18:43:16 [INFO] vae.train — [Class 7/Web] New best val_loss=-1.1186 — checkpoint saved.
+2026-05-22 18:43:16 [INFO] vae.train — [Class 7/Web] Epoch 43/200 | train_loss=3.0389 val_loss=-0.5135 beta=0.7167 lr=8.95e-04
+2026-05-22 18:43:16 [INFO] vae.train — [Class 7/Web] Epoch 44/200 | train_loss=3.5217 val_loss=-1.2298 beta=0.7333 lr=8.90e-04
+2026-05-22 18:43:16 [INFO] vae.train — [Class 7/Web] New best val_loss=-1.2298 — checkpoint saved.
+2026-05-22 18:43:16 [INFO] vae.train — [Class 7/Web] Epoch 45/200 | train_loss=3.5329 val_loss=1.6837 beta=0.7500 lr=8.85e-04
+2026-05-22 18:43:17 [INFO] vae.train — [Class 7/Web] Epoch 46/200 | train_loss=3.8471 val_loss=-1.4628 beta=0.7667 lr=8.80e-04
+2026-05-22 18:43:17 [INFO] vae.train — [Class 7/Web] New best val_loss=-1.4628 — checkpoint saved.
+2026-05-22 18:43:17 [INFO] vae.train — [Class 7/Web] Epoch 47/200 | train_loss=3.3566 val_loss=0.6126 beta=0.7833 lr=8.75e-04
+2026-05-22 18:43:17 [INFO] vae.train — [Class 7/Web] Epoch 48/200 | train_loss=3.5635 val_loss=-2.3310 beta=0.8000 lr=8.70e-04
+2026-05-22 18:43:17 [INFO] vae.train — [Class 7/Web] New best val_loss=-2.3310 — checkpoint saved.
+2026-05-22 18:43:17 [INFO] vae.train — [Class 7/Web] Epoch 49/200 | train_loss=2.6966 val_loss=-3.2343 beta=0.8167 lr=8.64e-04
+2026-05-22 18:43:17 [INFO] vae.train — [Class 7/Web] New best val_loss=-3.2343 — checkpoint saved.
+2026-05-22 18:43:17 [INFO] vae.train — [Class 7/Web] Epoch 50/200 | train_loss=2.2639 val_loss=-2.3385 beta=0.8333 lr=8.59e-04
+2026-05-22 18:43:18 [INFO] vae.train — [Class 7/Web] Epoch 51/200 | train_loss=3.1835 val_loss=-1.6712 beta=0.8500 lr=8.54e-04
+2026-05-22 18:43:18 [INFO] vae.train — [Class 7/Web] Epoch 52/200 | train_loss=2.4059 val_loss=-1.8263 beta=0.8667 lr=8.48e-04
+2026-05-22 18:43:18 [INFO] vae.train — [Class 7/Web] Epoch 53/200 | train_loss=2.8735 val_loss=-1.8561 beta=0.8833 lr=8.42e-04
+2026-05-22 18:43:18 [INFO] vae.train — [Class 7/Web] Epoch 54/200 | train_loss=3.0739 val_loss=-2.4694 beta=0.9000 lr=8.37e-04
+2026-05-22 18:43:19 [INFO] vae.train — [Class 7/Web] Epoch 55/200 | train_loss=2.9674 val_loss=-2.1300 beta=0.9167 lr=8.31e-04
+2026-05-22 18:43:19 [INFO] vae.train — [Class 7/Web] Epoch 56/200 | train_loss=2.4479 val_loss=-3.1930 beta=0.9333 lr=8.25e-04
+2026-05-22 18:43:19 [INFO] vae.train — [Class 7/Web] Epoch 57/200 | train_loss=2.2970 val_loss=-3.5148 beta=0.9500 lr=8.19e-04
+2026-05-22 18:43:19 [INFO] vae.train — [Class 7/Web] New best val_loss=-3.5148 — checkpoint saved.
+2026-05-22 18:43:19 [INFO] vae.train — [Class 7/Web] Epoch 58/200 | train_loss=2.1458 val_loss=-0.8438 beta=0.9667 lr=8.13e-04
+2026-05-22 18:43:20 [INFO] vae.train — [Class 7/Web] Epoch 59/200 | train_loss=2.3206 val_loss=-1.8415 beta=0.9833 lr=8.06e-04
+2026-05-22 18:43:20 [INFO] vae.train — [Class 7/Web] Epoch 60/200 | train_loss=3.3148 val_loss=-1.5724 beta=1.0000 lr=8.00e-04
+2026-05-22 18:43:20 [INFO] vae.train — [Class 7/Web] Epoch 61/200 | train_loss=2.4188 val_loss=-3.6956 beta=1.0000 lr=7.94e-04
+2026-05-22 18:43:20 [INFO] vae.train — [Class 7/Web] New best val_loss=-3.6956 — checkpoint saved.
+2026-05-22 18:43:20 [INFO] vae.train — [Class 7/Web] Epoch 62/200 | train_loss=1.8026 val_loss=-3.2449 beta=1.0000 lr=7.88e-04
+2026-05-22 18:43:20 [INFO] vae.train — [Class 7/Web] Epoch 63/200 | train_loss=1.4643 val_loss=-4.2708 beta=1.0000 lr=7.81e-04
+2026-05-22 18:43:20 [INFO] vae.train — [Class 7/Web] New best val_loss=-4.2708 — checkpoint saved.
+2026-05-22 18:43:21 [INFO] vae.train — [Class 7/Web] Epoch 64/200 | train_loss=1.1239 val_loss=-4.9452 beta=1.0000 lr=7.75e-04
+2026-05-22 18:43:21 [INFO] vae.train — [Class 7/Web] New best val_loss=-4.9452 — checkpoint saved.
+2026-05-22 18:43:21 [INFO] vae.train — [Class 7/Web] Epoch 65/200 | train_loss=0.6965 val_loss=-4.6896 beta=1.0000 lr=7.68e-04
+2026-05-22 18:43:21 [INFO] vae.train — [Class 7/Web] Epoch 66/200 | train_loss=0.5368 val_loss=-5.4469 beta=1.0000 lr=7.61e-04
+2026-05-22 18:43:21 [INFO] vae.train — [Class 7/Web] New best val_loss=-5.4469 — checkpoint saved.
+2026-05-22 18:43:21 [INFO] vae.train — [Class 7/Web] Epoch 67/200 | train_loss=-0.2112 val_loss=-5.3163 beta=1.0000 lr=7.55e-04
+2026-05-22 18:43:22 [INFO] vae.train — [Class 7/Web] Epoch 68/200 | train_loss=0.1169 val_loss=-4.4273 beta=1.0000 lr=7.48e-04
+2026-05-22 18:43:22 [INFO] vae.train — [Class 7/Web] Epoch 69/200 | train_loss=-0.2590 val_loss=-5.3616 beta=1.0000 lr=7.41e-04
+2026-05-22 18:43:22 [INFO] vae.train — [Class 7/Web] Epoch 70/200 | train_loss=-0.5637 val_loss=-4.6899 beta=1.0000 lr=7.34e-04
+2026-05-22 18:43:22 [INFO] vae.train — [Class 7/Web] Epoch 71/200 | train_loss=-0.9337 val_loss=-6.1245 beta=1.0000 lr=7.27e-04
+2026-05-22 18:43:22 [INFO] vae.train — [Class 7/Web] New best val_loss=-6.1245 — checkpoint saved.
+2026-05-22 18:43:23 [INFO] vae.train — [Class 7/Web] Epoch 72/200 | train_loss=-0.9131 val_loss=-6.1695 beta=1.0000 lr=7.20e-04
+2026-05-22 18:43:23 [INFO] vae.train — [Class 7/Web] New best val_loss=-6.1695 — checkpoint saved.
+2026-05-22 18:43:23 [INFO] vae.train — [Class 7/Web] Epoch 73/200 | train_loss=-1.0922 val_loss=-6.1197 beta=1.0000 lr=7.13e-04
+2026-05-22 18:43:23 [INFO] vae.train — [Class 7/Web] Epoch 74/200 | train_loss=-1.4719 val_loss=-6.7424 beta=1.0000 lr=7.06e-04
+2026-05-22 18:43:23 [INFO] vae.train — [Class 7/Web] New best val_loss=-6.7424 — checkpoint saved.
+2026-05-22 18:43:23 [INFO] vae.train — [Class 7/Web] Epoch 75/200 | train_loss=-1.8416 val_loss=-6.3681 beta=1.0000 lr=6.99e-04
+2026-05-22 18:43:24 [INFO] vae.train — [Class 7/Web] Epoch 76/200 | train_loss=-1.5261 val_loss=-5.7043 beta=1.0000 lr=6.91e-04
+2026-05-22 18:43:24 [INFO] vae.train — [Class 7/Web] Epoch 77/200 | train_loss=-1.7843 val_loss=-6.5293 beta=1.0000 lr=6.84e-04
+2026-05-22 18:43:24 [INFO] vae.train — [Class 7/Web] Epoch 78/200 | train_loss=-1.8699 val_loss=-6.1378 beta=1.0000 lr=6.77e-04
+2026-05-22 18:43:24 [INFO] vae.train — [Class 7/Web] Epoch 79/200 | train_loss=-2.1391 val_loss=-6.0022 beta=1.0000 lr=6.69e-04
+2026-05-22 18:43:24 [INFO] vae.train — [Class 7/Web] Epoch 80/200 | train_loss=-2.2053 val_loss=-6.1372 beta=1.0000 lr=6.62e-04
+2026-05-22 18:43:25 [INFO] vae.train — [Class 7/Web] Epoch 81/200 | train_loss=-2.3200 val_loss=-6.9449 beta=1.0000 lr=6.55e-04
+2026-05-22 18:43:25 [INFO] vae.train — [Class 7/Web] New best val_loss=-6.9449 — checkpoint saved.
+2026-05-22 18:43:25 [INFO] vae.train — [Class 7/Web] Epoch 82/200 | train_loss=-2.7706 val_loss=-7.2679 beta=1.0000 lr=6.47e-04
+2026-05-22 18:43:25 [INFO] vae.train — [Class 7/Web] New best val_loss=-7.2679 — checkpoint saved.
+2026-05-22 18:43:25 [INFO] vae.train — [Class 7/Web] Epoch 83/200 | train_loss=-2.8909 val_loss=-7.6502 beta=1.0000 lr=6.39e-04
+2026-05-22 18:43:25 [INFO] vae.train — [Class 7/Web] New best val_loss=-7.6502 — checkpoint saved.
+2026-05-22 18:43:25 [INFO] vae.train — [Class 7/Web] Epoch 84/200 | train_loss=-3.1365 val_loss=-7.1692 beta=1.0000 lr=6.32e-04
+2026-05-22 18:43:26 [INFO] vae.train — [Class 7/Web] Epoch 85/200 | train_loss=-3.3019 val_loss=-7.3708 beta=1.0000 lr=6.24e-04
+2026-05-22 18:43:26 [INFO] vae.train — [Class 7/Web] Epoch 86/200 | train_loss=-3.5347 val_loss=-8.0230 beta=1.0000 lr=6.17e-04
+2026-05-22 18:43:26 [INFO] vae.train — [Class 7/Web] New best val_loss=-8.0230 — checkpoint saved.
+2026-05-22 18:43:26 [INFO] vae.train — [Class 7/Web] Epoch 87/200 | train_loss=-3.7073 val_loss=-7.9223 beta=1.0000 lr=6.09e-04
+2026-05-22 18:43:26 [INFO] vae.train — [Class 7/Web] Epoch 88/200 | train_loss=-3.0587 val_loss=-7.2193 beta=1.0000 lr=6.01e-04
+2026-05-22 18:43:27 [INFO] vae.train — [Class 7/Web] Epoch 89/200 | train_loss=-3.6305 val_loss=-8.3959 beta=1.0000 lr=5.94e-04
+2026-05-22 18:43:27 [INFO] vae.train — [Class 7/Web] New best val_loss=-8.3959 — checkpoint saved.
+2026-05-22 18:43:27 [INFO] vae.train — [Class 7/Web] Epoch 90/200 | train_loss=-4.1171 val_loss=-8.4545 beta=1.0000 lr=5.86e-04
+2026-05-22 18:43:27 [INFO] vae.train — [Class 7/Web] New best val_loss=-8.4545 — checkpoint saved.
+2026-05-22 18:43:27 [INFO] vae.train — [Class 7/Web] Epoch 91/200 | train_loss=-4.3509 val_loss=-9.3175 beta=1.0000 lr=5.78e-04
+2026-05-22 18:43:27 [INFO] vae.train — [Class 7/Web] New best val_loss=-9.3175 — checkpoint saved.
+2026-05-22 18:43:27 [INFO] vae.train — [Class 7/Web] Epoch 92/200 | train_loss=-4.5512 val_loss=-8.9614 beta=1.0000 lr=5.70e-04
+2026-05-22 18:43:28 [INFO] vae.train — [Class 7/Web] Epoch 93/200 | train_loss=-4.6800 val_loss=-9.2406 beta=1.0000 lr=5.63e-04
+2026-05-22 18:43:28 [INFO] vae.train — [Class 7/Web] Epoch 94/200 | train_loss=-4.7264 val_loss=-9.0921 beta=1.0000 lr=5.55e-04
+2026-05-22 18:43:28 [INFO] vae.train — [Class 7/Web] Epoch 95/200 | train_loss=-4.9149 val_loss=-8.9661 beta=1.0000 lr=5.47e-04
+2026-05-22 18:43:28 [INFO] vae.train — [Class 7/Web] Epoch 96/200 | train_loss=-4.9253 val_loss=-9.4104 beta=1.0000 lr=5.39e-04
+2026-05-22 18:43:28 [INFO] vae.train — [Class 7/Web] New best val_loss=-9.4104 — checkpoint saved.
+2026-05-22 18:43:28 [INFO] vae.train — [Class 7/Web] Epoch 97/200 | train_loss=-4.9958 val_loss=-9.5389 beta=1.0000 lr=5.31e-04
+2026-05-22 18:43:28 [INFO] vae.train — [Class 7/Web] New best val_loss=-9.5389 — checkpoint saved.
+2026-05-22 18:43:29 [INFO] vae.train — [Class 7/Web] Epoch 98/200 | train_loss=-5.4085 val_loss=-9.2965 beta=1.0000 lr=5.24e-04
+2026-05-22 18:43:29 [INFO] vae.train — [Class 7/Web] Epoch 99/200 | train_loss=-5.2802 val_loss=-9.5376 beta=1.0000 lr=5.16e-04
+2026-05-22 18:43:29 [INFO] vae.train — [Class 7/Web] Epoch 100/200 | train_loss=-5.7469 val_loss=-9.7469 beta=1.0000 lr=5.08e-04
+2026-05-22 18:43:29 [INFO] vae.train — [Class 7/Web] New best val_loss=-9.7469 — checkpoint saved.
+2026-05-22 18:43:29 [INFO] vae.train — [Class 7/Web] Epoch 101/200 | train_loss=-5.8393 val_loss=-9.7266 beta=1.0000 lr=5.00e-04
+2026-05-22 18:43:30 [INFO] vae.train — [Class 7/Web] Epoch 102/200 | train_loss=-5.8502 val_loss=-9.8697 beta=1.0000 lr=4.92e-04
+2026-05-22 18:43:30 [INFO] vae.train — [Class 7/Web] New best val_loss=-9.8697 — checkpoint saved.
+2026-05-22 18:43:30 [INFO] vae.train — [Class 7/Web] Epoch 103/200 | train_loss=-6.1445 val_loss=-10.3146 beta=1.0000 lr=4.84e-04
+2026-05-22 18:43:30 [INFO] vae.train — [Class 7/Web] New best val_loss=-10.3146 — checkpoint saved.
+2026-05-22 18:43:30 [INFO] vae.train — [Class 7/Web] Epoch 104/200 | train_loss=-6.2941 val_loss=-10.7370 beta=1.0000 lr=4.76e-04
+2026-05-22 18:43:30 [INFO] vae.train — [Class 7/Web] New best val_loss=-10.7370 — checkpoint saved.
+2026-05-22 18:43:30 [INFO] vae.train — [Class 7/Web] Epoch 105/200 | train_loss=-6.3982 val_loss=-10.5235 beta=1.0000 lr=4.69e-04
+2026-05-22 18:43:31 [INFO] vae.train — [Class 7/Web] Epoch 106/200 | train_loss=-6.5785 val_loss=-10.8148 beta=1.0000 lr=4.61e-04
+2026-05-22 18:43:31 [INFO] vae.train — [Class 7/Web] New best val_loss=-10.8148 — checkpoint saved.
+2026-05-22 18:43:31 [INFO] vae.train — [Class 7/Web] Epoch 107/200 | train_loss=-6.6892 val_loss=-10.7846 beta=1.0000 lr=4.53e-04
+2026-05-22 18:43:31 [INFO] vae.train — [Class 7/Web] Epoch 108/200 | train_loss=-6.8331 val_loss=-10.7411 beta=1.0000 lr=4.45e-04
+2026-05-22 18:43:31 [INFO] vae.train — [Class 7/Web] Epoch 109/200 | train_loss=-6.8316 val_loss=-10.5490 beta=1.0000 lr=4.37e-04
+2026-05-22 18:43:32 [INFO] vae.train — [Class 7/Web] Epoch 110/200 | train_loss=-6.8927 val_loss=-10.6168 beta=1.0000 lr=4.30e-04
+2026-05-22 18:43:32 [INFO] vae.train — [Class 7/Web] Epoch 111/200 | train_loss=-7.1373 val_loss=-11.1845 beta=1.0000 lr=4.22e-04
+2026-05-22 18:43:32 [INFO] vae.train — [Class 7/Web] New best val_loss=-11.1845 — checkpoint saved.
+2026-05-22 18:43:32 [INFO] vae.train — [Class 7/Web] Epoch 112/200 | train_loss=-7.2424 val_loss=-11.2642 beta=1.0000 lr=4.14e-04
+2026-05-22 18:43:32 [INFO] vae.train — [Class 7/Web] New best val_loss=-11.2642 — checkpoint saved.
+2026-05-22 18:43:32 [INFO] vae.train — [Class 7/Web] Epoch 113/200 | train_loss=-7.3523 val_loss=-11.3172 beta=1.0000 lr=4.06e-04
+2026-05-22 18:43:32 [INFO] vae.train — [Class 7/Web] New best val_loss=-11.3172 — checkpoint saved.
+2026-05-22 18:43:33 [INFO] vae.train — [Class 7/Web] Epoch 114/200 | train_loss=-7.5609 val_loss=-11.3296 beta=1.0000 lr=3.99e-04
+2026-05-22 18:43:33 [INFO] vae.train — [Class 7/Web] New best val_loss=-11.3296 — checkpoint saved.
+2026-05-22 18:43:33 [INFO] vae.train — [Class 7/Web] Epoch 115/200 | train_loss=-7.6803 val_loss=-11.5387 beta=1.0000 lr=3.91e-04
+2026-05-22 18:43:33 [INFO] vae.train — [Class 7/Web] New best val_loss=-11.5387 — checkpoint saved.
+2026-05-22 18:43:33 [INFO] vae.train — [Class 7/Web] Epoch 116/200 | train_loss=-7.8540 val_loss=-11.8424 beta=1.0000 lr=3.83e-04
+2026-05-22 18:43:33 [INFO] vae.train — [Class 7/Web] New best val_loss=-11.8424 — checkpoint saved.
+2026-05-22 18:43:33 [INFO] vae.train — [Class 7/Web] Epoch 117/200 | train_loss=-7.8987 val_loss=-11.7706 beta=1.0000 lr=3.76e-04
+2026-05-22 18:43:33 [INFO] vae.train — [Class 7/Web] Epoch 118/200 | train_loss=-8.0225 val_loss=-11.5268 beta=1.0000 lr=3.68e-04
+2026-05-22 18:43:34 [INFO] vae.train — [Class 7/Web] Epoch 119/200 | train_loss=-8.1806 val_loss=-11.6074 beta=1.0000 lr=3.61e-04
+2026-05-22 18:43:34 [INFO] vae.train — [Class 7/Web] Epoch 120/200 | train_loss=-8.2633 val_loss=-11.7677 beta=1.0000 lr=3.53e-04
+2026-05-22 18:43:34 [INFO] vae.train — [Class 7/Web] Epoch 121/200 | train_loss=-8.2912 val_loss=-11.9774 beta=1.0000 lr=3.45e-04
+2026-05-22 18:43:34 [INFO] vae.train — [Class 7/Web] New best val_loss=-11.9774 — checkpoint saved.
+2026-05-22 18:43:34 [INFO] vae.train — [Class 7/Web] Epoch 122/200 | train_loss=-8.5421 val_loss=-12.2660 beta=1.0000 lr=3.38e-04
+2026-05-22 18:43:34 [INFO] vae.train — [Class 7/Web] New best val_loss=-12.2660 — checkpoint saved.
+2026-05-22 18:43:34 [INFO] vae.train — [Class 7/Web] Epoch 123/200 | train_loss=-8.5372 val_loss=-12.2829 beta=1.0000 lr=3.31e-04
+2026-05-22 18:43:34 [INFO] vae.train — [Class 7/Web] New best val_loss=-12.2829 — checkpoint saved.
+2026-05-22 18:43:35 [INFO] vae.train — [Class 7/Web] Epoch 124/200 | train_loss=-8.8126 val_loss=-12.5248 beta=1.0000 lr=3.23e-04
+2026-05-22 18:43:35 [INFO] vae.train — [Class 7/Web] New best val_loss=-12.5248 — checkpoint saved.
+2026-05-22 18:43:35 [INFO] vae.train — [Class 7/Web] Epoch 125/200 | train_loss=-8.9455 val_loss=-12.4029 beta=1.0000 lr=3.16e-04
+2026-05-22 18:43:35 [INFO] vae.train — [Class 7/Web] Epoch 126/200 | train_loss=-9.1779 val_loss=-12.9300 beta=1.0000 lr=3.09e-04
+2026-05-22 18:43:35 [INFO] vae.train — [Class 7/Web] New best val_loss=-12.9300 — checkpoint saved.
+2026-05-22 18:43:36 [INFO] vae.train — [Class 7/Web] Epoch 127/200 | train_loss=-9.2628 val_loss=-12.9929 beta=1.0000 lr=3.01e-04
+2026-05-22 18:43:36 [INFO] vae.train — [Class 7/Web] New best val_loss=-12.9929 — checkpoint saved.
+2026-05-22 18:43:36 [INFO] vae.train — [Class 7/Web] Epoch 128/200 | train_loss=-9.3603 val_loss=-12.9135 beta=1.0000 lr=2.94e-04
+2026-05-22 18:43:36 [INFO] vae.train — [Class 7/Web] Epoch 129/200 | train_loss=-9.5199 val_loss=-13.0223 beta=1.0000 lr=2.87e-04
+2026-05-22 18:43:36 [INFO] vae.train — [Class 7/Web] New best val_loss=-13.0223 — checkpoint saved.
+2026-05-22 18:43:36 [INFO] vae.train — [Class 7/Web] Epoch 130/200 | train_loss=-9.5692 val_loss=-13.1645 beta=1.0000 lr=2.80e-04
+2026-05-22 18:43:36 [INFO] vae.train — [Class 7/Web] New best val_loss=-13.1645 — checkpoint saved.
+2026-05-22 18:43:36 [INFO] vae.train — [Class 7/Web] Epoch 131/200 | train_loss=-9.5934 val_loss=-13.0795 beta=1.0000 lr=2.73e-04
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] Epoch 132/200 | train_loss=-9.7119 val_loss=-13.0554 beta=1.0000 lr=2.66e-04
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] Epoch 133/200 | train_loss=-9.8986 val_loss=-13.4835 beta=1.0000 lr=2.59e-04
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] New best val_loss=-13.4835 — checkpoint saved.
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] Epoch 134/200 | train_loss=-10.0136 val_loss=-13.6335 beta=1.0000 lr=2.52e-04
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] New best val_loss=-13.6335 — checkpoint saved.
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] Epoch 135/200 | train_loss=-10.1350 val_loss=-13.6523 beta=1.0000 lr=2.45e-04
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] New best val_loss=-13.6523 — checkpoint saved.
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] Epoch 136/200 | train_loss=-10.2856 val_loss=-13.8836 beta=1.0000 lr=2.39e-04
+2026-05-22 18:43:37 [INFO] vae.train — [Class 7/Web] New best val_loss=-13.8836 — checkpoint saved.
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] Epoch 137/200 | train_loss=-10.3364 val_loss=-13.7076 beta=1.0000 lr=2.32e-04
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] Epoch 138/200 | train_loss=-10.4730 val_loss=-14.1057 beta=1.0000 lr=2.25e-04
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.1057 — checkpoint saved.
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] Epoch 139/200 | train_loss=-10.5055 val_loss=-13.9855 beta=1.0000 lr=2.19e-04
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] Epoch 140/200 | train_loss=-10.6362 val_loss=-14.1576 beta=1.0000 lr=2.12e-04
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.1576 — checkpoint saved.
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] Epoch 141/200 | train_loss=-10.6985 val_loss=-14.1729 beta=1.0000 lr=2.06e-04
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.1729 — checkpoint saved.
+2026-05-22 18:43:38 [INFO] vae.train — [Class 7/Web] Epoch 142/200 | train_loss=-10.7990 val_loss=-14.1524 beta=1.0000 lr=2.00e-04
+2026-05-22 18:43:39 [INFO] vae.train — [Class 7/Web] Epoch 143/200 | train_loss=-10.8355 val_loss=-14.1428 beta=1.0000 lr=1.94e-04
+2026-05-22 18:43:39 [INFO] vae.train — [Class 7/Web] Epoch 144/200 | train_loss=-11.0846 val_loss=-14.2922 beta=1.0000 lr=1.87e-04
+2026-05-22 18:43:39 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.2922 — checkpoint saved.
+2026-05-22 18:43:39 [INFO] vae.train — [Class 7/Web] Epoch 145/200 | train_loss=-11.0554 val_loss=-14.6005 beta=1.0000 lr=1.81e-04
+2026-05-22 18:43:39 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.6005 — checkpoint saved.
+2026-05-22 18:43:39 [INFO] vae.train — [Class 7/Web] Epoch 146/200 | train_loss=-10.9766 val_loss=-14.3890 beta=1.0000 lr=1.75e-04
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] Epoch 147/200 | train_loss=-11.1395 val_loss=-14.2933 beta=1.0000 lr=1.69e-04
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] Epoch 148/200 | train_loss=-11.2813 val_loss=-14.6840 beta=1.0000 lr=1.63e-04
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.6840 — checkpoint saved.
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] Epoch 149/200 | train_loss=-11.3050 val_loss=-14.6856 beta=1.0000 lr=1.58e-04
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.6856 — checkpoint saved.
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] Epoch 150/200 | train_loss=-11.3819 val_loss=-14.7876 beta=1.0000 lr=1.52e-04
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.7876 — checkpoint saved.
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] Epoch 151/200 | train_loss=-11.3891 val_loss=-14.8797 beta=1.0000 lr=1.46e-04
+2026-05-22 18:43:40 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.8797 — checkpoint saved.
+2026-05-22 18:43:41 [INFO] vae.train — [Class 7/Web] Epoch 152/200 | train_loss=-11.5897 val_loss=-14.9125 beta=1.0000 lr=1.41e-04
+2026-05-22 18:43:41 [INFO] vae.train — [Class 7/Web] New best val_loss=-14.9125 — checkpoint saved.
+2026-05-22 18:43:41 [INFO] vae.train — [Class 7/Web] Epoch 153/200 | train_loss=-11.5998 val_loss=-14.7410 beta=1.0000 lr=1.36e-04
+2026-05-22 18:43:41 [INFO] vae.train — [Class 7/Web] Epoch 154/200 | train_loss=-11.6671 val_loss=-15.0399 beta=1.0000 lr=1.30e-04
+2026-05-22 18:43:41 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.0399 — checkpoint saved.
+2026-05-22 18:43:41 [INFO] vae.train — [Class 7/Web] Epoch 155/200 | train_loss=-11.7210 val_loss=-15.0481 beta=1.0000 lr=1.25e-04
+2026-05-22 18:43:41 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.0481 — checkpoint saved.
+2026-05-22 18:43:41 [INFO] vae.train — [Class 7/Web] Epoch 156/200 | train_loss=-11.6461 val_loss=-14.8930 beta=1.0000 lr=1.20e-04
+2026-05-22 18:43:42 [INFO] vae.train — [Class 7/Web] Epoch 157/200 | train_loss=-11.8807 val_loss=-15.0473 beta=1.0000 lr=1.15e-04
+2026-05-22 18:43:42 [INFO] vae.train — [Class 7/Web] Epoch 158/200 | train_loss=-11.8726 val_loss=-14.9381 beta=1.0000 lr=1.10e-04
+2026-05-22 18:43:42 [INFO] vae.train — [Class 7/Web] Epoch 159/200 | train_loss=-11.9358 val_loss=-15.1430 beta=1.0000 lr=1.05e-04
+2026-05-22 18:43:42 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.1430 — checkpoint saved.
+2026-05-22 18:43:42 [INFO] vae.train — [Class 7/Web] Epoch 160/200 | train_loss=-11.9487 val_loss=-15.2975 beta=1.0000 lr=1.00e-04
+2026-05-22 18:43:42 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.2975 — checkpoint saved.
+2026-05-22 18:43:43 [INFO] vae.train — [Class 7/Web] Epoch 161/200 | train_loss=-12.0458 val_loss=-15.2781 beta=1.0000 lr=9.55e-05
+2026-05-22 18:43:43 [INFO] vae.train — [Class 7/Web] Epoch 162/200 | train_loss=-11.9997 val_loss=-15.4464 beta=1.0000 lr=9.09e-05
+2026-05-22 18:43:43 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.4464 — checkpoint saved.
+2026-05-22 18:43:43 [INFO] vae.train — [Class 7/Web] Epoch 163/200 | train_loss=-12.1169 val_loss=-15.3426 beta=1.0000 lr=8.65e-05
+2026-05-22 18:43:43 [INFO] vae.train — [Class 7/Web] Epoch 164/200 | train_loss=-12.1520 val_loss=-15.4075 beta=1.0000 lr=8.21e-05
+2026-05-22 18:43:43 [INFO] vae.train — [Class 7/Web] Epoch 165/200 | train_loss=-12.2042 val_loss=-15.4770 beta=1.0000 lr=7.78e-05
+2026-05-22 18:43:43 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.4770 — checkpoint saved.
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] Epoch 166/200 | train_loss=-12.2169 val_loss=-15.4890 beta=1.0000 lr=7.37e-05
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.4890 — checkpoint saved.
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] Epoch 167/200 | train_loss=-12.2911 val_loss=-15.5275 beta=1.0000 lr=6.96e-05
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.5275 — checkpoint saved.
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] Epoch 168/200 | train_loss=-12.2506 val_loss=-15.5139 beta=1.0000 lr=6.57e-05
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] Epoch 169/200 | train_loss=-12.3133 val_loss=-15.5358 beta=1.0000 lr=6.18e-05
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.5358 — checkpoint saved.
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] Epoch 170/200 | train_loss=-12.3674 val_loss=-15.6161 beta=1.0000 lr=5.81e-05
+2026-05-22 18:43:44 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.6161 — checkpoint saved.
+2026-05-22 18:43:45 [INFO] vae.train — [Class 7/Web] Epoch 171/200 | train_loss=-12.3350 val_loss=-15.5840 beta=1.0000 lr=5.45e-05
+2026-05-22 18:43:45 [INFO] vae.train — [Class 7/Web] Epoch 172/200 | train_loss=-12.3662 val_loss=-15.5991 beta=1.0000 lr=5.10e-05
+2026-05-22 18:43:45 [INFO] vae.train — [Class 7/Web] Epoch 173/200 | train_loss=-12.4296 val_loss=-15.6819 beta=1.0000 lr=4.76e-05
+2026-05-22 18:43:45 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.6819 — checkpoint saved.
+2026-05-22 18:43:45 [INFO] vae.train — [Class 7/Web] Epoch 174/200 | train_loss=-12.3709 val_loss=-15.4691 beta=1.0000 lr=4.43e-05
+2026-05-22 18:43:45 [INFO] vae.train — [Class 7/Web] Epoch 175/200 | train_loss=-12.4559 val_loss=-15.6853 beta=1.0000 lr=4.11e-05
+2026-05-22 18:43:45 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.6853 — checkpoint saved.
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] Epoch 176/200 | train_loss=-12.5068 val_loss=-15.7178 beta=1.0000 lr=3.81e-05
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.7178 — checkpoint saved.
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] Epoch 177/200 | train_loss=-12.5767 val_loss=-15.7303 beta=1.0000 lr=3.51e-05
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.7303 — checkpoint saved.
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] Epoch 178/200 | train_loss=-12.5245 val_loss=-15.7116 beta=1.0000 lr=3.23e-05
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] Epoch 179/200 | train_loss=-12.5516 val_loss=-15.7590 beta=1.0000 lr=2.96e-05
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.7590 — checkpoint saved.
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] Epoch 180/200 | train_loss=-12.5618 val_loss=-15.7633 beta=1.0000 lr=2.70e-05
+2026-05-22 18:43:46 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.7633 — checkpoint saved.
+2026-05-22 18:43:47 [INFO] vae.train — [Class 7/Web] Epoch 181/200 | train_loss=-12.6152 val_loss=-15.7719 beta=1.0000 lr=2.45e-05
+2026-05-22 18:43:47 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.7719 — checkpoint saved.
+2026-05-22 18:43:47 [INFO] vae.train — [Class 7/Web] Epoch 182/200 | train_loss=-12.6551 val_loss=-15.8471 beta=1.0000 lr=2.21e-05
+2026-05-22 18:43:47 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.8471 — checkpoint saved.
+2026-05-22 18:43:47 [INFO] vae.train — [Class 7/Web] Epoch 183/200 | train_loss=-12.6768 val_loss=-15.8980 beta=1.0000 lr=1.99e-05
+2026-05-22 18:43:47 [INFO] vae.train — [Class 7/Web] New best val_loss=-15.8980 — checkpoint saved.
+2026-05-22 18:43:47 [INFO] vae.train — [Class 7/Web] Epoch 184/200 | train_loss=-12.6239 val_loss=-15.7386 beta=1.0000 lr=1.77e-05
+2026-05-22 18:43:47 [INFO] vae.train — [Class 7/Web] Epoch 185/200 | train_loss=-12.6545 val_loss=-15.7934 beta=1.0000 lr=1.57e-05
+2026-05-22 18:43:48 [INFO] vae.train — [Class 7/Web] Epoch 186/200 | train_loss=-12.5626 val_loss=-15.8166 beta=1.0000 lr=1.38e-05
+2026-05-22 18:43:48 [INFO] vae.train — [Class 7/Web] Epoch 187/200 | train_loss=-12.7230 val_loss=-15.8763 beta=1.0000 lr=1.20e-05
+2026-05-22 18:43:48 [INFO] vae.train — [Class 7/Web] Epoch 188/200 | train_loss=-12.7317 val_loss=-15.8590 beta=1.0000 lr=1.04e-05
+2026-05-22 18:43:48 [INFO] vae.train — [Class 7/Web] Epoch 189/200 | train_loss=-12.6509 val_loss=-15.8446 beta=1.0000 lr=8.86e-06
+2026-05-22 18:43:49 [INFO] vae.train — [Class 7/Web] Epoch 190/200 | train_loss=-12.7133 val_loss=-15.8572 beta=1.0000 lr=7.45e-06
+2026-05-22 18:43:49 [INFO] vae.train — [Class 7/Web] Epoch 191/200 | train_loss=-12.7247 val_loss=-15.8612 beta=1.0000 lr=6.16e-06
+2026-05-22 18:43:49 [INFO] vae.train — [Class 7/Web] Epoch 192/200 | train_loss=-12.7118 val_loss=-15.8740 beta=1.0000 lr=4.99e-06
+2026-05-22 18:43:49 [INFO] vae.train — [Class 7/Web] Epoch 193/200 | train_loss=-12.7466 val_loss=-15.8708 beta=1.0000 lr=3.94e-06
+2026-05-22 18:43:49 [INFO] vae.train — [Class 7/Web] Early stop after 193 epochs (patience=10).
+2026-05-22 18:43:49 [INFO] vae.train — [Class 7/Web] Curves saved to D:\thesis_final\results\vae\curves_Web.png
+2026-05-22 18:43:49 [INFO] __main__ — Reloading checkpoint from D:\thesis_final\models\vae\vae_class_7_Web.pt
+2026-05-22 18:43:50 [INFO] vae.dataset — Class 7: 2380 samples loaded
+2026-05-22 18:43:50 [INFO] vae.diagnostics — === Running diagnostics for class 7 (Web) ===
+2026-05-22 18:43:50 [INFO] vae.diagnostics — Loaded validator via attack.validator.validate_batch
+2026-05-22 18:43:50 [INFO] vae.diagnostics — [1/4] Posterior collapse check ...
+2026-05-22 18:43:50 [INFO] vae.diagnostics — Posterior collapse: 4/16 dims below threshold 0.010
+2026-05-22 18:43:50 [INFO] vae.diagnostics — [2/4] Per-feature reconstruction error ...
+2026-05-22 18:43:50 [INFO] vae.diagnostics — Per-feature recon: protocol top-1=0.9462, worst feature=IAT (1.0873)
+2026-05-22 18:43:50 [INFO] vae.diagnostics — [3/4] Unconditional sample validity (n=1000) ...
+2026-05-22 18:43:50 [INFO] vae.diagnostics — Unconditional validity: 0.2610 overall (261/1000 valid)
+2026-05-22 18:43:50 [INFO] vae.diagnostics — Protocol-binary consistency: 1.0 (as expected)
+2026-05-22 18:43:50 [INFO] vae.diagnostics — [4/4] Conditional reconstruction validity ...
+2026-05-22 18:43:50 [INFO] vae.diagnostics — Conditional validity: 0.4910 overall (491/1000 valid)
+2026-05-22 18:43:50 [INFO] vae.diagnostics — Diagnostics written to D:\thesis_final\results\vae\diagnostics_Web.json
+2026-05-22 18:43:50 [INFO] __main__ — Manifest updated for class Web
+2026-05-22 18:43:50 [INFO] __main__ — Class Web done: best_val_loss=-15.8980 epochs=193 collapsed=4 uncond_validity=26.10% cond_validity=49.10% proto_acc=94.62%
+2026-05-22 18:43:50 [INFO] __main__ — ===== Training Summary =====
+2026-05-22 18:43:50 [INFO] __main__ —                          Class | n_train | n_val | best_val_loss | final_kl | collapsed_dims | unconditional_validity_pct | conditional_validity_pct | protocol_accuracy_pct
+2026-05-22 18:43:50 [INFO] __main__ — Mirai | 419972 | 59996 | -48.225119 | 14.031077 | 6 | 38.7 | 47.0 | 99.86
+2026-05-22 18:43:50 [INFO] __main__ — Recon | 352470 | 50353 | -28.842307 | 28.849303 | 2 | 8.1 | 34.2 | 98.47
+2026-05-22 18:43:50 [INFO] __main__ — Spoofing | 260015 | 37145 | -25.898043 | 28.267324 | 3 | 7.1 | 31.2 | 99.28
+2026-05-22 18:43:50 [INFO] __main__ — Web | 16659 | 2380 | -15.897951 | 13.247476 | 4 | 26.1 | 49.1 | 94.62
+2026-05-22 18:43:50 [INFO] __main__ — Summary Markdown saved to D:\thesis_final\results\vae\summary.md
+2026-05-22 18:43:50 [INFO] __main__ — Summary CSV saved to D:\thesis_final\results\vae\summary.csv
+2026-05-22 18:43:50 [INFO] __main__ — ===== Phase 10 Gate Checks =====
+2026-05-22 18:43:50 [INFO] __main__ —   Gate1_all_checkpoints_exist                   PASS
+2026-05-22 18:43:50 [INFO] __main__ —   Gate2_no_excess_collapse                      PASS
+2026-05-22 18:43:50 [INFO] __main__ —   Gate3_conditional_validity_60pct              FAIL
+2026-05-22 18:43:50 [INFO] __main__ —   Gate4_unconditional_validity_30pct            FAIL
+2026-05-22 18:43:50 [INFO] __main__ —   Gate5_protocol_accuracy_95pct                 FAIL
+2026-05-22 18:43:50 [INFO] __main__ —   Gate6_no_nan_inf_recon                        PASS
+2026-05-22 18:43:50 [INFO] __main__ —   Gate7_protocol_binary_consistency             PASS
+2026-05-22 18:43:50 [INFO] __main__ —   Gate8_summary_md_exists                       PASS
+2026-05-22 18:43:50 [WARNING] __main__ — One or more Phase 10 gates FAILED — review logs above.
+2026-05-22 18:43:50 [INFO] __main__ — === VAE Orchestrator complete ===

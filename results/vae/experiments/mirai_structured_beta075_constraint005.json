@@ -1,0 +1,60 @@
+{
+  "classes": [
+    "Benign",
+    "BruteForce",
+    "DDoS",
+    "DoS",
+    "Mirai",
+    "Recon",
+    "Spoofing",
+    "Web"
+  ],
+  "latent_dim": {
+    "Benign": 16,
+    "BruteForce": 16,
+    "DDoS": 16,
+    "DoS": 16,
+    "Mirai": 16,
+    "Recon": 16,
+    "Spoofing": 16,
+    "Web": 16
+  },
+  "beta_target": {
+    "Benign": 1.0,
+    "BruteForce": 1.0,
+    "DDoS": 1.0,
+    "DoS": 1.0,
+    "Mirai": 0.75,
+    "Recon": 1.0,
+    "Spoofing": 1.0,
+    "Web": 1.0
+  },
+  "protocol_embed_dim": 4,
+  "encoder_hidden": [
+    128,
+    64
+  ],
+  "decoder_hidden": [
+    64,
+    128
+  ],
+  "max_epochs": 200,
+  "batch_size": 512,
+  "num_workers": 0,
+  "lr": 0.001,
+  "weight_decay": 1e-05,
+  "warmup_frac": 0.3,
+  "early_stop_patience": 10,
+  "grad_clip": 5.0,
+  "use_protocol_class_weights": false,
+  "protocol_class_weight_power": 0.5,
+  "protocol_loss_weight": 2.0,
+  "constraint_loss_weight": 0.05,
+  "use_structured_continuous_decoder": true,
+  "structured_std_floor": 0.01,
+  "latent_logvar_floor": -6.0,
+  "latent_logvar_ceiling": 6.0,
+  "continuous_logvar_floor": -7.0,
+  "continuous_logvar_ceiling": 2.0,
+  "continuous_nll_per_sample_cap": null
+}

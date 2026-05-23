@@ -1,6 +1,7 @@
 {
   "enabledPlugins": {
     "codex@openai-codex": true,
-    "memclaw@memclaw": true
+    "memclaw@memclaw": true,
+    "ecc@ecc": true
   }
 }

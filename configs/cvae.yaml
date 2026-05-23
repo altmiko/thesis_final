@@ -1,0 +1,38 @@
+data:
+  processed_dir: D:/thesis_final/data/processed
+  data_space: raw
+  exclude_benign: true
+  nonbinary_threshold: 0.05
+  nonbinary_tol: 0.000001
+  scan_batch_size: 200000
+  tail_clip: null
+
+model:
+  latent_dim: 16
+  encoder_layers: [256, 128]
+  decoder_layers: [128, 256]
+  dropout: 0.1
+  # Use "identity" if training on unbounded scaled values.
+  continuous_output_activation: identity
+
+train:
+  batch_size: 512
+  max_epochs: 100
+  lr: 0.001
+  weight_decay: 0.0
+  beta_warmup_fraction: 0.3
+  early_stop_patience: 10
+  num_workers: 0
+  seed: 42
+  save_dir: D:/thesis_final/checkpoints/cvae
+  cont_weight: 1.0
+  bin_weight: 1.0
+  free_bits: 0.0
+  report_continuous_stats: false
+  stats_sample_size: 200000
+  grad_clip: 5.0
+  use_cosine_lr: true
+  selection_beta: 1.0
+  debug_diagnostics: true
+  debug_sample_size: 50000
+  debug_batches: 3

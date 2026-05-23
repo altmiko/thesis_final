@@ -1,0 +1,14 @@
+# VAE Training Summary
+
+Important: treat `*_validity_pre_pct` as the honest decoder metric. `*_validity_pre_pct` is validity in raw space immediately after `scaler.inverse_transform`, before any repair. `*_validity_pct` is validity after `raw_postprocess()`, and `*_repair_pct` is the fraction of samples rescued by that repair step.
+
+| Class | latent_dim | n_train | n_val | best_val_loss | final_kl | collapsed_dims | unconditional_validity_pre_pct | unconditional_validity_pct | unconditional_repair_pct | conditional_validity_pre_pct | conditional_validity_pct | conditional_repair_pct | protocol_accuracy_pct |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Benign | 16 | 139992 | 19999 | -24.547164 | 30.127369 | 0 | 100.0 | 100.0 | 0.0 | 100.0 | 100.0 | 0.0 | 98.91 |
+| BruteForce | 16 | 8766 | 1252 | 58.095072 | 255.514114 | 0 | 100.0 | 100.0 | 0.0 | 100.0 | 100.0 | 0.0 | 85.78 |
+| DDoS | 16 | 1434940 | 204993 | -36.072708 | 24.342851 | 3 | 100.0 | 100.0 | 0.0 | 100.0 | 100.0 | 0.0 | 99.9 |
+| DoS | 16 | 468144 | 66876 | -30.186392 | 13.430898 | 6 | 100.0 | 100.0 | 0.0 | 100.0 | 100.0 | 0.0 | 99.93 |
+| Mirai | 16 | 419972 | 59996 | -42.343058 | 9.201848 | 9 | 100.0 | 100.0 | 0.0 | 100.0 | 100.0 | 0.0 | 99.95 |
+| Recon | 16 | 352470 | 50353 | -29.428819 | 22.196724 | 7 | 100.0 | 100.0 | 0.0 | 100.0 | 100.0 | 0.0 | 98.87 |
+| Spoofing | 16 | 260015 | 37145 | -21.295234 | 41.005686 | 1 | 100.0 | 100.0 | 0.0 | 100.0 | 100.0 | 0.0 | 99.36 |
+| Web | 16 | 16659 | 2380 | -14.809789 | 13.427054 | 5 | 100.0 | 100.0 | 0.0 | 100.0 | 100.0 | 0.0 | 99.37 |

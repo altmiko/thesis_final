@@ -1,0 +1,269 @@
+{
+  "schema_version": "1.0",
+  "created": "2026-05-21T20:52:08Z",
+  "phase0_audit": {
+    "feature_partition": {
+      "protocol_idx": [
+        1
+      ],
+      "continuous_idx": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "independent_binary_idx": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        24,
+        25,
+        28,
+        29
+      ],
+      "derived_binary_idx": [
+        22,
+        23,
+        26,
+        27
+      ]
+    },
+    "n_pseudo_binary": 0,
+    "protocol_allowlist": [
+      0,
+      1,
+      2,
+      6,
+      17,
+      47
+    ],
+    "protocol_values_in_train": [
+      0,
+      1,
+      6,
+      17,
+      47
+    ],
+    "protocol_note": "Protocol 2 (IGMP) absent from training data but included in allowlist",
+    "binary_columns_all_clean": true
+  },
+  "checkpoints": {
+    "Benign": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_0_Benign.pt",
+      "sha256": "093c5ad9e71dd104c58f13b964c5ddef20d148b9d2f2f3f84e9f1850f554a11f",
+      "best_val_loss": -24.54716377258301,
+      "epochs_trained": 32,
+      "n_train": 139992,
+      "n_val": 19999,
+      "latent_dim": 16
+    },
+    "BruteForce": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_1_BruteForce.pt",
+      "sha256": "d9964469143421ff2fde5d79acd3a395d81fd46d212cefca90b012b7d4cf7bfb",
+      "best_val_loss": 58.09507179260254,
+      "epochs_trained": 23,
+      "n_train": 8766,
+      "n_val": 1252,
+      "latent_dim": 16
+    },
+    "DDoS": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_2_DDoS.pt",
+      "sha256": "e41b8a570990469c58c31a125c71b3386f546cdff3eda5495fcf3acf1183d5b0",
+      "best_val_loss": -36.07270831966875,
+      "epochs_trained": 21,
+      "n_train": 1434940,
+      "n_val": 204993,
+      "latent_dim": 16
+    },
+    "DoS": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_3_DoS.pt",
+      "sha256": "26f658a096bafc4a3ecf3147cf3b1409202bba623d4a0ff2ca94ba02211f7530",
+      "best_val_loss": -30.186391541452117,
+      "epochs_trained": 26,
+      "n_train": 468144,
+      "n_val": 66876,
+      "latent_dim": 16
+    },
+    "Mirai": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_4_Mirai.pt",
+      "sha256": "25df86c2e5f6e05a36793e99a20b97fcedbb114b5c3c303285b500d82754bbe3",
+      "best_val_loss": -42.34305760011835,
+      "epochs_trained": 41,
+      "n_train": 419972,
+      "n_val": 59996,
+      "latent_dim": 16
+    },
+    "Recon": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_5_Recon.pt",
+      "sha256": "e6aa797bb905806c03b2f15706d9b8a31ca3eacc714fa0d064cc3f8157e82b40",
+      "best_val_loss": -29.428819313049317,
+      "epochs_trained": 41,
+      "n_train": 352470,
+      "n_val": 50353,
+      "latent_dim": 16
+    },
+    "Spoofing": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_6_Spoofing.pt",
+      "sha256": "6b22c6e68aa536def5e49545e3f899718b1b55721a26d540e3d393734314753a",
+      "best_val_loss": -21.295233597626556,
+      "epochs_trained": 24,
+      "n_train": 260015,
+      "n_val": 37145,
+      "latent_dim": 16
+    },
+    "Web": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_7_Web.pt",
+      "sha256": "1ec2931c6f378c44f035bb0388a64bce24706c97960c30cb6969130f8e04a668",
+      "best_val_loss": -14.809788703918457,
+      "epochs_trained": 200,
+      "n_train": 16659,
+      "n_val": 2380,
+      "latent_dim": 16
+    }
+  },
+  "diagnostics": {
+    "Benign": {
+      "path": "D:\\thesis_final\\results\\vae\\diagnostics_Benign.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9890994549727486
+    },
+    "BruteForce": {
+      "path": "D:\\thesis_final\\results\\vae\\diagnostics_BruteForce.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.8578274760383386
+    },
+    "DDoS": {
+      "path": "D:\\thesis_final\\results\\vae\\diagnostics_DDoS.json",
+      "collapsed_dim_count": 3,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9990194787139073
+    },
+    "DoS": {
+      "path": "D:\\thesis_final\\results\\vae\\diagnostics_DoS.json",
+      "collapsed_dim_count": 6,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9993121598181709
+    },
+    "Mirai": {
+      "path": "D:\\thesis_final\\results\\vae\\diagnostics_Mirai.json",
+      "collapsed_dim_count": 9,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9995166344422961
+    },
+    "Recon": {
+      "path": "D:\\thesis_final\\results\\vae\\diagnostics_Recon.json",
+      "collapsed_dim_count": 7,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9886600599765655
+    },
+    "Spoofing": {
+      "path": "D:\\thesis_final\\results\\vae\\diagnostics_Spoofing.json",
+      "collapsed_dim_count": 1,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.993619598869296
+    },
+    "Web": {
+      "path": "D:\\thesis_final\\results\\vae\\diagnostics_Web.json",
+      "collapsed_dim_count": 5,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9936974789915967
+    }
+  }
+}
