@@ -14,7 +14,10 @@ def classifier_logits(classifier: Any, x_batch: torch.Tensor, *, device: str) ->
 
     classifier = classifier.to(device)
     classifier.eval()
-    logits = classifier(x_batch.to(device))
+    # Disable CuDNN for attack-time classifier passes so recurrent baselines can
+    # backpropagate in eval mode on CUDA without tripping the CuDNN RNN guard.
+    with torch.backends.cudnn.flags(enabled=False):
+        logits = classifier(x_batch.to(device))
     if isinstance(logits, tuple):
         logits = logits[0]
     return logits

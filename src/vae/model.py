@@ -68,6 +68,7 @@ class MixedInputBetaVAE(nn.Module):
         decoder_hidden: tuple = (64, 128),
         n_pseudo_binary: int = 0,
         use_structured_continuous_decoder: bool = False,
+        use_structured_physics_decoder: bool = False,
         structured_continuous_mode: str = "full",
         structured_std_floor: float = 0.0,
         latent_logvar_bounds: tuple[float, float] = (-6.0, 6.0),
@@ -81,6 +82,7 @@ class MixedInputBetaVAE(nn.Module):
         self.decoder_hidden = decoder_hidden
         self.n_pseudo_binary = n_pseudo_binary
         self.use_structured_continuous_decoder = use_structured_continuous_decoder
+        self.use_structured_physics_decoder = use_structured_physics_decoder
         self.structured_continuous_mode = structured_continuous_mode
         self.structured_std_floor = structured_std_floor
         self.latent_logvar_bounds = latent_logvar_bounds
@@ -232,10 +234,12 @@ class MixedInputBetaVAE(nn.Module):
     def _structure_continuous_raw(self, continuous_raw: torch.Tensor) -> torch.Tensor:
         """Apply by-construction constraints for the main raw-space consistency rules."""
         ttl_idx = _continuous_pos(self.partition, 2)
+        tot_sum_idx = _continuous_pos(self.partition, 30)
         min_idx = _continuous_pos(self.partition, 31)
         max_idx = _continuous_pos(self.partition, 32)
         avg_idx = _continuous_pos(self.partition, 33)
         std_idx = _continuous_pos(self.partition, 34)
+        tot_size_idx = _continuous_pos(self.partition, 35)
         number_idx = _continuous_pos(self.partition, 37)
         variance_idx = _continuous_pos(self.partition, 38)
 
@@ -259,18 +263,46 @@ class MixedInputBetaVAE(nn.Module):
         avg_val = min_base + avg_gap
         max_val = avg_val + max_gap
 
-        std_val = self.structured_std_floor + torch.nn.functional.softplus(continuous_raw[:, std_idx])
-        variance_val = std_val.square()
-
         number_pos = 1.0 + torch.nn.functional.softplus(continuous_raw[:, number_idx])
         number_val = number_pos + (torch.round(number_pos) - number_pos).detach()
         ttl_val = torch.sigmoid(continuous_raw[:, ttl_idx] / 32.0) * 255.0
 
+        std_candidate = self.structured_std_floor + torch.nn.functional.softplus(
+            continuous_raw[:, std_idx]
+        )
+        if self.use_structured_physics_decoder:
+            # P4: keep packet-size dispersion physically compatible with the realized range.
+            std_cap = 0.5 * (max_val - min_base)
+            std_val = torch.minimum(std_candidate, std_cap)
+        else:
+            std_val = std_candidate
+
+        if self.use_structured_physics_decoder:
+            # P5: singleton flows cannot have within-flow size variance.
+            singleton_mask = number_val <= 1.0
+            singleton_size = torch.nn.functional.softplus(continuous_raw[:, avg_idx])
+            min_base = torch.where(singleton_mask, singleton_size, min_base)
+            avg_val = torch.where(singleton_mask, singleton_size, avg_val)
+            max_val = torch.where(singleton_mask, singleton_size, max_val)
+            std_val = torch.where(singleton_mask, torch.zeros_like(std_val), std_val)
+
+        variance_val = std_val.square()
+
+        if self.use_structured_physics_decoder:
+            # P2 plus dataset duplication: Tot sum ~= Number * AVG and Tot size == AVG.
+            tot_size_val = avg_val
+            tot_sum_val = number_val * avg_val
+        else:
+            tot_size_val = structured[:, tot_size_idx]
+            tot_sum_val = structured[:, tot_sum_idx]
+
         structured[:, ttl_idx] = ttl_val
+        structured[:, tot_sum_idx] = tot_sum_val
         structured[:, min_idx] = min_base
         structured[:, avg_idx] = avg_val
         structured[:, max_idx] = max_val
         structured[:, std_idx] = std_val
+        structured[:, tot_size_idx] = tot_size_val
         structured[:, variance_idx] = variance_val
         structured[:, number_idx] = number_val
 

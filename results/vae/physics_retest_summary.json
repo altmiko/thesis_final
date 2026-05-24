@@ -1,0 +1,274 @@
+{
+  "Benign": {
+    "conditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.476,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.476
+    },
+    "conditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    },
+    "unconditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.521,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.521
+    },
+    "unconditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    }
+  },
+  "BruteForce": {
+    "conditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.814,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.814
+    },
+    "conditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    },
+    "unconditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.818,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.818
+    },
+    "unconditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    }
+  },
+  "DDoS": {
+    "conditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.637,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.637
+    },
+    "conditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    },
+    "unconditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.665,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.665
+    },
+    "unconditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.999,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.999
+    }
+  },
+  "DoS": {
+    "conditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.514,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.514
+    },
+    "conditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    },
+    "unconditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.506,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.506
+    },
+    "unconditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    }
+  },
+  "Mirai": {
+    "conditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.809,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.809
+    },
+    "conditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.989,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.989
+    },
+    "unconditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.979,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.979
+    },
+    "unconditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    }
+  },
+  "Recon": {
+    "conditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.954,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.954
+    },
+    "conditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.989,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.989
+    },
+    "unconditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.98,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.98
+    },
+    "unconditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.996,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.996
+    }
+  },
+  "Spoofing": {
+    "conditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.513,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.513
+    },
+    "conditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    },
+    "unconditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.522,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.522
+    },
+    "unconditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    }
+  },
+  "Web": {
+    "conditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.492,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.492
+    },
+    "conditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    },
+    "unconditional_pre": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 0.521,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 0.521
+    },
+    "unconditional_post": {
+      "per_rule_pass_rate": {
+        "P2": 1.0,
+        "P4": 1.0,
+        "P5": 1.0
+      },
+      "all_rules_pass_rate": 1.0
+    }
+  }
+}

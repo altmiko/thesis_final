@@ -1,0 +1,4 @@
+{
+  "use_structured_physics_decoder": true,
+  "physics_constraint_loss_weight": 0.05
+}

@@ -80,6 +80,56 @@ def _compute_constraint_loss(
     }
 
 
+def _compute_physics_constraint_loss(
+    continuous_mu_raw: torch.Tensor,
+    partition: dict,
+) -> dict[str, torch.Tensor]:
+    """Differentiable raw-space penalties for post-hoc physics rules P2/P4/P5."""
+    tot_sum_idx = _constraint_pos(partition, 30)
+    min_idx = _constraint_pos(partition, 31)
+    max_idx = _constraint_pos(partition, 32)
+    avg_idx = _constraint_pos(partition, 33)
+    std_idx = _constraint_pos(partition, 34)
+    number_idx = _constraint_pos(partition, 37)
+    variance_idx = _constraint_pos(partition, 38)
+
+    total_sum_raw = continuous_mu_raw[:, tot_sum_idx]
+    min_raw = continuous_mu_raw[:, min_idx]
+    max_raw = continuous_mu_raw[:, max_idx]
+    avg_raw = continuous_mu_raw[:, avg_idx]
+    std_raw = continuous_mu_raw[:, std_idx]
+    number_raw = continuous_mu_raw[:, number_idx]
+    variance_raw = continuous_mu_raw[:, variance_idx]
+
+    p2_total_bytes = (
+        torch.abs(total_sum_raw - (number_raw * avg_raw)) / (total_sum_raw.abs() + 1.0)
+    ).mean()
+
+    std_cap = 0.5 * (max_raw - min_raw)
+    p4_std_bound = torch.relu(std_raw - std_cap).mean()
+
+    singleton_mask = number_raw <= 1.5
+    singleton_count = singleton_mask.float().sum().clamp_min(1.0)
+    singleton_size_match = (
+        (
+            torch.abs(min_raw - avg_raw)
+            + torch.abs(max_raw - avg_raw)
+        ) * singleton_mask.float()
+    ).sum() / singleton_count
+    singleton_var_zero = (
+        (std_raw.abs() + variance_raw.abs()) * singleton_mask.float()
+    ).sum() / singleton_count
+    p5_singleton = singleton_size_match + singleton_var_zero
+
+    total = p2_total_bytes + p4_std_bound + p5_singleton
+    return {
+        "total": total,
+        "p2_total_bytes": p2_total_bytes,
+        "p4_std_bound": p4_std_bound,
+        "p5_singleton": p5_singleton,
+    }
+
+
 def compute_elbo(
     batch_x_39: torch.Tensor,
     model_out: dict,
@@ -90,6 +140,7 @@ def compute_elbo(
     protocol_class_weights: torch.Tensor | None = None,
     protocol_loss_weight: float = 1.0,
     constraint_loss_weight: float = 0.0,
+    physics_constraint_loss_weight: float = 0.0,
     continuous_feature_weights: torch.Tensor | None = None,
     binary_feature_weights: torch.Tensor | None = None,
     continuous_logvar_floor: float = -4.0,
@@ -266,12 +317,26 @@ def compute_elbo(
         }
         constraint_loss = zero
 
+    if continuous_mu_raw is not None and physics_constraint_loss_weight > 0.0:
+        physics_constraint_terms = _compute_physics_constraint_loss(continuous_mu_raw, partition)
+        physics_constraint_loss = physics_constraint_terms["total"]
+    else:
+        zero = torch.tensor(0.0, device=mu.device)
+        physics_constraint_terms = {
+            "total": zero,
+            "p2_total_bytes": zero,
+            "p4_std_bound": zero,
+            "p5_singleton": zero,
+        }
+        physics_constraint_loss = zero
+
     loss = (
         recon_continuous
         + recon_independent_binary
         + protocol_loss_weight * recon_protocol
         + beta * kl
         + constraint_loss_weight * constraint_loss
+        + physics_constraint_loss_weight * physics_constraint_loss
         + raw_relative_continuous_loss_weight * recon_continuous_raw_relative
         + raw_relative_tail_focus_weight * recon_continuous_raw_relative_tail
     )
@@ -294,6 +359,10 @@ def compute_elbo(
         "constraint_variance": constraint_terms["variance"],
         "constraint_packet_positive": constraint_terms["packet_positive"],
         "constraint_packet_integer": constraint_terms["packet_integer"],
+        "physics_constraint_loss": physics_constraint_loss,
+        "physics_p2_total_bytes": physics_constraint_terms["p2_total_bytes"],
+        "physics_p4_std_bound": physics_constraint_terms["p4_std_bound"],
+        "physics_p5_singleton": physics_constraint_terms["p5_singleton"],
         "loss": loss,
     }
 

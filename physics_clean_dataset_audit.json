@@ -1,0 +1,28 @@
+{
+  "n_samples": 4429940,
+  "rules_implemented": [
+    "P2",
+    "P4",
+    "P5"
+  ],
+  "per_rule_pass_rate": {
+    "P2": 1.0,
+    "P4": 0.9971103446096335,
+    "P5": 1.0
+  },
+  "all_rules_pass_rate": 0.9971103446096335,
+  "rules_omitted": [
+    "P1",
+    "P3",
+    "P6",
+    "P7",
+    "P8"
+  ],
+  "rule_notes": {
+    "P3": "Omitted because Tot size is ambiguous in the source documentation and is an exact duplicate of AVG in this processed schema.",
+    "P1": "Removed because clean raw dataset pass rate was below threshold.",
+    "P6": "Removed because clean raw dataset pass rate was below threshold.",
+    "P7": "Removed because clean raw dataset pass rate was below threshold.",
+    "P8": "Removed because clean raw dataset pass rate was below threshold."
+  }
+}

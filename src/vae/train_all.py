@@ -57,7 +57,7 @@ def compute_sha256(path: Path | str) -> str:
 def _resolve_model_hparams(
     config_like: dict,
     class_name: str,
-) -> tuple[int, tuple[int, ...], tuple[int, ...], int, bool, str, float, tuple[float, float]]:
+) -> tuple[int, tuple[int, ...], tuple[int, ...], int, bool, bool, str, float, tuple[float, float]]:
     latent_cfg = config_like["latent_dim"]
     latent_dim = latent_cfg[class_name] if isinstance(latent_cfg, dict) else int(latent_cfg)
     encoder_hidden = tuple(config_like.get("encoder_hidden", [128, 64]))
@@ -65,6 +65,9 @@ def _resolve_model_hparams(
     protocol_embed_dim = int(config_like.get("protocol_embed_dim", 4))
     use_structured_continuous_decoder = bool(
         config_like.get("use_structured_continuous_decoder", False)
+    )
+    use_structured_physics_decoder = bool(
+        config_like.get("use_structured_physics_decoder", False)
     )
     structured_continuous_mode = str(config_like.get("structured_continuous_mode", "full"))
     structured_std_floor = float(
@@ -83,6 +86,7 @@ def _resolve_model_hparams(
         decoder_hidden,
         protocol_embed_dim,
         use_structured_continuous_decoder,
+        use_structured_physics_decoder,
         structured_continuous_mode,
         structured_std_floor,
         latent_logvar_bounds,
@@ -482,6 +486,7 @@ def main(args: argparse.Namespace) -> None:
             decoder_hidden,
             protocol_embed_dim,
             use_structured_continuous_decoder,
+            use_structured_physics_decoder,
             structured_continuous_mode,
             structured_std_floor,
             latent_logvar_bounds,
@@ -498,6 +503,7 @@ def main(args: argparse.Namespace) -> None:
             decoder_hidden=decoder_hidden,
             n_pseudo_binary=0,
             use_structured_continuous_decoder=use_structured_continuous_decoder,
+            use_structured_physics_decoder=use_structured_physics_decoder,
             structured_continuous_mode=structured_continuous_mode,
             structured_std_floor=structured_std_floor,
             latent_logvar_bounds=latent_logvar_bounds,

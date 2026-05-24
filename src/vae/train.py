@@ -409,6 +409,9 @@ def train_one_vae(
         decoder_hidden=tuple(config.get("decoder_hidden", [64, 128])),
         n_pseudo_binary=0,
         use_structured_continuous_decoder=use_structured_continuous_decoder,
+        use_structured_physics_decoder=bool(
+            config.get("use_structured_physics_decoder", False)
+        ),
         structured_continuous_mode=structured_continuous_mode,
         structured_std_floor=structured_std_floor,
         latent_logvar_bounds=(
@@ -506,6 +509,9 @@ def train_one_vae(
                 protocol_class_weights=protocol_class_weights_t,
                 protocol_loss_weight=float(config.get("protocol_loss_weight", 1.0)),
                 constraint_loss_weight=float(config.get("constraint_loss_weight", 0.0)),
+                physics_constraint_loss_weight=float(
+                    config.get("physics_constraint_loss_weight", 0.0)
+                ),
                 continuous_feature_weights=continuous_feature_weights_t,
                 binary_feature_weights=binary_feature_weights_t,
                 continuous_logvar_floor=float(config.get("continuous_logvar_floor", -4.0)),
@@ -582,6 +588,9 @@ def train_one_vae(
                     protocol_class_weights=protocol_class_weights_t,
                     protocol_loss_weight=float(config.get("protocol_loss_weight", 1.0)),
                     constraint_loss_weight=float(config.get("constraint_loss_weight", 0.0)),
+                    physics_constraint_loss_weight=float(
+                        config.get("physics_constraint_loss_weight", 0.0)
+                    ),
                     continuous_feature_weights=continuous_feature_weights_t,
                     binary_feature_weights=binary_feature_weights_t,
                     continuous_logvar_floor=float(config.get("continuous_logvar_floor", -4.0)),

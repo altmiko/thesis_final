@@ -339,16 +339,35 @@ class AttackRouter:
         ckpt = torch.load(str(ckpt_path), map_location=self.device, weights_only=False)
         ckpt_config = ckpt.get("config", {})
 
-        (
-            latent_dim,
-            encoder_hidden,
-            decoder_hidden,
-            protocol_embed_dim,
-            use_structured_continuous_decoder,
-            structured_continuous_mode,
-            structured_std_floor,
-            latent_logvar_bounds,
-        ) = _resolve_model_hparams(ckpt_config, class_name)
+        resolved_hparams = _resolve_model_hparams(ckpt_config, class_name)
+        if len(resolved_hparams) == 9:
+            (
+                latent_dim,
+                encoder_hidden,
+                decoder_hidden,
+                protocol_embed_dim,
+                use_structured_continuous_decoder,
+                use_structured_physics_decoder,
+                structured_continuous_mode,
+                structured_std_floor,
+                latent_logvar_bounds,
+            ) = resolved_hparams
+        elif len(resolved_hparams) == 8:
+            (
+                latent_dim,
+                encoder_hidden,
+                decoder_hidden,
+                protocol_embed_dim,
+                use_structured_continuous_decoder,
+                structured_continuous_mode,
+                structured_std_floor,
+                latent_logvar_bounds,
+            ) = resolved_hparams
+            use_structured_physics_decoder = False
+        else:
+            raise ValueError(
+                f"Unexpected _resolve_model_hparams arity={len(resolved_hparams)} for class {class_name}"
+            )
 
         vae = MixedInputBetaVAE(
             partition=self.partition,
@@ -358,6 +377,7 @@ class AttackRouter:
             decoder_hidden=decoder_hidden,
             n_pseudo_binary=0,
             use_structured_continuous_decoder=use_structured_continuous_decoder,
+            use_structured_physics_decoder=use_structured_physics_decoder,
             structured_continuous_mode=structured_continuous_mode,
             structured_std_floor=structured_std_floor,
             latent_logvar_bounds=latent_logvar_bounds,
