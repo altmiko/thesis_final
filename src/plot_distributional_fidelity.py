@@ -1,22 +1,6 @@
-"""PCA-projected KDE density plot comparing original vs PGD/CW vs VAE adversarial traffic.
-
-NetDiffuser-style distributional-fidelity figure for CICIoT2023.
-
-Per attack category:
-    1. Restrict to the 22 fully mutable features (PERTURBATION_MASK == 1.0) so the
-       projection lives in the subspace where perturbations actually happen.
-    2. Clip every column to [1st, 99th] percentile of the *original* samples to stop
-       latent-attack outliers from compressing PCA.
-    3. Fit PCA(1) on clipped originals; project all four populations.
-    4. Overlay KDEs and annotate JS divergence vs the original.
-
-Reads results/attacks/thesis_bundle.npz, writes the PNG given by --out.
-"""
-
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -25,140 +9,238 @@ import seaborn as sns
 from scipy.spatial.distance import jensenshannon
 from sklearn.decomposition import PCA
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src" / "preprocessing"))
-from feature_groups import PERTURBATION_MASK  # noqa: E402
 
 SEED = 42
 DEFAULT_CATEGORIES = ["DoS", "Mirai", "BruteForce"]
 
-CURVES = [
-    # (label,        bundle key,            color,    linestyle, alpha, hatch)
-    ("Original",    "X_original",          "#6e6e6e", "--",      0.30, "///"),
-    ("PGD",         "X_adv_input_pgd",     "#d62728", "-",       0.40, None),
-    ("CW",          "X_adv_input_cw",      "#2ca02c", "-",       0.40, None),
-    ("VAE (Ours)",  "X_adv_latent_pgd",    "#1f77b4", "-",       0.50, None),
-]
+
+def load_bundle(path: Path) -> dict[str, np.ndarray]:
+    with np.load(path, allow_pickle=True) as data:
+        return {key: data[key] for key in data.files}
 
 
 def js_divergence_1d(a: np.ndarray, b: np.ndarray, bins: np.ndarray) -> float:
-    ha, _ = np.histogram(a, bins=bins, density=True)
-    hb, _ = np.histogram(b, bins=bins, density=True)
-    ha = ha.astype(np.float64) + 1e-12
-    hb = hb.astype(np.float64) + 1e-12
-    ha /= ha.sum()
-    hb /= hb.sum()
-    return float(jensenshannon(ha, hb, base=2.0) ** 2)
+    hist_a, _ = np.histogram(a, bins=bins, density=True)
+    hist_b, _ = np.histogram(b, bins=bins, density=True)
+    hist_a = hist_a.astype(np.float64) + 1e-12
+    hist_b = hist_b.astype(np.float64) + 1e-12
+    hist_a /= hist_a.sum()
+    hist_b /= hist_b.sum()
+    return float(jensenshannon(hist_a, hist_b, base=2.0) ** 2)
 
 
-def draw_kde(ax, values, *, color, label, linestyle, alpha, hatch):
-    sns.kdeplot(x=values, ax=ax, color=color, fill=False, linewidth=1.6,
-                linestyle=linestyle, label=label, warn_singular=False, clip_on=True)
+def draw_kde(
+    ax: plt.Axes,
+    values: np.ndarray,
+    *,
+    color: str,
+    label: str,
+    linestyle: str = "-",
+    alpha: float = 0.35,
+    hatch: str | None = None,
+) -> None:
+    sns.kdeplot(
+        x=values,
+        ax=ax,
+        color=color,
+        fill=False,
+        linewidth=2.5,
+        linestyle=linestyle,
+        label=label,
+        warn_singular=False,
+        clip_on=False,
+    )
     line = ax.lines[-1]
-    ax.fill_between(line.get_xdata(), line.get_ydata(), 0,
-                    facecolor=color, edgecolor=color, alpha=alpha,
-                    hatch=hatch, linewidth=0.0)
+    x_data = line.get_xdata()
+    y_data = line.get_ydata()
+    ax.fill_between(
+        x_data,
+        y_data,
+        0,
+        facecolor=color,
+        edgecolor=color,
+        alpha=alpha,
+        hatch=hatch,
+        linewidth=0.0,
+        zorder=1,
+    )
+    line.set_zorder(3)
+
+
+def style_axis(ax: plt.Axes, title: str, show_ylabel: bool) -> None:
+    ax.set_title(title, fontsize=20, fontweight="bold", pad=14)
+    ax.set_xlabel("PCA Projection (mutable subspace)", fontsize=16, labelpad=10)
+    ax.set_ylabel("Density" if show_ylabel else "", fontsize=16, labelpad=10)
+    ax.grid(False)
+    ax.tick_params(axis="both", labelsize=14, pad=6)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(True)
+    ax.spines["bottom"].set_visible(True)
+    ax.margins(x=0.04)
 
 
 def main() -> None:
-    p = argparse.ArgumentParser()
-    p.add_argument("--artifacts", type=Path, default=ROOT / "results/attacks/thesis_bundle.npz")
-    p.add_argument("--categories", nargs="+", default=DEFAULT_CATEGORIES)
-    p.add_argument("--vae-source", choices=["pgd", "cw"], default="pgd",
-                   help="Which latent attack to label as 'VAE (Ours)'.")
-    p.add_argument("--clip-pct", type=float, default=1.0,
-                   help="Per-feature percentile clip range (clip-pct, 100-clip-pct).")
-    p.add_argument("--out", type=Path, default=ROOT / "results/figures/distributional_fidelity.png")
-    args = p.parse_args()
+    parser = argparse.ArgumentParser(
+        description="Wide PCA-KDE distributional fidelity plot for CICIoT2023."
+    )
+    parser.add_argument(
+        "--artifacts",
+        type=Path,
+        default=Path("results/attacks/thesis_bundle.npz"),
+        help="Path to thesis bundle NPZ.",
+    )
+    parser.add_argument(
+        "--categories",
+        nargs="+",
+        default=DEFAULT_CATEGORIES,
+        help="Attack categories to plot, one subplot per category.",
+    )
+    parser.add_argument(
+        "--vae-key",
+        default="X_adv_latent_cw",
+        choices=["X_adv_latent_pgd", "X_adv_latent_cw"],
+        help="Bundle key for the VAE-generated adversarial distribution.",
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=Path("thesis_figures/distributional_fidelity.png"),
+        help="Output PNG path.",
+    )
+    args = parser.parse_args()
 
-    curves = list(CURVES)
-    curves[-1] = (curves[-1][0], f"X_adv_latent_{args.vae_source}",
-                  curves[-1][2], curves[-1][3], curves[-1][4], curves[-1][5])
+    sns.set_theme(style="white")
+    plt.rcParams.update(
+        {
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+            "axes.labelsize": 16,
+            "axes.titlesize": 20,
+            "xtick.labelsize": 14,
+            "ytick.labelsize": 14,
+            "legend.fontsize": 14,
+            "savefig.dpi": 300,
+            "figure.dpi": 120,
+        }
+    )
 
-    mask = np.asarray(PERTURBATION_MASK) == 1.0
-    mutable_idx = np.where(mask)[0]
-    print(f"Restricting PCA to {mutable_idx.size} mutable features (PERTURBATION_MASK==1.0)")
-
-    bundle = np.load(args.artifacts, allow_pickle=True)
+    bundle = load_bundle(args.artifacts)
     y_true = np.asarray(bundle["y_true"]).astype(str)
-    arrays = {key: np.asarray(bundle[key], dtype=np.float32)[:, mutable_idx]
-              for _, key, *_ in curves}
-    X_orig = arrays["X_original"]
+    x_original = np.asarray(bundle["X_original"], dtype=np.float32)
+    x_pgd = np.asarray(bundle["X_adv_input_pgd"], dtype=np.float32)
+    x_cw = np.asarray(bundle["X_adv_input_cw"], dtype=np.float32)
+    x_vae = np.asarray(bundle[args.vae_key], dtype=np.float32)
 
-    # --- L2 sanity print (in mutable subspace) ----------------------------------
-    print("\nL2 sanity (mutable subspace, mean per-sample distance vs Original):")
-    for label, key, *_ in curves[1:]:
-        d = np.linalg.norm(arrays[key] - X_orig, axis=1)
-        print(f"  {label:<11s} mean={d.mean():.4f}  median={np.median(d):.4f}  max={d.max():.4f}")
+    colors = {
+        "Original": "#7a7a7a",
+        "PGD": "#4c9f50",
+        "CW": "#d88432",
+        "VAE (Ours)": "#2f6db5",
+    }
 
-    sns.set_style("white")
-    plt.rcParams.update({"axes.labelsize": 11, "axes.titlesize": 11,
-                         "legend.fontsize": 9, "xtick.labelsize": 9,
-                         "ytick.labelsize": 9, "savefig.dpi": 300})
-
-    n = len(args.categories)
-    fig, axes = plt.subplots(1, n, figsize=(max(7.0, 2.5 * n), 3.0), squeeze=False)
-    js_log: dict[str, dict[str, float]] = {}
-
-    for col, category in enumerate(args.categories):
-        ax = axes[0, col]
-        sel = y_true == category
-        if not sel.any():
-            raise ValueError(f"Category {category!r} not in bundle.")
-
-        Xo = X_orig[sel]
-        lo = np.percentile(Xo, args.clip_pct, axis=0)
-        hi = np.percentile(Xo, 100.0 - args.clip_pct, axis=0)
-        eps = 1e-6
-        hi = np.where(hi - lo < eps, lo + eps, hi)
-
-        clipped = {key: np.clip(arrays[key][sel], lo, hi) for _, key, *_ in curves}
-        pca = PCA(n_components=1, random_state=SEED).fit(clipped["X_original"])
-        projections = {key: pca.transform(clipped[key]).ravel() for key in clipped}
-
-        combined = np.concatenate(list(projections.values()))
-        bins = np.histogram_bin_edges(combined, bins="fd")
-        if len(bins) < 12:
-            bins = np.linspace(combined.min(), combined.max(), 32)
-
-        js_log[category] = {}
-        ref = projections["X_original"]
-        for label, key, color, ls, alpha, hatch in curves:
-            draw_kde(ax, projections[key], color=color, label=label,
-                     linestyle=ls, alpha=alpha, hatch=hatch)
-            if key != "X_original":
-                js_log[category][label] = js_divergence_1d(ref, projections[key], bins)
-
-        ax.set_title(category)
-        ax.set_xlabel("PCA Projection (mutable subspace)")
-        ax.set_ylabel("Density" if col == 0 else "")
-        ax.grid(False)
-        for side in ("top", "right"):
-            ax.spines[side].set_visible(False)
-        if ax.get_legend() is not None:
-            ax.get_legend().remove()
-
-        text = "\n".join(f"JS({lbl})={v:.3f}" for lbl, v in js_log[category].items())
-        ax.text(1.02, 0.98, text, transform=ax.transAxes, ha="left", va="top",
-                fontsize=8.5,
-                bbox={"boxstyle": "round,pad=0.3", "facecolor": "white",
-                      "edgecolor": "#bbbbbb", "alpha": 0.9})
-
-    handles = [plt.Line2D([0], [0], color=c[2], linestyle=c[3], linewidth=2.0, label=c[0])
-               for c in curves]
-    fig.legend(handles=handles, loc="upper center", ncol=len(curves),
-               bbox_to_anchor=(0.5, 1.02), frameon=False)
-
-    fig.tight_layout(rect=(0, 0, 0.92, 0.94))
     args.out.parent.mkdir(parents=True, exist_ok=True)
+
+    fig, axes = plt.subplots(1, len(args.categories), figsize=(20, 7), sharey=True)
+    if len(args.categories) == 1:
+        axes = [axes]
+
+    for idx, category in enumerate(args.categories):
+        ax = axes[idx]
+        mask = y_true == category
+        if not np.any(mask):
+            raise ValueError(f"Category '{category}' not found in bundle labels.")
+
+        x_orig_cat = x_original[mask]
+        x_pgd_cat = x_pgd[mask]
+        x_cw_cat = x_cw[mask]
+        x_vae_cat = x_vae[mask]
+
+        pca = PCA(n_components=1, random_state=SEED)
+        pca.fit(x_orig_cat)
+
+        proj_orig = pca.transform(x_orig_cat).ravel()
+        proj_pgd = pca.transform(x_pgd_cat).ravel()
+        proj_cw = pca.transform(x_cw_cat).ravel()
+        proj_vae = pca.transform(x_vae_cat).ravel()
+
+        combined = np.concatenate([proj_orig, proj_pgd, proj_cw, proj_vae])
+        bins = np.histogram_bin_edges(combined, bins="fd")
+        if len(bins) < 10:
+            bins = np.linspace(combined.min(), combined.max(), 40)
+
+        js_pgd = js_divergence_1d(proj_orig, proj_pgd, bins)
+        js_cw = js_divergence_1d(proj_orig, proj_cw, bins)
+        js_vae = js_divergence_1d(proj_orig, proj_vae, bins)
+
+        print(
+            f"{category}: JS(Original,PGD)={js_pgd:.4f} | "
+            f"JS(Original,CW)={js_cw:.4f} | "
+            f"JS(Original,VAE)={js_vae:.4f}"
+        )
+
+        draw_kde(
+            ax,
+            proj_orig,
+            color=colors["Original"],
+            label="Original",
+            linestyle="--",
+            alpha=0.30,
+            hatch="///",
+        )
+        draw_kde(
+            ax,
+            proj_pgd,
+            color=colors["PGD"],
+            label="PGD",
+            alpha=0.35,
+        )
+        draw_kde(
+            ax,
+            proj_cw,
+            color=colors["CW"],
+            label="CW",
+            alpha=0.35,
+        )
+        draw_kde(
+            ax,
+            proj_vae,
+            color=colors["VAE (Ours)"],
+            label="VAE (Ours)",
+            alpha=0.35,
+        )
+
+        style_axis(ax, category, show_ylabel=(idx == 0))
+        ax.text(
+            0.98,
+            0.97,
+            f"JS vs PGD: {js_pgd:.3f}\nJS vs CW: {js_cw:.3f}\nJS vs VAE: {js_vae:.3f}",
+            transform=ax.transAxes,
+            ha="right",
+            va="top",
+            fontsize=12,
+            bbox={
+                "boxstyle": "round,pad=0.5",
+                "facecolor": "white",
+                "alpha": 0.8,
+                "edgecolor": "lightgray",
+            },
+        )
+
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(
+        handles,
+        labels,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 1.03),
+        ncol=4,
+        frameon=False,
+        fontsize=14,
+    )
+    fig.subplots_adjust(left=0.07, right=0.99, bottom=0.17, top=0.78, wspace=0.40, hspace=0.40)
     fig.savefig(args.out, dpi=300, bbox_inches="tight")
     plt.close(fig)
-
-    print("\nJS divergence (base 2) vs Original:")
-    for cat, row in js_log.items():
-        kv = "  ".join(f"{k}={v:.4f}" for k, v in row.items())
-        print(f"  {cat:<12s} {kv}")
-    print(f"\nSaved -> {args.out}")
+    print(f"Saved {args.out}")
 
 
 if __name__ == "__main__":
