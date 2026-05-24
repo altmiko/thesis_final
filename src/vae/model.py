@@ -130,6 +130,30 @@ class MixedInputBetaVAE(nn.Module):
             "continuous_scale",
             torch.ones(self.n_continuous, dtype=torch.float32),
         )
+        self.register_buffer(
+            "independent_binary_center",
+            torch.zeros(self.n_independent_binary, dtype=torch.float32),
+        )
+        self.register_buffer(
+            "independent_binary_scale",
+            torch.ones(self.n_independent_binary, dtype=torch.float32),
+        )
+        self.register_buffer(
+            "derived_binary_center",
+            torch.zeros(len(self.partition["derived_binary_idx"]), dtype=torch.float32),
+        )
+        self.register_buffer(
+            "derived_binary_scale",
+            torch.ones(len(self.partition["derived_binary_idx"]), dtype=torch.float32),
+        )
+        self.register_buffer(
+            "protocol_center",
+            torch.zeros(1, dtype=torch.float32),
+        )
+        self.register_buffer(
+            "protocol_scale",
+            torch.ones(1, dtype=torch.float32),
+        )
 
     def register_protocol_references(self, scaler: "RobustScaler") -> None:
         """Compute and register scaled reference values for each allowlist protocol.
@@ -155,6 +179,33 @@ class MixedInputBetaVAE(nn.Module):
             scaler.scale_[cont_idx].astype(np.float32),
             dtype=torch.float32,
         )
+        ind_bin_idx = self.partition["independent_binary_idx"]
+        self.independent_binary_center = torch.tensor(
+            scaler.center_[ind_bin_idx].astype(np.float32),
+            dtype=torch.float32,
+        )
+        self.independent_binary_scale = torch.tensor(
+            scaler.scale_[ind_bin_idx].astype(np.float32),
+            dtype=torch.float32,
+        )
+        derived_idx = self.partition["derived_binary_idx"]
+        self.derived_binary_center = torch.tensor(
+            scaler.center_[derived_idx].astype(np.float32),
+            dtype=torch.float32,
+        )
+        self.derived_binary_scale = torch.tensor(
+            scaler.scale_[derived_idx].astype(np.float32),
+            dtype=torch.float32,
+        )
+        proto_idx = self.partition["protocol_idx"]
+        self.protocol_center = torch.tensor(
+            scaler.center_[proto_idx].astype(np.float32),
+            dtype=torch.float32,
+        )
+        self.protocol_scale = torch.tensor(
+            scaler.scale_[proto_idx].astype(np.float32),
+            dtype=torch.float32,
+        )
 
     def continuous_scaled_to_raw(self, continuous_scaled: torch.Tensor) -> torch.Tensor:
         """Map decoder continuous outputs from scaled space back to raw space."""
@@ -167,6 +218,16 @@ class MixedInputBetaVAE(nn.Module):
         center = self.continuous_center.to(continuous_raw.device)
         scale = self.continuous_scale.to(continuous_raw.device)
         return (continuous_raw - center.unsqueeze(0)) / scale.unsqueeze(0)
+
+    def _raw_subset_to_scaled(
+        self,
+        raw_values: torch.Tensor,
+        center: torch.Tensor,
+        scale: torch.Tensor,
+    ) -> torch.Tensor:
+        center = center.to(raw_values.device)
+        scale = scale.to(raw_values.device)
+        return (raw_values - center.unsqueeze(0)) / scale.unsqueeze(0)
 
     def _structure_continuous_raw(self, continuous_raw: torch.Tensor) -> torch.Tensor:
         """Apply by-construction constraints for the main raw-space consistency rules."""
@@ -305,14 +366,11 @@ class MixedInputBetaVAE(nn.Module):
         protocol_idx_batch = dec["protocol_logits"].argmax(dim=1)  # (N,) long
 
         derived_raw = derive_binaries_from_protocol_index(protocol_idx_batch)  # (N, 4)
-        derived_np = derived_raw.detach().cpu().numpy().astype(np.float64)
-        derived_scaled_np = apply_scaler_to_columns(
-            derived_np,
-            scaler,
-            col_indices=self.partition["derived_binary_idx"],
-            n_features=39,
-        ).astype(np.float32)
-        derived_scaled = torch.from_numpy(derived_scaled_np).to(device)
+        derived_scaled = self._raw_subset_to_scaled(
+            derived_raw,
+            self.derived_binary_center,
+            self.derived_binary_scale,
+        )
 
         proto_idx_np = protocol_idx_batch.detach().cpu().numpy()
         raw_proto_np = np.array(
@@ -330,14 +388,11 @@ class MixedInputBetaVAE(nn.Module):
         # raw targets). Convert to scaled space so inverse_transform yields valid {0,1}.
         # For most binary cols center_=0 so this is identity, but IPv/LLC have center_=1
         # which would otherwise produce raw=2.0 after inverse_transform.
-        binary_np = binary_output.detach().cpu().numpy().astype(np.float64)
-        binary_scaled_np = apply_scaler_to_columns(
-            binary_np,
-            scaler,
-            col_indices=self.partition["independent_binary_idx"],
-            n_features=39,
-        ).astype(np.float32)
-        binary_scaled = torch.from_numpy(binary_scaled_np).to(device)
+        binary_scaled = self._raw_subset_to_scaled(
+            binary_output,
+            self.independent_binary_center,
+            self.independent_binary_scale,
+        )
 
         x_out = torch.zeros(N, 39, device=device, dtype=torch.float32)
         x_out[:, self.partition["continuous_idx"]] = continuous_mu
