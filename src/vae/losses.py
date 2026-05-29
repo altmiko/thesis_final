@@ -17,6 +17,7 @@ import torch.nn.functional as F
 logger = logging.getLogger(__name__)
 
 _LOG_2PI: float = math.log(2 * math.pi)
+_LOG_2: float = math.log(2.0)
 
 
 def _constraint_pos(partition: dict, full_feature_idx: int) -> int:
@@ -58,7 +59,12 @@ def _compute_constraint_loss(
     ).mean()
 
     packet_positive_penalty = torch.relu(1.0 - number_raw).mean()
-    packet_integer_penalty = torch.sin(math.pi * number_raw).square().mean()
+    # Squared fractional distance to the nearest integer. The previous
+    # ``sin(pi * N)**2`` form loses all precision in float32 once N is large
+    # (argument reduction error), so it produced meaningless gradients for
+    # exactly the high-count rows it was meant to constrain. ``round()`` carries
+    # no gradient, so the gradient here is the well-conditioned 2*(N - round(N)).
+    packet_integer_penalty = (number_raw - number_raw.round()).square().mean()
 
     total = (
         nonneg_penalty
@@ -145,6 +151,7 @@ def compute_elbo(
     binary_feature_weights: torch.Tensor | None = None,
     continuous_logvar_floor: float = -4.0,
     continuous_logvar_ceiling: float = 2.0,
+    continuous_likelihood: str = "gaussian",
     continuous_nll_per_sample_cap: float | None = None,
     free_bits_lambda: float = 0.0,
     continuous_target_raw: torch.Tensor | None = None,
@@ -220,11 +227,28 @@ def compute_elbo(
         min=continuous_logvar_floor,
         max=continuous_logvar_ceiling,
     )
-    per_feature_continuous_nll = 0.5 * (
-        effective_logvar
-        + (x_cont_target - continuous_mu) ** 2 / effective_logvar.exp()
-        + _LOG_2PI
-    )
+    if continuous_likelihood == "gaussian":
+        per_feature_continuous_nll = 0.5 * (
+            effective_logvar
+            + (x_cont_target - continuous_mu) ** 2 / effective_logvar.exp()
+            + _LOG_2PI
+        )
+    elif continuous_likelihood == "laplace":
+        # Heteroscedastic Laplace NLL: the second continuous head is reinterpreted
+        # as the log-scale (log b), so NLL = log(2b) + |x - mu| / b. The L1 error
+        # term is far more robust to the heavy right tails of flow statistics
+        # (Rate, IAT, Tot sum) than the Gaussian L2 term, which is dominated by a
+        # handful of large-magnitude rows. The decoder mean (continuous_mu) is the
+        # Laplace location, so reconstruction/decoding is unaffected by this choice.
+        log_scale = effective_logvar
+        per_feature_continuous_nll = (
+            _LOG_2 + log_scale + (x_cont_target - continuous_mu).abs() / log_scale.exp()
+        )
+    else:
+        raise ValueError(
+            f"Unknown continuous_likelihood={continuous_likelihood!r} "
+            "(expected 'gaussian' or 'laplace')"
+        )
     if continuous_feature_weights is not None:
         per_feature_continuous_nll = (
             per_feature_continuous_nll
@@ -379,10 +403,18 @@ class BetaScheduler:
         beta_target: float,
         total_steps: int,
         warmup_frac: float = 0.3,
+        warmup_steps: int | None = None,
     ) -> None:
         self.beta_target = beta_target
         self.total_steps = total_steps
-        self.warmup_steps = int(warmup_frac * total_steps)
+        # ``warmup_steps`` takes precedence when provided. Deriving warmup from
+        # ``warmup_frac * total_steps`` ties it to ``max_epochs`` (e.g. 200), so
+        # with early stopping β often never reaches its target before the run
+        # ends. Callers should pass an epoch-based ``warmup_steps`` instead.
+        if warmup_steps is not None:
+            self.warmup_steps = int(warmup_steps)
+        else:
+            self.warmup_steps = int(warmup_frac * total_steps)
         self._step_count: int = 0
         self._current_beta: float = 0.0
 

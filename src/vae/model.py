@@ -20,13 +20,8 @@ if TYPE_CHECKING:
 
 from vae.schema import (
     PROTOCOL_ALLOWLIST,
-    apply_scaler_to_columns,
     derive_binaries_from_protocol_index,
-    get_partition,
-    protocol_index_to_raw,
     raw_protocol_to_scaled,
-    raw_to_protocol_index,
-    scaled_to_raw_protocol,
 )
 
 logger = logging.getLogger(__name__)
@@ -380,9 +375,12 @@ class MixedInputBetaVAE(nn.Module):
     def decode_to_39(
         self,
         z: torch.Tensor,
-        scaler: "RobustScaler",
+        scaler: "RobustScaler | None" = None,
         mode: str = "soft",
     ) -> tuple[torch.Tensor, dict]:
+        # ``scaler`` is retained for backward compatibility with existing callers
+        # but is no longer required: every scaled value below is produced from
+        # buffers registered by ``register_protocol_references``.
         device = z.device
         N = z.shape[0]
 
@@ -404,17 +402,13 @@ class MixedInputBetaVAE(nn.Module):
             self.derived_binary_scale,
         )
 
-        proto_idx_np = protocol_idx_batch.detach().cpu().numpy()
-        raw_proto_np = np.array(
-            [protocol_index_to_raw(int(i)) for i in proto_idx_np], dtype=np.float64
-        )
-        proto_scaled_np = raw_protocol_to_scaled(
-            raw_proto_np,
-            scaler,
-            protocol_idx=self.partition["protocol_idx"][0],
-            n_features=39,
-        ).astype(np.float32)
-        protocol_scaled = torch.from_numpy(proto_scaled_np).to(device)  # (N,)
+        # The scaled value for each allowlist protocol is already precomputed in
+        # the ``ref_proto_scaled`` buffer (see register_protocol_references), so a
+        # gather is exact and avoids a per-call GPU→CPU→NumPy(scaler)→GPU round
+        # trip. This matters most inside the latent attack inner loops, where
+        # decode_to_39 is called every PGD/CW step and the CPU sync would
+        # otherwise serialise the CUDA stream.
+        protocol_scaled = self.ref_proto_scaled.to(device)[protocol_idx_batch]  # (N,)
 
         # binary_output is in raw {0,1} space (the head was trained with BCE against
         # raw targets). Convert to scaled space so inverse_transform yields valid {0,1}.

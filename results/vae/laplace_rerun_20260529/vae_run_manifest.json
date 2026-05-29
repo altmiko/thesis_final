@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0",
+  "checkpoints": {
+    "Benign": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_0_Benign_laplace_rerun_20260529.pt",
+      "sha256": "1439132304218e649fee12f24cbbfa12b3081e548afbc3ffad6c5f268a28fdf7",
+      "best_val_loss": -77.57976493835449,
+      "epochs_trained": 93,
+      "n_train": 139992,
+      "n_val": 19999,
+      "latent_dim": 16
+    },
+    "BruteForce": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_1_BruteForce_laplace_rerun_20260529.pt",
+      "sha256": "853df0b393350bb35edb3d65d6f13e0aae973dda909291b59917c0722a797b4a",
+      "best_val_loss": -51.75184631347656,
+      "epochs_trained": 200,
+      "n_train": 8766,
+      "n_val": 1252,
+      "latent_dim": 16
+    },
+    "DDoS": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_2_DDoS_laplace_rerun_20260529.pt",
+      "sha256": "63d4d85ccec8a6a679631f47526d26fdb3322e37ce43b0524baead946c1f2c2a",
+      "best_val_loss": -94.9858572660987,
+      "epochs_trained": 83,
+      "n_train": 1434940,
+      "n_val": 204993,
+      "latent_dim": 16
+    },
+    "DoS": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_3_DoS_laplace_rerun_20260529.pt",
+      "sha256": "459b4806ca5874a0b071f2b178826e9a32642316fa30290106618645e3635862",
+      "best_val_loss": -95.11015504779238,
+      "epochs_trained": 29,
+      "n_train": 468144,
+      "n_val": 66876,
+      "latent_dim": 16
+    },
+    "Mirai": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_4_Mirai_laplace_rerun_20260529.pt",
+      "sha256": "e90dce9854728a5bd0757ed23d5e59cc6eb2a4f0cff22e87e05112742a4162ce",
+      "best_val_loss": -103.13541619252351,
+      "epochs_trained": 52,
+      "n_train": 419972,
+      "n_val": 59996,
+      "latent_dim": 16
+    },
+    "Recon": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_5_Recon_laplace_rerun_20260529.pt",
+      "sha256": "f819794910503072e9f73e1373723d4b4a3926d024010c7652d1162f87dfadf0",
+      "best_val_loss": -93.05701431274414,
+      "epochs_trained": 200,
+      "n_train": 352470,
+      "n_val": 50353,
+      "latent_dim": 16
+    },
+    "Spoofing": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_6_Spoofing_laplace_rerun_20260529.pt",
+      "sha256": "7d0b6d1f174387de1a23b92d576a2ffa3d228ddfeaedd28e18ac7a54349556d4",
+      "best_val_loss": -74.96384017531936,
+      "epochs_trained": 75,
+      "n_train": 260015,
+      "n_val": 37145,
+      "latent_dim": 16
+    },
+    "Web": {
+      "path": "D:\\thesis_final\\models\\vae\\vae_class_7_Web_laplace_rerun_20260529.pt",
+      "sha256": "52e1deb8bba1c4d413b2bdd34359c526b62173c8449d3e0636db5f62981dbc7b",
+      "best_val_loss": -56.210917154947914,
+      "epochs_trained": 200,
+      "n_train": 16659,
+      "n_val": 2380,
+      "latent_dim": 16
+    }
+  },
+  "diagnostics": {
+    "Benign": {
+      "path": "D:\\thesis_final\\results\\vae\\laplace_rerun_20260529\\diagnostics_Benign.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9977498874943748
+    },
+    "BruteForce": {
+      "path": "D:\\thesis_final\\results\\vae\\laplace_rerun_20260529\\diagnostics_BruteForce.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9704472843450479
+    },
+    "DDoS": {
+      "path": "D:\\thesis_final\\results\\vae\\laplace_rerun_20260529\\diagnostics_DDoS.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9996048645563507
+    },
+    "DoS": {
+      "path": "D:\\thesis_final\\results\\vae\\laplace_rerun_20260529\\diagnostics_DoS.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9996560799090854
+    },
+    "Mirai": {
+      "path": "D:\\thesis_final\\results\\vae\\laplace_rerun_20260529\\diagnostics_Mirai.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9990832722181479
+    },
+    "Recon": {
+      "path": "D:\\thesis_final\\results\\vae\\laplace_rerun_20260529\\diagnostics_Recon.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9979147220622406
+    },
+    "Spoofing": {
+      "path": "D:\\thesis_final\\results\\vae\\laplace_rerun_20260529\\diagnostics_Spoofing.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.998573159240813
+    },
+    "Web": {
+      "path": "D:\\thesis_final\\results\\vae\\laplace_rerun_20260529\\diagnostics_Web.json",
+      "collapsed_dim_count": 0,
+      "unconditional_validity_pre_postprocess": 1.0,
+      "unconditional_validity_raw": 1.0,
+      "unconditional_validity": 1.0,
+      "unconditional_validity_postprocess": 1.0,
+      "unconditional_postprocess_repair_rate": 0.0,
+      "conditional_validity_pre_postprocess": 1.0,
+      "conditional_validity_raw": 1.0,
+      "conditional_validity": 1.0,
+      "conditional_validity_postprocess": 1.0,
+      "conditional_postprocess_repair_rate": 0.0,
+      "protocol_accuracy": 0.9794117647058823
+    }
+  }
+}

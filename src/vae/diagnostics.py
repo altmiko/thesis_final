@@ -33,48 +33,12 @@ RULE_GROUP_PREFIXES: dict[str, tuple[str, ...]] = {
     "G8_packet_count": ("R_pkts_positive", "R_pkts_integer"),
 }
 
-# Feature names matching the 39-dim CICIoT2023 schema (Schema A)
-FEATURE_NAMES: list[str] = [
-    "Header_Length",      # 0
-    "Protocol Type",      # 1
-    "Time_To_Live",       # 2
-    "Rate",               # 3
-    "fin_flag_number",    # 4
-    "syn_flag_number",    # 5
-    "rst_flag_number",    # 6
-    "psh_flag_number",    # 7
-    "ack_flag_number",    # 8
-    "ece_flag_number",    # 9
-    "cwr_flag_number",    # 10
-    "ack_count",          # 11
-    "syn_count",          # 12
-    "fin_count",          # 13
-    "rst_count",          # 14
-    "HTTP",               # 15
-    "HTTPS",              # 16
-    "DNS",                # 17
-    "Telnet",             # 18
-    "SMTP",               # 19
-    "SSH",                # 20
-    "IRC",                # 21
-    "TCP",                # 22
-    "UDP",                # 23
-    "DHCP",               # 24
-    "ARP",                # 25
-    "ICMP",               # 26
-    "IGMP",               # 27
-    "IPv",                # 28
-    "LLC",                # 29
-    "Tot sum",            # 30
-    "Min",                # 31
-    "Max",                # 32
-    "AVG",                # 33
-    "Std",                # 34
-    "Tot size",           # 35
-    "IAT",                # 36
-    "Number",             # 37
-    "Variance",           # 38
-]
+# Canonical 39-dim CICIoT2023 feature order. Imported from the single source of
+# truth (preprocessing.feature_groups) so this module, the validator, and
+# preprocessing can never drift out of sync.
+from preprocessing.feature_groups import FEATURE_NAMES  # noqa: E402
+
+assert len(FEATURE_NAMES) == 39, f"Expected 39 feature names, got {len(FEATURE_NAMES)}"
 
 
 # ---------------------------------------------------------------------------
@@ -239,6 +203,7 @@ def _diag_per_feature_recon(
     val_ds: "PerClassDataset",
     partition: dict,
     device: str,
+    continuous_likelihood: str = "gaussian",
 ) -> dict:
     """Compute per-feature reconstruction error on validation set."""
     continuous_idx = partition["continuous_idx"]
@@ -275,10 +240,14 @@ def _diag_per_feature_recon(
             cont_logvar = out["continuous_logvar"]   # (B, 23)
             cont_target = x[:, continuous_idx]       # (B, 23) scaled values as targets
 
-            # Gaussian NLL: 0.5 * (logvar + (target - mu)^2 / exp(logvar) + log(2pi))
-            # We drop the constant log(2pi)/2 for comparability across features
-            var = torch.exp(cont_logvar)
-            nll_per_sample = 0.5 * (cont_logvar + (cont_target - cont_mu).pow(2) / (var + 1e-8))
+            # Reconstruction NLL per column, matching the trained likelihood.
+            # Additive constants (log(2pi)/2, log 2) are dropped for comparability.
+            if continuous_likelihood == "laplace":
+                scale = torch.exp(cont_logvar)
+                nll_per_sample = cont_logvar + (cont_target - cont_mu).abs() / (scale + 1e-8)
+            else:
+                var = torch.exp(cont_logvar)
+                nll_per_sample = 0.5 * (cont_logvar + (cont_target - cont_mu).pow(2) / (var + 1e-8))
             # Mean over batch, per column
             nll_accum += nll_per_sample.sum(dim=0).cpu().numpy()
 
@@ -469,15 +438,15 @@ def _diag_unconditional_validity(
         count = int((proto_idx_batch == proto_allowlist_idx).sum())
         proto_dist_gen[str(raw_val)] = float(count / n_samples)
 
-    # --- 6. Protocol distribution in training data (val_ds as proxy) ---
-    train_proto_indices = val_ds.target_protocol_index.numpy()
-    proto_dist_train: dict[str, float] = {}
-    n_train = len(train_proto_indices)
+    # --- 6. Protocol distribution in the validation split (reference distribution) ---
+    val_proto_indices = val_ds.target_protocol_index.numpy()
+    proto_dist_val: dict[str, float] = {}
+    n_val_proto = len(val_proto_indices)
     for proto_allowlist_idx in range(len(PROTOCOL_ALLOWLIST)):
         raw_val = PROTOCOL_ALLOWLIST[proto_allowlist_idx]
-        count = int((train_proto_indices == proto_allowlist_idx).sum())
+        count = int((val_proto_indices == proto_allowlist_idx).sum())
         if count > 0:
-            proto_dist_train[str(raw_val)] = float(count / n_train)
+            proto_dist_val[str(raw_val)] = float(count / n_val_proto)
 
     return {
         "n_samples": n_samples,
@@ -504,7 +473,7 @@ def _diag_unconditional_validity(
         ),
         "protocol_binary_consistency": proto_binary_consistency,
         "protocol_distribution_generated": proto_dist_gen,
-        "protocol_distribution_train": proto_dist_train,
+        "protocol_distribution_val": proto_dist_val,
         "raw_sample_head_before_postprocess": raw_samples_pre[:3].tolist(),
         "raw_sample_head_after_postprocess": raw_samples_post[:3].tolist(),
     }
@@ -625,6 +594,9 @@ def run_diagnostics(
     scaler: "RobustScaler",
     partition: dict,
     device: str = "cpu",
+    continuous_likelihood: str = "gaussian",
+    output_dir: Path | str | None = None,
+    output_name: str | None = None,
 ) -> dict:
     """Run all post-training diagnostics for a single per-class β-VAE.
 
@@ -666,7 +638,9 @@ def run_diagnostics(
 
     # --- Diagnostic 2 ---
     logger.info("[2/4] Per-feature reconstruction error ...")
-    d2 = _diag_per_feature_recon(model, val_ds, partition, device)
+    d2 = _diag_per_feature_recon(
+        model, val_ds, partition, device, continuous_likelihood=continuous_likelihood
+    )
 
     # --- Diagnostic 3 ---
     logger.info("[3/4] Unconditional sample validity (n=1000) ...")
@@ -699,9 +673,14 @@ def run_diagnostics(
     result_native = _to_python(result)
 
     repo_root = Path(__file__).resolve().parents[2]
-    out_dir = repo_root / "results" / "vae"
+    if output_dir is None:
+        out_dir = repo_root / "results" / "vae"
+    else:
+        out_dir = Path(output_dir)
+        if not out_dir.is_absolute():
+            out_dir = repo_root / out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"diagnostics_{class_name}.json"
+    out_path = out_dir / (output_name or f"diagnostics_{class_name}.json")
 
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(result_native, f, indent=2, cls=_NumpyEncoder)

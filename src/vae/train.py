@@ -440,11 +440,19 @@ def train_one_vae(
         optimizer, T_max=config["max_epochs"]
     )
 
-    total_steps = config["max_epochs"] * len(train_loader)
+    steps_per_epoch = max(1, len(train_loader))
+    total_steps = config["max_epochs"] * steps_per_epoch
+    beta_warmup_epochs = config.get("beta_warmup_epochs")
+    beta_warmup_steps = (
+        int(beta_warmup_epochs) * steps_per_epoch
+        if beta_warmup_epochs is not None
+        else None
+    )
     beta_scheduler = BetaScheduler(
         beta_target=beta_target,
         total_steps=total_steps,
         warmup_frac=config["warmup_frac"],
+        warmup_steps=beta_warmup_steps,
     )
 
     # ------------------------------------------------------------------
@@ -516,6 +524,7 @@ def train_one_vae(
                 binary_feature_weights=binary_feature_weights_t,
                 continuous_logvar_floor=float(config.get("continuous_logvar_floor", -4.0)),
                 continuous_logvar_ceiling=float(config.get("continuous_logvar_ceiling", 2.0)),
+                continuous_likelihood=str(config.get("continuous_likelihood", "gaussian")),
                 continuous_nll_per_sample_cap=config.get("continuous_nll_per_sample_cap"),
                 free_bits_lambda=float(config.get("free_bits_lambda", 0.0)),
                 continuous_target_raw=x_cont_target_raw,
@@ -595,6 +604,7 @@ def train_one_vae(
                     binary_feature_weights=binary_feature_weights_t,
                     continuous_logvar_floor=float(config.get("continuous_logvar_floor", -4.0)),
                     continuous_logvar_ceiling=float(config.get("continuous_logvar_ceiling", 2.0)),
+                    continuous_likelihood=str(config.get("continuous_likelihood", "gaussian")),
                     continuous_nll_per_sample_cap=config.get("continuous_nll_per_sample_cap"),
                     free_bits_lambda=float(config.get("free_bits_lambda", 0.0)),
                     continuous_target_raw=x_cont_target_raw,
@@ -695,10 +705,17 @@ def train_one_vae(
     # ------------------------------------------------------------------
     # 8. Training curves
     # ------------------------------------------------------------------
-    curves_dir = root / "results" / "vae"
+    curves_dir_cfg = config.get("curves_dir_override")
+    if curves_dir_cfg:
+        curves_dir = Path(str(curves_dir_cfg))
+        if not curves_dir.is_absolute():
+            curves_dir = root / curves_dir
+    else:
+        curves_dir = root / "results" / "vae"
     curves_dir.mkdir(parents=True, exist_ok=True)
     curves_name = str(config.get("curves_name_override", f"curves_{class_name}.png"))
     curves_path = curves_dir / curves_name
+    curves_path.parent.mkdir(parents=True, exist_ok=True)
 
     fig, axes = plt.subplots(1, 6, figsize=(24, 4))
     fig.suptitle(f"VAE Training Curves — Class {class_id} ({class_name})", fontsize=12)

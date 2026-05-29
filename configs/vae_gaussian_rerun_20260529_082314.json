@@ -1,0 +1,6 @@
+{
+  "run_tag": "gaussian_rerun_20260529_082314",
+  "continuous_likelihood": "gaussian",
+  "checkpoint_name_template": "vae_class_{class_id}_{class_name}_{run_tag}.pt",
+  "curves_name_template": "curves_{class_name}_{run_tag}.png"
+}

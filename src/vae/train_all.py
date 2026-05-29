@@ -146,8 +146,69 @@ def _deep_update(base: dict, override: dict) -> dict:
 
 
 def _save_manifest(manifest: dict, manifest_path: Path) -> None:
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
+
+
+def _resolve_repo_path(root: Path, value: str | Path) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else root / path
+
+
+def _format_run_template(
+    template: str,
+    *,
+    class_id: int,
+    class_name: str,
+    run_tag: str | None,
+) -> str:
+    return template.format(
+        class_id=class_id,
+        class_name=class_name,
+        run_tag=run_tag or "",
+    )
+
+
+def _config_for_class(
+    base_config: dict,
+    *,
+    class_id: int,
+    class_name: str,
+    run_tag: str | None,
+    results_dir: Path,
+    default_results_dir: Path,
+) -> dict:
+    class_config = deepcopy(base_config)
+
+    checkpoint_template = class_config.get("checkpoint_name_template")
+    if checkpoint_template:
+        class_config["checkpoint_name_override"] = _format_run_template(
+            str(checkpoint_template),
+            class_id=class_id,
+            class_name=class_name,
+            run_tag=run_tag,
+        )
+    elif run_tag and not class_config.get("checkpoint_name_override"):
+        class_config["checkpoint_name_override"] = (
+            f"vae_class_{class_id}_{class_name}_{run_tag}.pt"
+        )
+
+    curves_template = class_config.get("curves_name_template")
+    if curves_template:
+        class_config["curves_name_override"] = _format_run_template(
+            str(curves_template),
+            class_id=class_id,
+            class_name=class_name,
+            run_tag=run_tag,
+        )
+    elif run_tag and not class_config.get("curves_name_override"):
+        class_config["curves_name_override"] = f"curves_{class_name}_{run_tag}.png"
+
+    if results_dir != default_results_dir and not class_config.get("curves_dir_override"):
+        class_config["curves_dir_override"] = str(results_dir)
+
+    return class_config
 
 
 # ---------------------------------------------------------------------------
@@ -168,7 +229,8 @@ def _check_gates(
     all_present = True
     for cls in CLASSES:
         cid = CLASS_TO_ID[cls]
-        p = ckpt_dir / f"vae_class_{cid}_{cls}.pt"
+        ckpt_info = manifest.get("checkpoints", {}).get(cls, {})
+        p = Path(ckpt_info.get("path", ckpt_dir / f"vae_class_{cid}_{cls}.pt"))
         if not p.exists():
             all_present = False
             break
@@ -365,29 +427,45 @@ def _rows_to_csv(rows: list[dict], cols: list[str], out_path: Path) -> None:
 
 def main(args: argparse.Namespace) -> None:
     root = _REPO_ROOT
-    results_vae = root / "results" / "vae"
-    results_vae.mkdir(parents=True, exist_ok=True)
-
-    log_path = results_vae / "training_log.txt"
-    _setup_logging(log_path)
-
-    logger.info("=== VAE Orchestrator starting ===")
-    logger.info("Device: %s", args.device)
 
     # ------------------------------------------------------------------
     # 1. Build config
     # ------------------------------------------------------------------
-    config = dict(DEFAULT_CONFIG)
+    config = deepcopy(DEFAULT_CONFIG)
+    applied_config_path: Path | None = None
 
     if args.config:
         override_path = Path(args.config)
         if not override_path.exists():
-            logger.error("Config override file not found: %s", override_path)
+            print(f"Config override file not found: {override_path}", file=sys.stderr)
             sys.exit(1)
         with open(override_path, encoding="utf-8") as f:
             overrides = json.load(f)
         config = _deep_update(config, overrides)
-        logger.info("Applied config overrides from %s", override_path)
+        applied_config_path = override_path
+
+    run_tag = (args.run_tag or str(config.get("run_tag", "") or "")).strip() or None
+    default_results_vae = root / "results" / "vae"
+    results_dir_arg = args.results_dir or config.get("results_dir")
+    if results_dir_arg:
+        results_vae = _resolve_repo_path(root, results_dir_arg)
+    elif run_tag:
+        results_vae = default_results_vae / run_tag
+    else:
+        results_vae = default_results_vae
+    results_vae.mkdir(parents=True, exist_ok=True)
+
+    log_name = str(config.get("training_log_name", "training_log.txt"))
+    log_path = results_vae / log_name
+    _setup_logging(log_path)
+
+    logger.info("=== VAE Orchestrator starting ===")
+    logger.info("Device: %s", args.device)
+    if applied_config_path is not None:
+        logger.info("Applied config overrides from %s", applied_config_path)
+    if run_tag:
+        logger.info("Run tag: %s", run_tag)
+    logger.info("Results directory: %s", results_vae)
 
     # ------------------------------------------------------------------
     # 2. Determine which classes to train
@@ -433,7 +511,14 @@ def main(args: argparse.Namespace) -> None:
     # ------------------------------------------------------------------
     # 4. Load manifest
     # ------------------------------------------------------------------
-    manifest_path = root / "vae_run_manifest.json"
+    manifest_path_arg = args.manifest_path or config.get("manifest_path")
+    if manifest_path_arg:
+        manifest_path = _resolve_repo_path(root, manifest_path_arg)
+    elif results_vae != default_results_vae:
+        manifest_path = results_vae / "vae_run_manifest.json"
+    else:
+        manifest_path = root / "vae_run_manifest.json"
+    logger.info("Manifest path: %s", manifest_path)
     manifest = _load_manifest(manifest_path)
 
     # ------------------------------------------------------------------
@@ -466,16 +551,32 @@ def main(args: argparse.Namespace) -> None:
                 "epochs_trained": int(manifest["checkpoints"][class_name].get("epochs_trained", 0)),
             }
         else:
+            class_config = _config_for_class(
+                config,
+                class_id=class_id,
+                class_name=class_name,
+                run_tag=run_tag,
+                results_dir=results_vae,
+                default_results_dir=default_results_vae,
+            )
             metrics = train_one_vae(
                 class_id,
                 class_name,
-                config,
+                class_config,
                 args.device,
                 shared_arrays=shared_arrays,
             )
 
         # (a/b) Reload best checkpoint
-        ckpt_path = root / "models" / "vae" / f"vae_class_{class_id}_{class_name}.pt"
+        if args.diagnostics_only:
+            ckpt_path = Path(manifest["checkpoints"][class_name]["path"])
+        else:
+            ckpt_path = Path(
+                metrics.get(
+                    "checkpoint_path",
+                    root / "models" / "vae" / f"vae_class_{class_id}_{class_name}.pt",
+                )
+            )
         logger.info("Reloading checkpoint from %s", ckpt_path)
         ckpt = torch.load(str(ckpt_path), map_location=args.device, weights_only=False)
 
@@ -523,7 +624,9 @@ def main(args: argparse.Namespace) -> None:
         # (c) Build val_ds and run diagnostics
         val_ds = PerClassDataset(X_val, y_val_8, class_id, scaler, partition)
         diag_result = run_diagnostics(
-            class_id, class_name, model, val_ds, scaler, partition, args.device
+            class_id, class_name, model, val_ds, scaler, partition, args.device,
+            continuous_likelihood=str(ckpt_config.get("continuous_likelihood", "gaussian")),
+            output_dir=results_vae,
         )
 
         # Diagnostics output path
@@ -665,6 +768,31 @@ if __name__ == "__main__":
         "--config",
         default=None,
         help="Path to a JSON file with config overrides (merged on top of DEFAULT_CONFIG).",
+    )
+    parser.add_argument(
+        "--run-tag",
+        default=None,
+        help=(
+            "Optional tag for non-destructive reruns. When set, checkpoints get "
+            "the tag in their filename and outputs go under results/vae/<tag>."
+        ),
+    )
+    parser.add_argument(
+        "--results-dir",
+        default=None,
+        help=(
+            "Optional output directory for logs, diagnostics, summary files, and "
+            "curves. Relative paths are resolved from the repository root."
+        ),
+    )
+    parser.add_argument(
+        "--manifest-path",
+        default=None,
+        help=(
+            "Optional manifest path. Relative paths are resolved from the "
+            "repository root. Defaults to vae_run_manifest.json unless a tagged "
+            "or custom results directory is used."
+        ),
     )
     parser.add_argument(
         "--diagnostics-only",

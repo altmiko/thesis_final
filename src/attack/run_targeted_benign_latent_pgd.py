@@ -36,7 +36,6 @@ from attack.latent_infra import (  # noqa: E402
     ProtocolValidator,
     build_per_class_dataset,
     encode_dataset_mu,
-    load_collapsed_dims,
     load_split,
     phase0_config_snapshot,
     predict_labels,
@@ -59,6 +58,7 @@ MODEL_SPECS = [
     {"tag": "dualpath", "label": "DualPath", "checkpoint": "dualpath_8class.pt"},
 ]
 SUMMARY_COLUMNS = [
+    "vae_run_tag",
     "model",
     "model_tag",
     "attack",
@@ -78,6 +78,7 @@ SUMMARY_COLUMNS = [
 PER_CLASS_COLUMNS = SUMMARY_COLUMNS + ["class_name", "restart_target_success_counts"]
 PER_SAMPLE_COLUMNS = [
     "sample_id",
+    "vae_run_tag",
     "model",
     "model_tag",
     "source_class",
@@ -94,15 +95,95 @@ PER_SAMPLE_COLUMNS = [
 ]
 
 
-def _config_snapshot(args: argparse.Namespace) -> dict[str, Any]:
+def _load_json(path: Path) -> Any:
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _sanitize_phase_name(value: str) -> str:
+    keep = []
+    for char in value:
+        if char.isalnum() or char in {"_", "-"}:
+            keep.append(char)
+        else:
+            keep.append("_")
+    return "".join(keep)
+
+
+def _resolve_vae_paths(args: argparse.Namespace) -> tuple[str, Path, Path]:
+    run_tag = str(args.vae_run_tag or "").strip()
+    manifest_path = Path(args.vae_manifest).resolve() if args.vae_manifest else None
+    diagnostics_dir = Path(args.vae_diagnostics_dir).resolve() if args.vae_diagnostics_dir else None
+
+    if manifest_path is None:
+        if run_tag:
+            manifest_path = _REPO_ROOT / "results" / "vae" / run_tag / "vae_run_manifest.json"
+        else:
+            manifest_path = _REPO_ROOT / "vae_run_manifest.json"
+
+    if not manifest_path.exists():
+        raise FileNotFoundError(f"VAE manifest not found: {manifest_path}")
+
+    if diagnostics_dir is None:
+        diagnostics_dir = _REPO_ROOT / "results" / "vae" / run_tag if run_tag else _REPO_ROOT / "results" / "vae"
+
+    if not diagnostics_dir.exists():
+        raise FileNotFoundError(f"VAE diagnostics directory not found: {diagnostics_dir}")
+
+    if not run_tag:
+        run_tag = "root_manifest" if manifest_path.parent == _REPO_ROOT else manifest_path.parent.name
+
+    return run_tag, manifest_path, diagnostics_dir
+
+
+def _load_collapsed_dims_for_run(
+    *,
+    diagnostics_dir: Path,
+    manifest: dict[str, Any],
+) -> dict[int, list[int]]:
+    collapsed: dict[int, list[int]] = {}
+    manifest_diagnostics = manifest.get("diagnostics", {})
+
+    for class_name in CLASSES:
+        class_id = CLASS_TO_ID[class_name]
+        diag_path = diagnostics_dir / f"diagnostics_{class_name}.json"
+        manifest_diag = manifest_diagnostics.get(class_name, {})
+        if not diag_path.exists() and manifest_diag.get("path"):
+            diag_path = Path(str(manifest_diag["path"]))
+        if not diag_path.exists():
+            raise FileNotFoundError(f"Diagnostics not found for {class_name}: {diag_path}")
+
+        diag = _load_json(diag_path)
+        collapsed[class_id] = list(diag["posterior_collapse"]["collapsed_dim_indices"])
+
+    return collapsed
+
+
+def _config_snapshot(
+    args: argparse.Namespace,
+    *,
+    run_tag: str,
+    manifest_path: Path,
+    diagnostics_dir: Path,
+    manifest: dict[str, Any],
+    model_specs: list[dict[str, str]],
+) -> dict[str, Any]:
     snapshot = phase0_config_snapshot(args.seed, args.device)
-    selected_models = _resolve_model_specs(args.models)
     snapshot.update(
         {
             "phase": "targeted_benign_pgd",
             "split": "test",
+            "vae_run": {
+                "run_tag": run_tag,
+                "manifest_path": str(manifest_path),
+                "diagnostics_dir": str(diagnostics_dir),
+                "checkpoint_paths": {
+                    class_name: manifest["checkpoints"][class_name]["path"]
+                    for class_name in CLASSES
+                },
+            },
             "target": {"class_id": TARGET_CLASS_ID, "class_name": TARGET_CLASS_NAME},
-            "models": selected_models,
+            "models": model_specs,
             "sampling": {
                 "source_classes": SOURCE_CLASSES,
                 "samples_per_source_class": int(args.samples_per_class),
@@ -151,11 +232,11 @@ def _fit_detector(
     router: AttackRouter,
     device: str,
     *,
+    collapsed_by_class: dict[int, list[int]],
     max_samples_per_class: int | None = None,
     seed: int = 42,
 ) -> MahalanobisOutlierDetector:
     split_val = load_split("val")
-    collapsed_by_class = load_collapsed_dims()
     detector = MahalanobisOutlierDetector(latent_dim=16)
     for class_id, _class_name in enumerate(CLASSES):
         ds = build_per_class_dataset(
@@ -446,6 +527,7 @@ def _conditional_rate(numerator: torch.Tensor, denominator: torch.Tensor) -> flo
 
 def _row_from_best(
     *,
+    vae_run_tag: str,
     model_label: str,
     model_tag: str,
     class_name: str,
@@ -456,6 +538,7 @@ def _row_from_best(
     in_distribution = ~best["outlier_mask"]
 
     return {
+        "vae_run_tag": vae_run_tag,
         "model": model_label,
         "model_tag": model_tag,
         "attack": "targeted_benign_latent_pgd",
@@ -490,6 +573,7 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         for row in rows
     )
     return {
+        "vae_run_tag": rows[0].get("vae_run_tag", ""),
         "model": rows[0]["model"],
         "model_tag": rows[0]["model_tag"],
         "attack": "targeted_benign_latent_pgd",
@@ -513,6 +597,7 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
 def _build_per_sample_rows(
     *,
     sample_indices: np.ndarray,
+    vae_run_tag: str,
     model_label: str,
     model_tag: str,
     class_name: str,
@@ -535,6 +620,7 @@ def _build_per_sample_rows(
         rows.append(
             {
                 "sample_id": int(sample_id),
+                "vae_run_tag": vae_run_tag,
                 "model": model_label,
                 "model_tag": model_tag,
                 "source_class": class_name,
@@ -573,7 +659,10 @@ def main() -> None:
         description="Run targeted-to-Benign latent PGD with GMM-seeded restarts."
     )
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--device", default="cpu")
+    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--vae-run-tag", default=None)
+    parser.add_argument("--vae-manifest", default=None)
+    parser.add_argument("--vae-diagnostics-dir", default=None)
     parser.add_argument("--models", default="mlp", help="Comma-separated model tags or all")
     parser.add_argument("--samples-per-class", type=int, default=100)
     parser.add_argument("--epsilon", type=float, default=0.5)
@@ -597,23 +686,48 @@ def main() -> None:
         default=8192,
         help="Batch size for selecting correctly classified samples on GPU.",
     )
+    parser.add_argument(
+        "--output-root",
+        default=None,
+        help="Optional output root; defaults to outputs/latent_attacks.",
+    )
     args = parser.parse_args()
 
     set_global_seed(args.seed)
+    run_tag, manifest_path, diagnostics_dir = _resolve_vae_paths(args)
+    manifest = _load_json(manifest_path)
     model_specs = _resolve_model_specs(args.models)
+    collapsed_by_class = _load_collapsed_dims_for_run(
+        diagnostics_dir=diagnostics_dir,
+        manifest=manifest,
+    )
+    phase_name = "targeted_benign_pgd"
+    if run_tag != "root_manifest":
+        phase_name = f"targeted_benign_pgd_{_sanitize_phase_name(run_tag)}"
+
     run_logger = AttackRunLogger.create(
-        phase_name="targeted_benign_pgd",
+        phase_name=phase_name,
         seed=args.seed,
-        config_snapshot=_config_snapshot(args),
+        config_snapshot=_config_snapshot(
+            args,
+            run_tag=run_tag,
+            manifest_path=manifest_path,
+            diagnostics_dir=diagnostics_dir,
+            manifest=manifest,
+            model_specs=model_specs,
+        ),
+        output_root=Path(args.output_root) if args.output_root else None,
     )
 
     router = AttackRouter(device=args.device)
+    router.manifest = manifest
     mask = PerturbationMask.from_preprocessing_artifacts()
     protocol_validator = ProtocolValidator(router.scaler)
     split_test = load_split("test")
     detector = _fit_detector(
         router,
         args.device,
+        collapsed_by_class=collapsed_by_class,
         max_samples_per_class=args.detector_max_samples,
         seed=args.seed,
     )
@@ -674,6 +788,7 @@ def main() -> None:
                     {
                         "model": spec["label"],
                         "model_tag": spec["tag"],
+                        "vae_run_tag": run_tag,
                         "class_name": class_name,
                         "reason": "no_correctly_classified_samples",
                     }
@@ -714,6 +829,7 @@ def main() -> None:
             )
 
             row = _row_from_best(
+                vae_run_tag=run_tag,
                 model_label=spec["label"],
                 model_tag=spec["tag"],
                 class_name=class_name,
@@ -724,6 +840,7 @@ def main() -> None:
             per_sample_rows.extend(
                 _build_per_sample_rows(
                     sample_indices=sample_idx,
+                    vae_run_tag=run_tag,
                     model_label=spec["label"],
                     model_tag=spec["tag"],
                     class_name=class_name,
@@ -767,6 +884,9 @@ def main() -> None:
     per_class_rows.sort(key=lambda row: (row["model"], row["class_name"]))
 
     payload = {
+        "vae_run_tag": run_tag,
+        "vae_manifest_path": str(manifest_path),
+        "vae_diagnostics_dir": str(diagnostics_dir),
         "summary": summary_rows,
         "per_class": per_class_rows,
         "per_sample": per_sample_rows,
@@ -783,11 +903,12 @@ def main() -> None:
     _write_csv(
         run_logger.run_dir / "skipped_cells.csv",
         skipped_cells,
-        ["model", "model_tag", "class_name", "reason"],
+        ["vae_run_tag", "model", "model_tag", "class_name", "reason"],
     )
 
     print()
     print("=== Targeted Benign Latent-PGD Summary ===")
+    print(f"VAE run tag: {run_tag}")
     print(f"Output directory: {run_logger.run_dir}")
     for row in summary_rows:
         print(

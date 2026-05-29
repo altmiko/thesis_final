@@ -1,0 +1,8 @@
+{
+  "run_tag": "gaussian_anticollapse_beta05_freebits01_20260529_173512",
+  "continuous_likelihood": "gaussian",
+  "beta_target": 0.5,
+  "free_bits_lambda": 0.1,
+  "checkpoint_name_template": "vae_class_{class_id}_{class_name}_{run_tag}.pt",
+  "curves_name_template": "curves_{class_name}_{run_tag}.png"
+}
