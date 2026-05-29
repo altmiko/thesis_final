@@ -184,6 +184,52 @@ def _labels(y: np.ndarray) -> np.ndarray:
     return y.astype(str)
 
 
+def _class_local_standardize(
+    z: np.ndarray,
+    y: np.ndarray,
+) -> tuple[np.ndarray, dict[str, tuple[np.ndarray, np.ndarray]]]:
+    """Normalize each per-class VAE latent space independently for display.
+
+    The project uses separate VAEs per attack category. Their raw latent axes are
+    not globally aligned, so category-level latent plots must be interpreted as
+    class-local geometry rather than one shared coordinate system.
+    """
+    z = np.asarray(z, dtype=np.float64)
+    out = np.zeros_like(z, dtype=np.float64)
+    stats_by_class: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    for c in np.unique(y):
+        m = y == c
+        mu = z[m].mean(axis=0)
+        sigma = z[m].std(axis=0)
+        sigma = np.where(sigma < 1e-6, 1.0, sigma)
+        out[m] = (z[m] - mu) / sigma
+        stats_by_class[str(c)] = (mu, sigma)
+    return out.astype(np.float32), stats_by_class
+
+
+def _apply_class_local_standardize(
+    z: np.ndarray,
+    y: np.ndarray,
+    stats_by_class: dict[str, tuple[np.ndarray, np.ndarray]],
+) -> np.ndarray:
+    z = np.asarray(z, dtype=np.float64)
+    out = np.zeros_like(z, dtype=np.float64)
+    for c in np.unique(y):
+        m = y == c
+        mu, sigma = stats_by_class[str(c)]
+        out[m] = (z[m] - mu) / sigma
+    return out.astype(np.float32)
+
+
+def _mutable_indices(data) -> np.ndarray:
+    mask_type = np.asarray(data.get("mask_type", []), dtype=str)
+    if mask_type.size:
+        idx = np.flatnonzero(mask_type != "Frozen")
+        if idx.size:
+            return idx
+    return np.arange(np.asarray(data["X_original"]).shape[1])
+
+
 def _table_to_df(table) -> pd.DataFrame:
     if isinstance(table, pd.DataFrame):
         return table.copy()
@@ -201,8 +247,11 @@ def _table_to_df(table) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 def section_a(data, out, checklist):
     print("\n[Section A] Dimensionality reduction")
-    z = data["z_original"]
     y = _labels(data["y_true"])
+    z_raw = data["z_original"]
+    z, z_stats = _class_local_standardize(z_raw, y)
+    zp_local = _apply_class_local_standardize(data["z_perturbed_pgd"], y, z_stats)
+    zc_local = _apply_class_local_standardize(data["z_perturbed_cw"], y, z_stats)
     categories = sorted(np.unique(y).tolist())
     cat_to_color = dict(zip(categories, sns.color_palette(CATEGORY_PALETTE, len(categories))))
 
@@ -213,14 +262,13 @@ def section_a(data, out, checklist):
             m = y == c
             ax.scatter(emb[m, 0], emb[m, 1], s=8, alpha=0.6, color=cat_to_color[c], label=c)
         ax.set_xlabel("t-SNE 1"); ax.set_ylabel("t-SNE 2")
-        ax.set_title("VAE Latent Space by Attack Category")
+        ax.set_title("Class-Local Normalized VAE Latent Codes by Category")
         ax.legend(markerscale=2)
         save_fig(fig, out, "tsne_latent_by_category.pdf", checklist)
     _try("A1", a1)
 
     def a2():
-        zp = data["z_perturbed_pgd"]; zc = data["z_perturbed_cw"]
-        combo = np.vstack([z, zp, zc])
+        combo = np.vstack([z, zp_local, zc_local])
         emb = _tsne(combo); n = z.shape[0]
         fig, ax = plt.subplots(figsize=(7, 6))
         ax.scatter(emb[:n, 0], emb[:n, 1], s=8, alpha=SCATTER_ALPHA_ORIGINAL,
@@ -230,7 +278,7 @@ def section_a(data, out, checklist):
         ax.scatter(emb[2*n:, 0], emb[2*n:, 1], s=8, alpha=SCATTER_ALPHA_ADV,
                    c=SCATTER_COLORS["latent_cw"], marker="D", label="Latent-CW")
         ax.set_xlabel("t-SNE 1"); ax.set_ylabel("t-SNE 2")
-        ax.set_title("Latent Space: Original vs Perturbed")
+        ax.set_title("Class-Local Latent Codes: Original vs Perturbed")
         ax.legend(markerscale=2)
         save_fig(fig, out, "tsne_latent_original_vs_perturbed.pdf", checklist)
     _try("A2", a2)
@@ -260,12 +308,11 @@ def section_a(data, out, checklist):
                 m = y == c
                 ax.scatter(emb[m, 0], emb[m, 1], s=8, alpha=0.6, color=cat_to_color[c], label=c)
             ax.set_xlabel("UMAP 1"); ax.set_ylabel("UMAP 2")
-            ax.set_title("VAE Latent Space (UMAP) by Attack Category")
+            ax.set_title("Class-Local Normalized VAE Latent Codes (UMAP)")
             ax.legend(markerscale=2)
             save_fig(fig, out, "umap_latent_by_category.pdf", checklist)
 
-        zp = data["z_perturbed_pgd"]; zc = data["z_perturbed_cw"]
-        emb = _umap(np.vstack([z, zp, zc]))
+        emb = _umap(np.vstack([z, zp_local, zc_local]))
         if emb is not None:
             n = z.shape[0]
             fig, ax = plt.subplots(figsize=(7, 6))
@@ -276,7 +323,7 @@ def section_a(data, out, checklist):
             ax.scatter(emb[2*n:, 0], emb[2*n:, 1], s=8, alpha=SCATTER_ALPHA_ADV,
                        c=SCATTER_COLORS["latent_cw"], marker="D", label="Latent-CW")
             ax.set_xlabel("UMAP 1"); ax.set_ylabel("UMAP 2")
-            ax.set_title("Latent Space (UMAP): Original vs Perturbed")
+            ax.set_title("Class-Local Latent Codes (UMAP): Original vs Perturbed")
             ax.legend(markerscale=2)
             save_fig(fig, out, "umap_latent_original_vs_perturbed.pdf", checklist)
 
@@ -307,7 +354,7 @@ def section_a(data, out, checklist):
             ax.scatter(z_pca[m, 0], z_pca[m, 1], s=8, alpha=0.6, color=cat_to_color[c], label=c)
         ax.set_xlabel(f"PC1 ({ev[0]*100:.1f}%)")
         ax.set_ylabel(f"PC2 ({ev[1]*100:.1f}%)")
-        ax.set_title("PCA of VAE Latent Space by Attack Category")
+        ax.set_title("PCA of Class-Local Normalized VAE Latent Codes")
         ax.legend(markerscale=2)
         save_fig(fig, out, "pca_latent_by_category.pdf", checklist)
     _try("A5", a5)
@@ -326,7 +373,7 @@ def section_a(data, out, checklist):
                     bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="black", alpha=0.7))
         ax.set_xlabel(f"PC1 ({ev[0]*100:.1f}%)")
         ax.set_ylabel(f"PC2 ({ev[1]*100:.1f}%)")
-        ax.set_title("Latent PCA by Evasion Success (Latent-CW)")
+        ax.set_title("Class-Local Latent PCA by Evasion Success (Latent-CW)")
         ax.legend(markerscale=2)
         save_fig(fig, out, "pca_latent_by_evasion.pdf", checklist)
     _try("A6", a6)
@@ -347,7 +394,7 @@ def section_a(data, out, checklist):
             ax.text(cx, cy, c, fontsize=9, weight="bold", ha="center", va="center",
                     bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="black", alpha=0.7))
         ax.set_xlabel("UMAP 1"); ax.set_ylabel("UMAP 2")
-        ax.set_title("Latent UMAP by Evasion Success (Latent-CW)")
+        ax.set_title("Class-Local Latent UMAP by Evasion Success (Latent-CW)")
         ax.legend(markerscale=2)
         save_fig(fig, out, "umap_latent_by_evasion.pdf", checklist)
     _try("A7", a7)
@@ -536,8 +583,8 @@ def section_d(data, out, checklist):
     Xo = data["X_original"]; Xr = data["X_reconstructed"]
     feat_names = [str(f) for f in np.asarray(data["feature_names"]).tolist()]
     mask_type = [str(m) for m in np.asarray(data["mask_type"]).tolist()]
-    Xlat = data.get("X_adv_latent_cw", Xo)
-    top6 = np.argsort(-np.abs(Xlat - Xo).mean(axis=0))[:6]
+    recon_mae = np.abs(Xr - Xo).mean(axis=0)
+    top6 = np.argsort(-recon_mae)[:6]
 
     def d1():
         fig, axes = plt.subplots(2, 3, figsize=(12, 8))
@@ -555,7 +602,7 @@ def section_d(data, out, checklist):
             ax.set_title(feat_names[idx], fontsize=10)
             ax.set_xlabel("Original"); ax.set_ylabel("Reconstructed")
             ax.legend(fontsize=8)
-        fig.suptitle("VAE Reconstruction Scatter: Top-6 Perturbed Features", fontsize=12)
+        fig.suptitle("VAE Reconstruction Scatter: Top-6 Reconstruction-Error Features", fontsize=12)
         save_fig(fig, out, "vae_reconstruction_scatter.pdf", checklist)
     _try("D1", d1)
 
@@ -661,12 +708,14 @@ def section_e(data, out, checklist):
             for at in ATTACK_TYPES:
                 ev = np.asarray(data[f"evasion_mask_{at}"]).astype(bool)
                 pv = np.asarray(data[f"protocol_valid_{at}"]).astype(bool)
+                mv = np.asarray(data.get(f"mask_valid_{at}", np.ones_like(pv))).astype(bool)
+                valid = pv & mv
                 for c in np.unique(y):
                     m = y == c
                     if m.sum() == 0:
                         continue
                     rows.append({"model": "aggregate", "attack_type": at,
-                                 "category": c, "ASR_Valid": (ev[m] & pv[m]).mean() * 100})
+                                 "category": c, "ASR_Valid": (ev[m] & valid[m]).mean() * 100})
             ct = pd.DataFrame(rows)
         ct = ct.copy()
         ct["row"] = ct["model"].astype(str) + " | " + ct["attack_type"].astype(str)
@@ -684,13 +733,22 @@ def section_e(data, out, checklist):
 # ---------------------------------------------------------------------------
 # SECTION F
 # ---------------------------------------------------------------------------
-def section_f(data, out, checklist, stats_rows):
+def section_f(data, out, checklist, stats_rows, device: str = "cpu"):
     print("\n[Section F] Latent geometry")
     z = data["z_original"]; y = _labels(data["y_true"])
 
     def f1():
-        pv = np.asarray(data["protocol_valid_latent_cw"]).astype(bool)
-        z_pert = data["z_perturbed_cw"]
+        try:
+            import torch
+            from attack.latent_infra import AttackRouter
+            from attack.validator import validate_batch
+            from preprocessing.feature_groups import FEATURE_NAMES
+            from vae.config import CLASS_TO_ID
+        except Exception as exc:
+            print(f"  [SKIP F1] decoder/validator imports unavailable: {exc}")
+            return
+
+        router = AttackRouter(device=device)
         rng = np.random.default_rng(SEED)
         categories = np.unique(y)
         rows = []
@@ -702,12 +760,14 @@ def section_f(data, out, checklist, stats_rows):
             a, b = rng.choice(idxs, size=2, replace=False)
             za, zb = z[a], z[b]
             alphas = np.linspace(0, 1, 10)
-            valids = []
-            for alpha in alphas:
-                z_interp = (1 - alpha) * za + alpha * zb
-                d = np.linalg.norm(z_pert - z_interp, axis=1)
-                nn = int(np.argmin(d))
-                valids.append(bool(pv[nn]))
+            z_interp = np.vstack([(1 - alpha) * za + alpha * zb for alpha in alphas]).astype(np.float32)
+            class_id = CLASS_TO_ID[str(cat)]
+            vae = router.get_vae(class_id)
+            with torch.no_grad():
+                z_t = torch.from_numpy(z_interp).to(device)
+                x_scaled_t, _ = vae.decode_to_39(z_t, router.scaler, mode="hard")
+            raw = router.scaler.inverse_transform(x_scaled_t.detach().cpu().numpy().astype(np.float64))
+            valids = validate_batch(raw, FEATURE_NAMES).overall_valid.astype(bool).tolist()
             rows.append((f"{cat}: {a}<->{b}", valids))
         if not rows:
             print("  [SKIP F1] not enough samples")
@@ -720,42 +780,40 @@ def section_f(data, out, checklist, stats_rows):
                     xticklabels=[f"{a:.1f}" for a in np.linspace(0, 1, 10)],
                     annot=mat, fmt="d", annot_kws={"size": 8, "color": "white"})
         ax.set_xlabel("Interpolation alpha (a -> b)")
-        ax.set_title("Latent Interpolation: Protocol Validity per Step\n(green = valid, red = invalid)")
+        ax.set_title("Decoded Latent Interpolation: Domain Validity per Step\n(green = valid, red = invalid)")
         save_fig(fig, out, "latent_interpolation_validity.pdf", checklist)
     _try("F1", f1)
 
     def f2():
-        rng = np.random.default_rng(SEED)
+        z_pert = data["z_perturbed_cw"]
         ev = np.asarray(data["evasion_mask_latent_cw"]).astype(bool)
         pv = np.asarray(data["protocol_valid_latent_cw"]).astype(bool)
-        valid_attack = ev & pv
-        cats, spreads, asrs = [], [], []
+        mv = np.asarray(data.get("mask_valid_latent_cw", np.ones_like(pv))).astype(bool)
+        valid_attack = ev & pv & mv
+        cats, mean_delta, asrs = [], [], []
         for c in np.unique(y):
             m = np.flatnonzero(y == c)
-            if len(m) < 2:
+            if len(m) == 0:
                 continue
-            sample = m if len(m) <= 500 else rng.choice(m, size=500, replace=False)
-            zs = z[sample]
-            d = np.linalg.norm(zs[:, None, :] - zs[None, :, :], axis=-1)
-            iu = np.triu_indices_from(d, k=1)
-            spreads.append(float(d[iu].mean()))
+            dz = np.linalg.norm(z_pert[m] - z[m], axis=1)
+            mean_delta.append(float(dz.mean()))
             asrs.append(float(valid_attack[m].mean() * 100))
             cats.append(str(c))
         fig, ax = plt.subplots(figsize=(8, 5))
-        bars = ax.bar(cats, spreads, color=sns.color_palette(CATEGORY_PALETTE, len(cats)),
+        bars = ax.bar(cats, mean_delta, color=sns.color_palette(CATEGORY_PALETTE, len(cats)),
                        edgecolor="black", lw=0.5)
-        ax.set_ylabel("Mean intra-cluster latent L2 distance")
+        ax.set_ylabel("Mean Latent-CW perturbation norm")
         ax.set_xlabel("Attack category")
-        ax.set_title("Latent Cluster Spread per Category (annotation = ASR_Valid %)")
+        ax.set_title("Latent Perturbation Size per Category (annotation = ASR_Valid %)")
         ax.tick_params(axis="x", rotation=30)
         for b, asr in zip(bars, asrs):
             ax.text(b.get_x() + b.get_width()/2, b.get_height(),
                     f"{asr:.1f}%", ha="center", va="bottom", fontsize=8)
         save_fig(fig, out, "latent_cluster_spread_vs_asr.pdf", checklist)
-        if len(spreads) >= 3:
-            rho, p = stats.spearmanr(spreads, asrs)
-            print(f"  Spearman(cluster_spread, ASR_Valid) = rho={rho:.3f}, p={p:.3g}")
-            stats_rows.append({"test": "Spearman_clusterSpread_vs_ASRValid",
+        if len(mean_delta) >= 3:
+            rho, p = stats.spearmanr(mean_delta, asrs)
+            print(f"  Spearman(latent_delta, ASR_Valid) = rho={rho:.3f}, p={p:.3g}")
+            stats_rows.append({"test": "Spearman_latentDelta_vs_ASRValid",
                                "feature": "n/a", "statistic": rho, "p_value": p})
     _try("F2", f2)
 
@@ -765,9 +823,16 @@ def section_f(data, out, checklist, stats_rows):
 # ---------------------------------------------------------------------------
 def main():
     p = argparse.ArgumentParser()
+    try:
+        import torch as _torch
+        default_device = "cuda" if _torch.cuda.is_available() else "cpu"
+    except Exception:
+        default_device = "cpu"
     p.add_argument("--artifacts", type=Path, required=True,
                    help="Path to .npz bundle or directory of .npy/.npz files")
     p.add_argument("--out", type=Path, default=Path("thesis_figures"))
+    p.add_argument("--device", default=default_device,
+                   help="Device for the small decoded-interpolation validity check")
     args = p.parse_args()
 
     args.out.mkdir(parents=True, exist_ok=True)
@@ -781,7 +846,7 @@ def main():
     section_c(data, args.out, checklist)
     section_d(data, args.out, checklist)
     section_e(data, args.out, checklist)
-    section_f(data, args.out, checklist, stats_rows)
+    section_f(data, args.out, checklist, stats_rows, device=args.device)
 
     if stats_rows:
         pd.DataFrame(stats_rows).to_csv(args.out / "statistical_summary.csv", index=False)

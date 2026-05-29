@@ -612,6 +612,33 @@ def reimpose_protocol_features(x_adv: torch.Tensor, x_original: torch.Tensor) ->
     return x_fixed
 
 
+def apply_decoder_residual(
+    *,
+    x_decoded: torch.Tensor,
+    x_anchor_decoded: torch.Tensor,
+    x_original: torch.Tensor,
+    mask: PerturbationMask,
+) -> torch.Tensor:
+    """Apply a latent decoder displacement around the original sample.
+
+    The per-class VAEs are not perfect identity maps. Using ``decode(z_adv)``
+    directly can move a sample away from the data space even when ``z_adv`` is
+    still close to ``z_orig``. Anchoring the decoder displacement cancels that
+    reconstruction bias while preserving the local latent direction found by
+    the attack.
+    """
+    if x_decoded.shape != x_anchor_decoded.shape or x_decoded.shape != x_original.shape:
+        raise ValueError(
+            "Shape mismatch among decoded, anchor decoded, and original tensors: "
+            f"{x_decoded.shape}, {x_anchor_decoded.shape}, {x_original.shape}"
+        )
+
+    x_delta = x_decoded - x_anchor_decoded.detach()
+    x_candidate = x_original + x_delta
+    x_masked = mask.apply(x_candidate, x_original)
+    return reimpose_protocol_features(x_masked, x_original)
+
+
 def predict_labels(classifier: Any, x_batch: torch.Tensor, *, device: str) -> torch.Tensor:
     if hasattr(classifier, "predict") and not isinstance(classifier, torch.nn.Module):
         preds = classifier.predict(x_batch.detach().cpu().numpy())

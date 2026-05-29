@@ -4,8 +4,18 @@ from typing import Any
 
 import torch
 
-from attack.latent_infra import PerturbationMask, reimpose_protocol_features
-from attack.latent_pgd import classifier_logits
+from attack.latent_infra import (
+    PerturbationMask,
+    apply_decoder_residual,
+    reimpose_protocol_features,
+)
+from attack.latent_pgd import (
+    MetadataValue,
+    _attack_success_mask,
+    _normalise_z_initializers,
+    _per_sample_objective,
+    classifier_logits,
+)
 
 
 def latent_cw_attack(
@@ -22,7 +32,12 @@ def latent_cw_attack(
     learning_rate: float,
     convergence_threshold: float,
     device: str,
-) -> tuple[torch.Tensor, torch.Tensor, dict[str, torch.Tensor | float | int | bool]]:
+    targeted: bool = False,
+    target_class: int = 0,
+    num_restarts: int = 1,
+    restart_strategy: str = "encoded",
+    z_initializers: torch.Tensor | None = None,
+) -> tuple[torch.Tensor, torch.Tensor, dict[str, MetadataValue]]:
     x_original = x_original.to(device=device, dtype=torch.float32)
     y_true = y_true.to(device=device, dtype=torch.long)
 
@@ -33,95 +48,195 @@ def latent_cw_attack(
 
     with torch.no_grad():
         z_orig, _ = vae.encode(x_original)
+        x_orig_dec_soft, _ = vae.decode_to_39(z_orig, scaler, mode="soft")
+        x_orig_dec_hard, _ = vae.decode_to_39(z_orig, scaler, mode="hard")
 
     if float(lambda_conf) <= 0.0:
         x_passthrough = reimpose_protocol_features(mask.apply(x_original, x_original), x_original)
-        metadata: dict[str, torch.Tensor | float | int | bool] = {
+        metadata: dict[str, MetadataValue] = {
             "loss_final": 0.0,
             "num_iterations": int(num_iterations),
             "learning_rate": float(learning_rate),
             "lambda_conf": float(lambda_conf),
             "kappa": float(kappa),
             "convergence_threshold": float(convergence_threshold),
+            "targeted": bool(targeted),
+            "target_class": int(target_class),
+            "num_restarts": int(num_restarts),
+            "restart_strategy": str(restart_strategy),
             "zero_budget_passthrough": True,
+            "anchored_decoder_residual": True,
             "iterations_run": 0,
             "converged_early": False,
             "z_orig": z_orig.detach(),
             "z_adv": z_orig.detach(),
             "best_success_mask": torch.zeros(x_original.shape[0], dtype=torch.bool, device=device),
+            "selected_restart": torch.zeros(x_original.shape[0], dtype=torch.long, device=device),
         }
         return x_passthrough.detach(), z_orig.detach(), metadata
 
-    delta = torch.zeros_like(z_orig, requires_grad=True)
-    optimizer = torch.optim.Adam([delta], lr=learning_rate)
+    z_starts = _normalise_z_initializers(
+        z_orig=z_orig,
+        epsilon=0.0,
+        random_start=False,
+        num_restarts=int(num_restarts),
+        z_initializers=z_initializers,
+        project=False,
+    )
 
-    best_delta = torch.zeros_like(z_orig)
-    best_delta_l2 = torch.full((z_orig.shape[0],), float("inf"), device=device)
-    best_success_mask = torch.zeros(z_orig.shape[0], dtype=torch.bool, device=device)
-
-    prev_delta = delta.detach().clone()
-    converged_early = False
+    best_x: torch.Tensor | None = None
+    best_z: torch.Tensor | None = None
+    best_success = torch.zeros(x_original.shape[0], dtype=torch.bool, device=device)
+    best_l2 = torch.full((x_original.shape[0],), float("inf"), device=device)
+    best_objective = torch.full((x_original.shape[0],), float("-inf"), device=device)
+    selected_restart = torch.zeros(x_original.shape[0], dtype=torch.long, device=device)
+    restart_success_counts: list[int] = []
     loss_value = 0.0
-    iterations_run = 0
+    max_iterations_run = 0
+    any_converged_early = False
 
-    for iteration in range(num_iterations):
-        optimizer.zero_grad(set_to_none=True)
+    for restart_idx, z_start in enumerate(z_starts):
+        delta = (z_start - z_orig).detach().clone().requires_grad_(True)
+        optimizer = torch.optim.Adam([delta], lr=learning_rate)
 
-        z_current = z_orig + delta
-        x_soft, _ = vae.decode_to_39(z_current, scaler, mode="soft")
-        x_soft = mask.apply(x_soft, x_original)
-        x_soft = reimpose_protocol_features(x_soft, x_original)
+        best_delta = delta.detach().clone()
+        best_delta_l2 = torch.full((z_orig.shape[0],), float("inf"), device=device)
+        best_restart_success = torch.zeros(z_orig.shape[0], dtype=torch.bool, device=device)
 
-        logits = classifier_logits(classifier, x_soft, device=device)
-        true_logits = logits.gather(1, y_true.unsqueeze(1)).squeeze(1)
-        masked_logits = logits.clone()
-        masked_logits.scatter_(1, y_true.unsqueeze(1), float("-inf"))
-        other_logits = masked_logits.max(dim=1).values
-        margin = true_logits - other_logits
+        prev_delta = delta.detach().clone()
+        converged_early = False
+        iterations_run = 0
 
-        conf_term = torch.clamp(margin + float(kappa), min=0.0)
-        delta_l2_sq = delta.pow(2).sum(dim=1)
-        loss_per_sample = float(lambda_conf) * conf_term + delta_l2_sq
-        loss = loss_per_sample.mean()
-        loss.backward()
-        optimizer.step()
+        for iteration in range(num_iterations):
+            optimizer.zero_grad(set_to_none=True)
+
+            z_current = z_orig + delta
+            x_soft_dec, _ = vae.decode_to_39(z_current, scaler, mode="soft")
+            x_soft = apply_decoder_residual(
+                x_decoded=x_soft_dec,
+                x_anchor_decoded=x_orig_dec_soft,
+                x_original=x_original,
+                mask=mask,
+            )
+
+            logits = classifier_logits(classifier, x_soft, device=device)
+            true_logits = logits.gather(1, y_true.unsqueeze(1)).squeeze(1)
+
+            if targeted:
+                target = torch.full_like(y_true, int(target_class), dtype=torch.long)
+                target_logits = logits.gather(1, target.unsqueeze(1)).squeeze(1)
+                margin = true_logits - target_logits
+            else:
+                masked_logits = logits.clone()
+                masked_logits.scatter_(1, y_true.unsqueeze(1), float("-inf"))
+                other_logits = masked_logits.max(dim=1).values
+                margin = true_logits - other_logits
+
+            conf_term = torch.clamp(margin + float(kappa), min=0.0)
+            delta_l2_sq = delta.pow(2).sum(dim=1)
+            loss_per_sample = float(lambda_conf) * conf_term + delta_l2_sq
+            loss = loss_per_sample.mean()
+            loss.backward()
+            optimizer.step()
+
+            with torch.no_grad():
+                z_post = z_orig + delta.detach()
+                x_post_dec, _ = vae.decode_to_39(z_post, scaler, mode="soft")
+                x_post = apply_decoder_residual(
+                    x_decoded=x_post_dec,
+                    x_anchor_decoded=x_orig_dec_soft,
+                    x_original=x_original,
+                    mask=mask,
+                )
+                logits_post = classifier_logits(classifier, x_post, device=device)
+                true_logits_post = logits_post.gather(1, y_true.unsqueeze(1)).squeeze(1)
+
+                if targeted:
+                    target = torch.full_like(y_true, int(target_class), dtype=torch.long)
+                    target_logits_post = logits_post.gather(1, target.unsqueeze(1)).squeeze(1)
+                    success_mask = (true_logits_post - target_logits_post) <= 0.0
+                else:
+                    masked_logits_post = logits_post.clone()
+                    masked_logits_post.scatter_(1, y_true.unsqueeze(1), float("-inf"))
+                    other_logits_post = masked_logits_post.max(dim=1).values
+                    success_mask = (true_logits_post - other_logits_post) <= 0.0
+
+                delta_l2 = torch.linalg.norm(delta.detach(), dim=1)
+                improved = success_mask & ((~best_restart_success) | (delta_l2 < best_delta_l2))
+                if improved.any():
+                    best_delta[improved] = delta.detach()[improved]
+                    best_delta_l2[improved] = delta_l2[improved]
+                    best_restart_success[improved] = True
+
+                delta_shift = torch.linalg.norm(
+                    (delta.detach() - prev_delta).reshape(delta.shape[0], -1),
+                    dim=1,
+                )
+                prev_delta = delta.detach().clone()
+                loss_value = float(loss.item())
+                iterations_run = iteration + 1
+
+                if torch.max(delta_shift).item() < float(convergence_threshold):
+                    converged_early = True
+                    break
 
         with torch.no_grad():
-            z_post = z_orig + delta.detach()
-            x_post, _ = vae.decode_to_39(z_post, scaler, mode="soft")
-            x_post = mask.apply(x_post, x_original)
-            x_post = reimpose_protocol_features(x_post, x_original)
-            logits_post = classifier_logits(classifier, x_post, device=device)
-            true_logits_post = logits_post.gather(1, y_true.unsqueeze(1)).squeeze(1)
-            masked_logits_post = logits_post.clone()
-            masked_logits_post.scatter_(1, y_true.unsqueeze(1), float("-inf"))
-            other_logits_post = masked_logits_post.max(dim=1).values
-            success_mask = (true_logits_post - other_logits_post) <= 0.0
+            final_delta = delta.detach()
+            chosen_delta = torch.where(best_restart_success.unsqueeze(1), best_delta, final_delta)
+            z_adv_final = z_orig + chosen_delta
+            x_adv_dec_final, _ = vae.decode_to_39(z_adv_final, scaler, mode="hard")
+            x_adv_final = apply_decoder_residual(
+                x_decoded=x_adv_dec_final,
+                x_anchor_decoded=x_orig_dec_hard,
+                x_original=x_original,
+                mask=mask,
+            )
+            logits_final = classifier_logits(classifier, x_adv_final, device=device)
+            success = _attack_success_mask(
+                logits_final,
+                y_true,
+                targeted=bool(targeted),
+                target_class=int(target_class),
+            )
+            objective = _per_sample_objective(
+                logits_final,
+                y_true,
+                targeted=bool(targeted),
+                target_class=int(target_class),
+            )
+            input_l2 = torch.linalg.norm(x_adv_final - x_original, dim=1)
+            restart_success_counts.append(int(success.float().sum().item()))
 
-            delta_l2 = torch.linalg.norm(delta.detach(), dim=1)
-            improved = success_mask & (delta_l2 < best_delta_l2)
-            if improved.any():
-                best_delta[improved] = delta.detach()[improved]
-                best_delta_l2[improved] = delta_l2[improved]
-                best_success_mask[improved] = True
+            if best_x is None or best_z is None:
+                best_x = x_adv_final.detach().clone()
+                best_z = z_adv_final.detach().clone()
+                best_success = success.detach().clone()
+                best_l2 = input_l2.detach().clone()
+                best_objective = objective.detach().clone()
+                selected_restart = torch.full(
+                    (x_original.shape[0],),
+                    int(restart_idx),
+                    dtype=torch.long,
+                    device=device,
+                )
+            else:
+                improved = success & (~best_success)
+                improved |= (success == best_success) & success & (input_l2 < best_l2)
+                improved |= (success == best_success) & (~success) & (objective > best_objective)
 
-            delta_shift = torch.linalg.norm((delta.detach() - prev_delta).reshape(delta.shape[0], -1), dim=1)
-            prev_delta = delta.detach().clone()
-            loss_value = float(loss.item())
-            iterations_run = iteration + 1
+                if improved.any():
+                    best_x[improved] = x_adv_final.detach()[improved]
+                    best_z[improved] = z_adv_final.detach()[improved]
+                    best_success[improved] = success.detach()[improved]
+                    best_l2[improved] = input_l2.detach()[improved]
+                    best_objective[improved] = objective.detach()[improved]
+                    selected_restart[improved] = int(restart_idx)
 
-            if torch.max(delta_shift).item() < float(convergence_threshold):
-                converged_early = True
-                break
+        max_iterations_run = max(max_iterations_run, int(iterations_run))
+        any_converged_early = any_converged_early or bool(converged_early)
 
-    with torch.no_grad():
-        final_delta = delta.detach()
-        final_success = best_success_mask
-        chosen_delta = torch.where(final_success.unsqueeze(1), best_delta, final_delta)
-        z_adv_final = z_orig + chosen_delta
-        x_adv_final, _ = vae.decode_to_39(z_adv_final, scaler, mode="hard")
-        x_adv_final = mask.apply(x_adv_final, x_original)
-        x_adv_final = reimpose_protocol_features(x_adv_final, x_original)
+    if best_x is None or best_z is None:
+        raise RuntimeError("No C&W restarts were executed")
 
     metadata = {
         "loss_final": loss_value,
@@ -130,11 +245,19 @@ def latent_cw_attack(
         "lambda_conf": float(lambda_conf),
         "kappa": float(kappa),
         "convergence_threshold": float(convergence_threshold),
+        "targeted": bool(targeted),
+        "target_class": int(target_class),
+        "num_restarts": int(len(z_starts)),
+        "restart_strategy": str(restart_strategy),
         "zero_budget_passthrough": False,
-        "iterations_run": int(iterations_run),
-        "converged_early": bool(converged_early),
+        "anchored_decoder_residual": True,
+        "iterations_run": int(max_iterations_run),
+        "converged_early": bool(any_converged_early),
         "z_orig": z_orig.detach(),
-        "z_adv": z_adv_final.detach(),
-        "best_success_mask": best_success_mask.detach(),
+        "z_adv": best_z.detach(),
+        "best_success_mask": best_success.detach(),
+        "best_objective": best_objective.detach(),
+        "selected_restart": selected_restart.detach(),
+        "restart_success_counts": restart_success_counts,
     }
-    return x_adv_final.detach(), z_adv_final.detach(), metadata
+    return best_x.detach(), best_z.detach(), metadata

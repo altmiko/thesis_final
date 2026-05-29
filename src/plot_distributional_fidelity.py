@@ -8,6 +8,7 @@ import numpy as np
 import seaborn as sns
 from scipy.spatial.distance import jensenshannon
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 
 SEED = 42
@@ -17,6 +18,17 @@ DEFAULT_CATEGORIES = ["DoS", "Mirai", "BruteForce"]
 def load_bundle(path: Path) -> dict[str, np.ndarray]:
     with np.load(path, allow_pickle=True) as data:
         return {key: data[key] for key in data.files}
+
+
+def select_subspace(bundle: dict[str, np.ndarray], mode: str) -> np.ndarray:
+    n_features = int(np.asarray(bundle["X_original"]).shape[1])
+    if mode == "full":
+        return np.arange(n_features)
+    mask_type = np.asarray(bundle.get("mask_type", []), dtype=str)
+    if mask_type.size != n_features:
+        return np.arange(n_features)
+    mutable = np.flatnonzero(mask_type != "Frozen")
+    return mutable if mutable.size else np.arange(n_features)
 
 
 def js_divergence_1d(a: np.ndarray, b: np.ndarray, bins: np.ndarray) -> float:
@@ -103,6 +115,17 @@ def main() -> None:
         help="Bundle key for the VAE-generated adversarial distribution.",
     )
     parser.add_argument(
+        "--subspace",
+        default="mutable",
+        choices=["mutable", "full"],
+        help="Feature subspace used for PCA projection.",
+    )
+    parser.add_argument(
+        "--no-standardize",
+        action="store_true",
+        help="Disable per-category standardization before PCA.",
+    )
+    parser.add_argument(
         "--out",
         type=Path,
         default=Path("thesis_figures/distributional_fidelity.png"),
@@ -131,6 +154,14 @@ def main() -> None:
     x_pgd = np.asarray(bundle["X_adv_input_pgd"], dtype=np.float32)
     x_cw = np.asarray(bundle["X_adv_input_cw"], dtype=np.float32)
     x_vae = np.asarray(bundle[args.vae_key], dtype=np.float32)
+    feature_idx = select_subspace(bundle, args.subspace)
+    axis_label = (
+        "PCA Projection (standardized mutable subspace)"
+        if args.subspace == "mutable"
+        else "PCA Projection (standardized full feature space)"
+    )
+    if args.no_standardize:
+        axis_label = axis_label.replace("standardized ", "")
 
     colors = {
         "Original": "#7a7a7a",
@@ -156,13 +187,29 @@ def main() -> None:
         x_cw_cat = x_cw[mask]
         x_vae_cat = x_vae[mask]
 
-        pca = PCA(n_components=1, random_state=SEED)
-        pca.fit(x_orig_cat)
+        x_orig_sub = x_orig_cat[:, feature_idx]
+        x_pgd_sub = x_pgd_cat[:, feature_idx]
+        x_cw_sub = x_cw_cat[:, feature_idx]
+        x_vae_sub = x_vae_cat[:, feature_idx]
+        if args.no_standardize:
+            x_orig_plot = x_orig_sub
+            x_pgd_plot = x_pgd_sub
+            x_cw_plot = x_cw_sub
+            x_vae_plot = x_vae_sub
+        else:
+            scaler = StandardScaler().fit(x_orig_sub)
+            x_orig_plot = scaler.transform(x_orig_sub)
+            x_pgd_plot = scaler.transform(x_pgd_sub)
+            x_cw_plot = scaler.transform(x_cw_sub)
+            x_vae_plot = scaler.transform(x_vae_sub)
 
-        proj_orig = pca.transform(x_orig_cat).ravel()
-        proj_pgd = pca.transform(x_pgd_cat).ravel()
-        proj_cw = pca.transform(x_cw_cat).ravel()
-        proj_vae = pca.transform(x_vae_cat).ravel()
+        pca = PCA(n_components=1, random_state=SEED)
+        pca.fit(x_orig_plot)
+
+        proj_orig = pca.transform(x_orig_plot).ravel()
+        proj_pgd = pca.transform(x_pgd_plot).ravel()
+        proj_cw = pca.transform(x_cw_plot).ravel()
+        proj_vae = pca.transform(x_vae_plot).ravel()
 
         combined = np.concatenate([proj_orig, proj_pgd, proj_cw, proj_vae])
         bins = np.histogram_bin_edges(combined, bins="fd")
@@ -211,10 +258,11 @@ def main() -> None:
         )
 
         style_axis(ax, category, show_ylabel=(idx == 0))
+        ax.set_xlabel(axis_label, fontsize=16, labelpad=10)
         ax.text(
             0.98,
             0.97,
-            f"JS vs PGD: {js_pgd:.3f}\nJS vs CW: {js_cw:.3f}\nJS vs VAE: {js_vae:.3f}",
+            f"Original-PGD JS: {js_pgd:.3f}\nOriginal-CW JS: {js_cw:.3f}\nOriginal-VAE JS: {js_vae:.3f}",
             transform=ax.transAxes,
             ha="right",
             va="top",

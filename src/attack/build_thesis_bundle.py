@@ -137,7 +137,7 @@ def run_latent_attack_for_model(
         z_orig_t = meta["z_orig"]
         z_adv_t = meta["z_adv"]
         with torch.no_grad():
-            x_recon_t, _ = vae.decode_to_39(z_orig_t, router.scaler, mode="soft")
+            x_recon_t, _ = vae.decode_to_39(z_orig_t, router.scaler, mode="hard")
 
         if z_orig_arr is None:
             latent_dim = int(z_orig_t.shape[1])
@@ -221,18 +221,29 @@ def _nn_align(haystack: np.ndarray, needles: np.ndarray) -> np.ndarray:
 def metrics_for(
     *, X_orig: np.ndarray, X_adv: np.ndarray, y_true: np.ndarray,
     y_pred_adv: np.ndarray, protocol_valid: np.ndarray,
+    mask_valid: np.ndarray | None = None,
 ) -> dict[str, float]:
     evasion = (y_pred_adv != y_true).astype(bool)
     pv = protocol_valid.astype(bool)
+    mv = np.ones_like(pv, dtype=bool) if mask_valid is None else mask_valid.astype(bool)
+    valid = pv & mv
     l2 = np.linalg.norm(X_adv - X_orig, axis=1)
     return {
         "ASR":            float(evasion.mean()),
-        "ASR_Valid":      float((evasion & pv).mean()),
+        "ASR_Valid":      float((evasion & valid).mean()),
         "Protocol_Valid": float(pv.mean()),
-        "Mask_Valid":     float("nan"),
+        "Mask_Valid":     float(mv.mean()),
         "IDSR":           float((~evasion).mean()),
         "L2_mean":        float(l2.mean()),
     }
+
+
+def mask_validity(mask: PerturbationMask, X_adv: np.ndarray, X_orig: np.ndarray) -> np.ndarray:
+    verify = mask.verify(
+        torch.from_numpy(X_adv.astype(np.float32)),
+        torch.from_numpy(X_orig.astype(np.float32)),
+    )
+    return verify["all_compliant"].cpu().numpy().astype(bool)
 
 
 # ---------------------------------------------------------------------------
@@ -326,6 +337,10 @@ def main():
         pv_lc = validator.validate(torch.from_numpy(lc["X_adv"])).cpu().numpy().astype(bool)
         pv_ip = validator.validate(torch.from_numpy(inp["X_adv_input_pgd"])).cpu().numpy().astype(bool)
         pv_ic = validator.validate(torch.from_numpy(inp["X_adv_input_cw"])).cpu().numpy().astype(bool)
+        mv_lp = mask_validity(mask, lp["X_adv"], X_orig)
+        mv_lc = mask_validity(mask, lc["X_adv"], X_orig)
+        mv_ip = mask_validity(mask, inp["X_adv_input_pgd"], X_orig)
+        mv_ic = mask_validity(mask, inp["X_adv_input_cw"], X_orig)
 
         per_model_per_sample[mk] = {
             "X_adv_latent_pgd": lp["X_adv"], "z_perturbed_pgd": lp["z_adv"],
@@ -346,24 +361,29 @@ def main():
             "protocol_valid_latent_cw":  pv_lc,
             "protocol_valid_input_pgd":  pv_ip,
             "protocol_valid_input_cw":   pv_ic,
+            "mask_valid_latent_pgd": mv_lp,
+            "mask_valid_latent_cw":  mv_lc,
+            "mask_valid_input_pgd":  mv_ip,
+            "mask_valid_input_cw":   mv_ic,
         }
 
         runs = {
-            "latent_pgd": (lp["X_adv"],            y_lp,                        pv_lp),
-            "latent_cw":  (lc["X_adv"],            y_lc,                        pv_lc),
-            "input_pgd":  (inp["X_adv_input_pgd"], inp["y_pred_adv_input_pgd"], pv_ip),
-            "input_cw":   (inp["X_adv_input_cw"],  inp["y_pred_adv_input_cw"],  pv_ic),
+            "latent_pgd": (lp["X_adv"],            y_lp,                        pv_lp, mv_lp),
+            "latent_cw":  (lc["X_adv"],            y_lc,                        pv_lc, mv_lc),
+            "input_pgd":  (inp["X_adv_input_pgd"], inp["y_pred_adv_input_pgd"], pv_ip, mv_ip),
+            "input_cw":   (inp["X_adv_input_cw"],  inp["y_pred_adv_input_cw"],  pv_ic, mv_ic),
         }
-        for atk, (Xa, ya, pv) in runs.items():
+        for atk, (Xa, ya, pv, mv) in runs.items():
             m = metrics_for(X_orig=X_orig, X_adv=Xa, y_true=y_true,
-                            y_pred_adv=ya, protocol_valid=pv)
+                            y_pred_adv=ya, protocol_valid=pv, mask_valid=mv)
             multimetric_rows.append({"model": MODEL_LABELS[mk], "attack_type": atk, **m})
             ev = (ya != y_true).astype(bool)
+            valid = pv.astype(bool) & mv.astype(bool)
             for cname in np.unique(y_true_names):
                 m_ = (y_true_names == cname)
                 if m_.sum() == 0:
                     continue
-                asr_valid = float((ev[m_] & pv[m_]).mean()) * 100.0
+                asr_valid = float((ev[m_] & valid[m_]).mean()) * 100.0
                 category_rows.append({
                     "model": MODEL_LABELS[mk], "attack_type": atk,
                     "category": cname, "ASR_Valid": asr_valid,
@@ -379,6 +399,8 @@ def main():
         "y_true":         y_true_names,
         "feature_names":  np.array(FEATURE_NAMES),
         "mask_type":      np.array(mask_type),
+        "latent_attack_update": np.array("anchored_decoder_residual"),
+        "latent_space_scope": np.array("per_class_vae"),
         **primary,
         # Store tables as structured arrays for round-trip-safe npz storage.
         # The viz script's loader detects these names and converts via pandas.
