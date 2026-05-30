@@ -330,8 +330,10 @@ def main() -> None:
 
             std_vals = x_chunk_raw[:, idx["Std"]]
             var_vals = x_chunk_raw[:, idx["Variance"]]
-            rel_err = np.abs(var_vals - (std_vals ** 2)) / (std_vals ** 2 + 1e-8)
-            mask_var_std = rel_err <= 0.05
+            exp_var = std_vals ** 2
+            abs_err = np.abs(var_vals - exp_var)
+            rel_err = abs_err / (np.abs(exp_var) + 1e-8)
+            mask_var_std = (abs_err <= 0.01) | (rel_err <= 0.05)
 
             mask_binary = (bin_dev <= 0.01).all(axis=1)
             int_vals = x_chunk_raw[:, int_idx]

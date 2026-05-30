@@ -27,7 +27,7 @@ from src.evaluation.validity_analysis import validate_adversarial_examples
 from src.evaluation.validity_analysis import validate_feature_matrix
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 ATTACKS_DIR = ROOT / "results" / "attacks"
 SCALER_PATH = ROOT / "data" / "processed" / "scaler.pkl"
 TABLES_DIR = ROOT / "tables"

@@ -4,6 +4,8 @@ Generated from workspace: `D:\thesis_final`
 
 Generated on: 2026-05-29
 
+Updated on: 2026-05-31 with restart-aware latent attack explanation and beta05 rerun results.
+
 Purpose: this file is a detailed working log for the Phase 2 LaTeX methodology chapter. It records the current data pipeline, preprocessing decisions, model design, VAE/generative framework, attack-validation outputs, and artifact inventory found in the workspace.
 
 Important scope note: I inspected the current repository state, including source code, configs, manifests, tables, figures, model checkpoints, validation reports, attack outputs, VAE outputs, and run folders. Binary artifacts such as `.pt`, `.npy`, `.npz`, `.pkl`, `.pdf`, and `.png` are logged by role, shape/count, and output directory rather than printed byte-for-byte. Text, CSV, JSON, Markdown, YAML, and Python files were used as the main sources for methodology and decision rationale.
@@ -49,7 +51,7 @@ The main package layout is:
 | Input-space attacks | `src/attack/adversarial_attacks.py`, `src/attack/run_attacks.py` | Runs FGSM, PGD, and CW without image-style [0,1] clamping to expose unconstrained tabular attack behavior. |
 | Validity evaluation | `src/evaluation/validity_analysis.py`, `src/evaluation/run_validity_analysis.py`, `src/evaluation/validate_full_dataset.py` | Inverse-transforms scaled arrays and computes raw validity, `ASR_valid`, rule violations, and exhibits. |
 | VAE subsystem | `src/vae/*` | Per-category beta-VAE models, mixed-type decoder, training, diagnostics, latent geometry, fidelity analysis, and physics checks. |
-| Latent attacks | `src/attack/latent_infra.py`, `src/attack/latent_pgd.py`, `src/attack/latent_cw.py`, `src/attack/run_all_models_attack_rerun.py`, `src/attack/run_targeted_benign_latent_pgd.py` | Performs VAE latent attacks under protocol and perturbation-mask governance. |
+| Latent attacks | `src/attack/latent_infra.py`, `src/attack/latent_pgd.py`, `src/attack/latent_cw.py`, `src/attack/latent_restarts.py`, `src/attack/run_all_models_attack_rerun.py`, `src/attack/run_targeted_benign_latent_pgd.py` | Performs VAE latent attacks under protocol and perturbation-mask governance, including restart-aware latent search. |
 | Thesis visualizations | `src/thesis_visualizations.py`, `src/plot_distributional_fidelity.py`, `src/plot_benign_overlay_fidelity.py` | Generates distribution, latent-space, perturbation, and statistical figures for thesis use. |
 
 ### Current Workspace Artifact Scale
@@ -1214,6 +1216,108 @@ Interpretation:
 - Latent attacks have lower ASR but preserve protocol validity and perturbation-mask compliance.
 - This gives the thesis a more realistic adversarial framework: success should be counted only when the example is both evasive and valid.
 
+### Why Restart-Aware Latent Attacks Improve ASR
+
+The restart-aware rerun uses the beta05 Gaussian VAE line:
+
+`outputs/latent_attacks/new_vae_attacks_gaussian_anticollapse_beta05_freebits01_20260529_173512_20260530_234841_seed42/summary.csv`
+
+This run keeps the same validity-aware philosophy but makes the latent attack search stronger. Instead of running each attack once from a single latent starting point, each sample is attacked from five starts:
+
+```text
+encoded, jitter, gmm, jitter, gmm
+```
+
+The attack is still performed in VAE latent space. For a clean scaled traffic row `x`, the class-specific VAE encoder maps the row to a latent code:
+
+```text
+x_original -> encoder -> z_orig
+```
+
+Latent PGD or latent CW then searches for a nearby latent code `z_adv` such that the decoded row fools the classifier:
+
+```text
+z_adv -> decoder -> x_adv -> classifier prediction changes
+```
+
+The important change is that the optimizer is not forced to start only from `z_orig`. It is given several plausible initial latent positions, and the best candidate is selected per sample after all restarts finish.
+
+The three restart types have different roles:
+
+| Restart type | Starting point | Purpose |
+|---|---|---|
+| `encoded` | `z_start = z_orig` | Local attack from the original encoded point. This is the most conservative start and tends to preserve similarity to the original sample. |
+| `jitter` | `z_start = z_orig + Uniform(-epsilon, epsilon)` | Random local exploration around the original latent point. This helps avoid one unlucky gradient path. |
+| `gmm` | `z_start` sampled from a class-specific latent GMM and clipped to the class radius | Manifold-guided exploration from regions where real validation samples from the same class tend to live. |
+
+A GMM is a Gaussian Mixture Model. In this pipeline it is fitted in latent space, not raw feature space. For each 8-class category, validation examples from that category are encoded through the corresponding per-class VAE:
+
+```text
+X_val[class] -> encoder -> latent posterior means z_mu
+```
+
+Then a 5-component Bayesian Gaussian mixture is fitted to those latent posterior means:
+
+```text
+p(z | class) = w1 N(mu1, Sigma1)
+             + w2 N(mu2, Sigma2)
+             + ...
+             + w5 N(mu5, Sigma5)
+```
+
+The mixture weights `w_k`, means `mu_k`, and covariance matrices `Sigma_k` approximate where that class lives in the VAE latent space. During an attack, a `gmm` restart samples from this learned class distribution. This is different from blind random noise: random jitter explores a small box around the current sample, while the GMM restart proposes latent points that are statistically typical for the class manifold learned from validation data.
+
+The GMM priors are cached under `outputs/latent_gmm_priors/`. They are not target-class classifiers and they do not use test labels to optimize the attack. They are only a density model over the source class's VAE latent codes.
+
+For latent PGD, the search remains budgeted. After each PGD step, the latent code is projected back into the class-specific `L_inf` ball:
+
+```text
+z_adv in [z_orig - epsilon_class, z_orig + epsilon_class]
+```
+
+The class-specific epsilon values remove a one-size-fits-all bottleneck:
+
+| Class | Epsilon |
+|---|---:|
+| Benign | 0.3 |
+| BruteForce | 0.3 |
+| DDoS | 0.8 |
+| DoS | 0.8 |
+| Mirai | 0.8 |
+| Recon | 0.5 |
+| Spoofing | 0.5 |
+| Web | 1.0 |
+
+The attack also uses `alpha = 0.1 * epsilon_class` by default, so larger class budgets receive proportionally larger PGD steps. Adaptive PGD then halves the step size when the loss stops improving, which reduces oscillation near a classifier boundary.
+
+For latent CW, the same restart pool is used as initialization. The restart seeds are clipped to the class radius before optimization, but CW then optimizes its own latent L2-style objective. This is why CW also benefits from GMM starts even though it is not a projected-gradient attack.
+
+After all restarts are evaluated, candidate selection is per sample, not per batch. The selection rule is:
+
+1. Prefer a candidate that flips the classifier.
+2. If both candidates tie on attack success, prefer the one that is jointly valid.
+3. If both tie on success and validity, prefer lower input-space L2 distance.
+4. If still tied, prefer the candidate with the stronger classifier loss objective.
+
+This explains the ASR improvement. A single-start attack can fail because it begins in a poor local region of latent space. Restart-aware latent search tries several doors into the classifier decision boundary. The GMM restarts are especially useful because they begin from plausible class-manifold regions rather than arbitrary latent noise.
+
+The beta05 Gaussian rerun shows the effect clearly:
+
+| Model | Attack | Previous ASR | Restart-aware ASR | Raw/Joint validity | Mean selected restart |
+|---|---|---:|---:|---:|---:|
+| CNN | latent-PGD | 16.80% | 32.00% | 94.20% | 1.62 |
+| CNN | latent-CW | 16.40% | 33.20% | 95.20% | 1.74 |
+| CNN-LSTM | latent-PGD | 21.33% | 40.50% | 94.00% | 1.83 |
+| CNN-LSTM | latent-CW | 22.33% | 41.17% | 96.17% | 2.04 |
+| DualPath | latent-PGD | 17.00% | 36.57% | 85.71% | 1.99 |
+| DualPath | latent-CW | 16.86% | 31.71% | 87.71% | 2.07 |
+| LSTM | latent-PGD | 21.71% | 37.29% | 87.14% | 1.95 |
+| LSTM | latent-CW | 22.86% | 39.71% | 90.29% | 2.09 |
+| MLP | latent-PGD | 19.86% | 38.29% | 87.43% | 1.95 |
+| MLP | latent-CW | 18.43% | 37.00% | 88.43% | 2.20 |
+
+The ASR increase is therefore an optimization effect: more starts, more informed starts, class-specific latent radii, and adaptive PGD. It is not caused by relaxing the attack-success definition. `ASR_overall` is still counted as a classifier label flip. The new raw/joint validity rate is stricter than the earlier latent summary because it includes full raw G1-G8 validation in addition to protocol and perturbation-mask checks. This is why the new joint-validity column is no longer automatically 100%.
+
 ### Statistical Comparison of Latent PGD vs Latent CW
 
 The latest McNemar summary reports no significant difference between latent-PGD and latent-CW at the saved sample sizes:
@@ -1383,8 +1487,9 @@ This framework is stronger than a standard adversarial-attack benchmark because 
 | `phase3_20260524_180113_seed42` | 10 | Latent CW, 7 class `.npz` files plus summary. |
 | `phase4_20260524_182644_seed42` | 17 | Input PGD/CW baseline comparison. |
 | `all_models_rerun_20260524_185905_seed42` | 21 | Main all-model latent/input rerun with stats. |
+| `new_vae_attacks_gaussian_anticollapse_beta05_freebits01_20260529_173512_20260530_234841_seed42` | 8 | Restart-aware beta05 latent PGD/CW rerun with GMM restarts, class-specific epsilon, raw G1-G8 validity, and improved ASR. |
 | `targeted_benign_pgd_20260529_065027_seed42` | 39 | Latest targeted benign latent PGD run across five classifiers. |
-| `latent_gmm_priors/` | 21 pkl files | Cached Bayesian/GMM latent priors per class and sample cap. |
+| `latent_gmm_priors/` | 35 pkl files | Cached Bayesian/GMM latent priors per class, checkpoint hash, and sample cap. |
 
 ---
 
@@ -1463,4 +1568,3 @@ Recommended figures/tables to cite:
 | Use per-category beta-VAEs | Attack families have different manifolds; 34-class VAEs are too sparse for rare labels. |
 | Treat postprocess validity carefully | It measures repaired validity, not pure decoder validity. |
 | Use bootstrap/McNemar/statistical summaries | Avoids overclaiming from raw point estimates. |
-

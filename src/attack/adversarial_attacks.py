@@ -167,6 +167,10 @@ def _extract_logits(output: Any) -> torch.Tensor:
     return output
 
 
+def _contains_rnn_module(model: nn.Module) -> bool:
+    return any(isinstance(module, nn.RNNBase) for module in model.modules())
+
+
 def load_model(
     model_path: str,
     num_features: int,
@@ -260,6 +264,12 @@ def run_attack(
     model.eval()
 
     attack = _build_attack(model, attack_name=attack_name, eps=eps, attack_kwargs=attack_kwargs)
+    if device_obj.type == "cuda" and _contains_rnn_module(model):
+        attack.set_model_training_mode(
+            model_training=True,
+            batchnorm_training=False,
+            dropout_training=False,
+        )
 
     x_adv_all: List[np.ndarray] = []
     x_clean_all: List[np.ndarray] = []
@@ -281,6 +291,7 @@ def run_attack(
             pred_clean = torch.argmax(logits_clean, dim=1)
 
         x_adv_batch = attack(x_batch, y_batch)
+        model.eval()
 
         # TODO: Apply perturbation_mask here for constrained attacks.
         # X_adv_batch = X_batch + (X_adv_batch - X_batch) * mask_tensor

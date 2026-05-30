@@ -33,6 +33,20 @@ from attack.latent_infra import (  # noqa: E402
     predict_labels,
     set_global_seed,
 )
+from attack.latent_gmm import LatentGMMPrior, fit_or_load_latent_gmm  # noqa: E402
+from attack.latent_restarts import (  # noqa: E402
+    DEFAULT_EPSILON_BY_CLASS_NAME,
+    DEFAULT_EPSILON_BY_CLASS_SPEC,
+    DEFAULT_GMM_COMPONENTS,
+    DEFAULT_GMM_FIT_MAX_SAMPLES,
+    DEFAULT_GMM_SPLIT,
+    DEFAULT_NUM_RESTARTS,
+    DEFAULT_RESTART_STRATEGY,
+    build_latent_restart_initializers,
+    class_float_value,
+    parse_class_float_map,
+    strategy_uses_gmm,
+)
 from attack.run_all_models_attack_rerun import (  # noqa: E402
     ATTACK_ORDER as BASE_ATTACK_ORDER,
     MODEL_SPECS,
@@ -231,10 +245,21 @@ def _config_snapshot(
             "attacks": {
                 "selected": attack_order,
                 "latent-pgd": {
-                    "epsilon": float(args.epsilon),
-                    "alpha": float(args.alpha),
+                    "epsilon_fallback": float(args.epsilon),
+                    "epsilon_by_class": str(args.epsilon_by_class),
+                    "alpha": None if args.alpha is None else float(args.alpha),
+                    "alpha_ratio": float(args.alpha_ratio),
                     "num_steps": int(args.num_steps),
                     "random_start": bool(args.random_start),
+                    "adaptive_pgd": bool(args.adaptive_pgd),
+                    "checkpoint_interval": int(args.checkpoint_interval),
+                    "rho": float(args.rho),
+                    "min_alpha": float(args.min_alpha),
+                    "num_restarts": int(args.num_restarts),
+                    "restart_strategy": str(args.restart_strategy),
+                    "gmm_split": str(args.gmm_split),
+                    "gmm_components": int(args.gmm_components),
+                    "gmm_fit_max_samples": args.gmm_fit_max_samples,
                 },
                 "latent-cw": {
                     "lambda_conf": float(args.lambda_conf),
@@ -242,6 +267,9 @@ def _config_snapshot(
                     "num_iterations": int(args.num_iterations),
                     "learning_rate": float(args.learning_rate),
                     "convergence_threshold": float(args.convergence_threshold),
+                    "num_restarts": int(args.num_restarts),
+                    "restart_strategy": str(args.restart_strategy),
+                    "cw_init_radius_by_class": str(args.cw_init_radius_by_class),
                 },
             },
         }
@@ -259,10 +287,12 @@ def _write_summary_md(path: Path, rows: list[dict[str, Any]], run_tag: str, samp
         "ASR Invalid",
         "Protocol",
         "Mask",
+        "Raw G1-G8",
         "Joint Valid",
         "IDSR",
         "L2 Input",
         "L2 Latent",
+        "Sel Restart",
     ]
     lines = [
         "# New VAE Attack Rerun Summary",
@@ -286,10 +316,12 @@ def _write_summary_md(path: Path, rows: list[dict[str, Any]], run_tag: str, samp
                     _fmt_pct(row["asr_invalid_only"]),
                     _fmt_pct(row["protocol_validity_rate"]),
                     _fmt_pct(row["mask_compliance_rate"]),
+                    _fmt_pct(row.get("raw_g1g8_validity_rate")),
                     _fmt_pct(row["joint_validity_rate"]),
                     _fmt_pct(row["idsr"]),
                     _fmt_float(row["mean_l2_input"]),
                     _fmt_float(row["mean_l2_latent"]),
+                    _fmt_float(row.get("selected_restart_mean")),
                 ]
             )
             + " |"
@@ -311,16 +343,57 @@ def main() -> None:
     parser.add_argument("--samples-per-class", type=int, default=100)
     parser.add_argument("--selection-batch-size", type=int, default=8192)
     parser.add_argument("--epsilon", type=float, default=0.5)
-    parser.add_argument("--alpha", type=float, default=0.05)
+    parser.add_argument(
+        "--epsilon-by-class",
+        default=DEFAULT_EPSILON_BY_CLASS_SPEC,
+        help="Class epsilon map, e.g. Web=1.0,DoS=0.8; empty uses built-in defaults.",
+    )
+    parser.add_argument(
+        "--alpha",
+        type=float,
+        default=None,
+        help="Optional global PGD alpha override; default is class epsilon * alpha-ratio.",
+    )
+    parser.add_argument("--alpha-ratio", type=float, default=0.1)
     parser.add_argument("--num-steps", type=int, default=40)
     parser.add_argument("--random-start", action="store_true", default=True)
     parser.add_argument("--no-random-start", dest="random_start", action="store_false")
+    parser.add_argument("--adaptive-pgd", dest="adaptive_pgd", action="store_true", default=True)
+    parser.add_argument("--no-adaptive-pgd", dest="adaptive_pgd", action="store_false")
+    parser.add_argument("--checkpoint-interval", type=int, default=10)
+    parser.add_argument("--rho", type=float, default=0.75)
+    parser.add_argument("--min-alpha", type=float, default=1e-4)
+    parser.add_argument("--num-restarts", type=int, default=DEFAULT_NUM_RESTARTS)
+    parser.add_argument("--restart-strategy", default=DEFAULT_RESTART_STRATEGY)
+    parser.add_argument("--gmm-split", default=DEFAULT_GMM_SPLIT, choices=["train", "val", "test"])
+    parser.add_argument("--gmm-components", type=int, default=DEFAULT_GMM_COMPONENTS)
+    parser.add_argument("--gmm-fit-max-samples", type=int, default=DEFAULT_GMM_FIT_MAX_SAMPLES)
+    parser.add_argument("--force-refit-gmm", action="store_true")
+    parser.add_argument(
+        "--cw-init-radius-by-class",
+        default="",
+        help="Class radius map for clipping CW restart seeds; default mirrors epsilon-by-class.",
+    )
     parser.add_argument("--lambda-conf", type=float, default=1.0)
     parser.add_argument("--kappa", type=float, default=0.0)
     parser.add_argument("--num-iterations", type=int, default=200)
     parser.add_argument("--learning-rate", type=float, default=0.01)
     parser.add_argument("--convergence-threshold", type=float, default=1e-5)
     args = parser.parse_args()
+
+    if args.num_restarts < 1:
+        raise ValueError("--num-restarts must be >= 1")
+    epsilon_by_class = parse_class_float_map(
+        args.epsilon_by_class,
+        default_by_class_name=DEFAULT_EPSILON_BY_CLASS_NAME,
+    )
+    cw_radius_by_class = parse_class_float_map(
+        args.cw_init_radius_by_class,
+        default_by_class_name={
+            class_name: class_float_value(CLASS_TO_ID[class_name], epsilon_by_class, args.epsilon)
+            for class_name in CLASSES
+        },
+    )
 
     set_global_seed(args.seed)
     run_tag, manifest_path, diagnostics_dir = _resolve_vae_paths(args)
@@ -357,6 +430,22 @@ def main() -> None:
         device=args.device,
         collapsed_by_class=collapsed_by_class,
     )
+    uses_gmm = strategy_uses_gmm(args.restart_strategy)
+    gmm_priors: dict[int, LatentGMMPrior] = {}
+    if uses_gmm:
+        for class_name in SOURCE_CLASSES:
+            class_id = CLASS_TO_ID[class_name]
+            print(f"[GMM] {class_name}: fitting/loading latent prior")
+            gmm_priors[class_id] = fit_or_load_latent_gmm(
+                router=router,
+                class_id=class_id,
+                split_name=args.gmm_split,
+                n_components=args.gmm_components,
+                max_fit_samples=args.gmm_fit_max_samples,
+                seed=args.seed,
+                device=args.device,
+                force_refit=args.force_refit_gmm,
+            )
 
     per_class_rows: list[dict[str, Any]] = []
     per_sample_rows: list[dict[str, Any]] = []
@@ -404,6 +493,29 @@ def main() -> None:
                 x_batch = torch.from_numpy(split_test["X"][sample_idx].astype(np.float32))
                 y_batch = torch.from_numpy(split_test["y_8"][sample_idx].astype(np.int64))
                 vae = router.get_vae(class_id)
+                class_epsilon = class_float_value(class_id, epsilon_by_class, args.epsilon)
+                class_alpha = (
+                    float(args.alpha)
+                    if args.alpha is not None
+                    else float(class_epsilon) * float(args.alpha_ratio)
+                )
+                init_radius = (
+                    class_float_value(class_id, cw_radius_by_class, class_epsilon)
+                    if attack_name == "latent-cw"
+                    else class_epsilon
+                )
+                z_initializers, restart_labels = build_latent_restart_initializers(
+                    vae=vae,
+                    x_batch=x_batch,
+                    gmm_prior=gmm_priors.get(class_id),
+                    epsilon=init_radius,
+                    num_restarts=args.num_restarts,
+                    restart_strategy=args.restart_strategy,
+                    seed=args.seed,
+                    class_id=class_id,
+                    device=args.device,
+                    project_to_epsilon=True,
+                )
                 metrics = _evaluate_latent_attack(
                     attack_name=attack_name,
                     class_id=class_id,
@@ -416,8 +528,8 @@ def main() -> None:
                     detector=detector,
                     scaler=router.scaler,
                     device=args.device,
-                    epsilon=args.epsilon,
-                    alpha=args.alpha,
+                    epsilon=class_epsilon,
+                    alpha=class_alpha,
                     num_steps=args.num_steps,
                     random_start=args.random_start,
                     lambda_conf=args.lambda_conf,
@@ -425,6 +537,14 @@ def main() -> None:
                     num_iterations=args.num_iterations,
                     learning_rate=args.learning_rate,
                     convergence_threshold=args.convergence_threshold,
+                    num_restarts=args.num_restarts,
+                    restart_strategy=args.restart_strategy,
+                    z_initializers=z_initializers,
+                    restart_labels=restart_labels,
+                    adaptive_pgd=args.adaptive_pgd,
+                    checkpoint_interval=args.checkpoint_interval,
+                    rho=args.rho,
+                    min_alpha=args.min_alpha,
                 )
 
                 metrics["vae_run_tag"] = run_tag
@@ -462,6 +582,11 @@ def main() -> None:
                         "idsr": None,
                         "mean_l2_input": None,
                         "mean_l2_latent": None,
+                        "raw_g1g8_validity_rate": None,
+                        "successful_joint_valid_count": None,
+                        "selected_restart_mean": None,
+                        "restart_success_counts": None,
+                        "restart_labels": None,
                     }
                 )
                 continue
@@ -510,6 +635,11 @@ def main() -> None:
             "idsr",
             "mean_l2_input",
             "mean_l2_latent",
+            "raw_g1g8_validity_rate",
+            "successful_joint_valid_count",
+            "selected_restart_mean",
+            "restart_success_counts",
+            "restart_labels",
         ],
     )
     _write_csv(
@@ -521,7 +651,10 @@ def main() -> None:
             "predicted_label",
             "protocol_valid",
             "mask_valid",
+            "raw_g1g8_valid",
+            "joint_valid",
             "success",
+            "selected_restart",
             "attack_type",
             "model_name",
             "model_tag",
@@ -551,6 +684,7 @@ def main() -> None:
             f"ASR_valid={_fmt_pct(row['asr_valid_only']):>8s} "
             f"Proto={_fmt_pct(row['protocol_validity_rate']):>8s} "
             f"Mask={_fmt_pct(row['mask_compliance_rate']):>8s} "
+            f"Raw={_fmt_pct(row.get('raw_g1g8_validity_rate')):>8s} "
             f"Joint={_fmt_pct(row['joint_validity_rate']):>8s} "
             f"IDSR={_fmt_pct(row['idsr']):>8s} "
             f"L2_in={_fmt_float(row['mean_l2_input']):>8s} "

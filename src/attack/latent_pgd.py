@@ -145,6 +145,10 @@ def latent_pgd_attack(
     num_restarts: int = 1,
     restart_strategy: str = "encoded",
     z_initializers: torch.Tensor | None = None,
+    adaptive_pgd: bool = True,
+    checkpoint_interval: int = 10,
+    rho: float = 0.75,
+    min_alpha: float = 1e-4,
 ) -> tuple[torch.Tensor, torch.Tensor, dict[str, MetadataValue]]:
     x_original = x_original.to(device=device, dtype=torch.float32)
     y_true = y_true.to(device=device, dtype=torch.long)
@@ -171,6 +175,11 @@ def latent_pgd_attack(
             "target_class": int(target_class),
             "num_restarts": int(num_restarts),
             "restart_strategy": str(restart_strategy),
+            "adaptive_pgd": bool(adaptive_pgd),
+            "checkpoint_interval": int(checkpoint_interval),
+            "rho": float(rho),
+            "min_alpha": float(min_alpha),
+            "alpha_final": float(alpha),
             "zero_budget_passthrough": True,
             "anchored_decoder_residual": True,
             "z_orig": z_orig.detach(),
@@ -196,12 +205,18 @@ def latent_pgd_attack(
     best_objective = torch.full((x_original.shape[0],), float("-inf"), device=device)
     selected_restart = torch.zeros(x_original.shape[0], dtype=torch.long, device=device)
     restart_success_counts: list[int] = []
+    restart_final_alphas: list[float] = []
     loss_value = 0.0
 
     for restart_idx, z_start in enumerate(z_starts):
         z_adv = z_start.clone()
+        step_alpha = float(alpha)
+        best_loss_seen = float("-inf")
+        steps_since_improvement = 0
+        effective_checkpoint_interval = max(1, int(checkpoint_interval))
+        improvement_patience = max(1, int(float(rho) * effective_checkpoint_interval))
 
-        for _ in range(num_steps):
+        for step_idx in range(num_steps):
             z_adv = z_adv.detach().requires_grad_(True)
             x_soft_dec, _ = vae.decode_to_39(z_adv, scaler, mode="soft")
             x_soft = apply_decoder_residual(
@@ -219,11 +234,26 @@ def latent_pgd_attack(
                 target_class=int(target_class),
             )
             grad = torch.autograd.grad(loss, z_adv, retain_graph=False, create_graph=False)[0]
+            loss_scalar = float(loss.item())
+
+            if loss_scalar > best_loss_seen + 1e-7:
+                best_loss_seen = loss_scalar
+                steps_since_improvement = 0
+            else:
+                steps_since_improvement += 1
 
             with torch.no_grad():
-                z_adv = z_adv + float(alpha) * grad.sign()
+                z_adv = z_adv + step_alpha * grad.sign()
                 z_adv = _project_z_linf(z_adv, z_orig, float(epsilon))
-                loss_value = float(loss.item())
+                loss_value = loss_scalar
+
+                if (
+                    bool(adaptive_pgd)
+                    and (step_idx + 1) % effective_checkpoint_interval == 0
+                    and steps_since_improvement > improvement_patience
+                ):
+                    step_alpha = max(step_alpha * 0.5, float(min_alpha))
+                    steps_since_improvement = 0
 
         with torch.no_grad():
             x_adv_dec_final, _ = vae.decode_to_39(z_adv, scaler, mode="hard")
@@ -248,6 +278,7 @@ def latent_pgd_attack(
             )
             input_l2 = torch.linalg.norm(x_adv_final - x_original, dim=1)
             restart_success_counts.append(int(success.float().sum().item()))
+            restart_final_alphas.append(float(step_alpha))
 
             if best_x is None or best_z is None:
                 best_x = x_adv_final.detach().clone()
@@ -288,6 +319,12 @@ def latent_pgd_attack(
         "target_class": int(target_class),
         "num_restarts": int(len(z_starts)),
         "restart_strategy": str(restart_strategy),
+        "adaptive_pgd": bool(adaptive_pgd),
+        "checkpoint_interval": int(checkpoint_interval),
+        "rho": float(rho),
+        "min_alpha": float(min_alpha),
+        "alpha_final": float(min(restart_final_alphas)) if restart_final_alphas else float(alpha),
+        "restart_final_alphas": restart_final_alphas,
         "zero_budget_passthrough": False,
         "anchored_decoder_residual": True,
         "z_orig": z_orig.detach(),

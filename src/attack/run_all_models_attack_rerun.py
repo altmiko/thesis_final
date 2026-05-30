@@ -33,10 +33,13 @@ from attack.latent_infra import (  # noqa: E402
     set_global_seed,
 )
 from attack.latent_pgd import classifier_logits, latent_pgd_attack  # noqa: E402
+from attack.latent_pgd import _per_sample_objective  # noqa: E402
+from attack.validator import validate_batch  # noqa: E402
 from preprocessing.feature_groups import FEATURE_NAMES  # noqa: E402
 from vae.config import CLASS_TO_ID, CLASSES  # noqa: E402
 
 SAMPLES_PER_SOURCE_CLASS = 100
+SELECTION_BATCH_SIZE = 1024
 SOURCE_CLASSES = [name for name in CLASSES if name != "Benign"]
 MODEL_SPECS = [
     {"tag": "mlp", "label": "MLP", "checkpoint": "mlp_8class.pt"},
@@ -59,6 +62,11 @@ SUMMARY_COLUMNS = [
     "idsr",
     "mean_l2_input",
     "mean_l2_latent",
+    "raw_g1g8_validity_rate",
+    "successful_joint_valid_count",
+    "selected_restart_mean",
+    "restart_success_counts",
+    "restart_labels",
 ]
 
 
@@ -72,6 +80,7 @@ def _config_snapshot(seed: int, device: str) -> dict[str, Any]:
             "sampling": {
                 "source_classes": SOURCE_CLASSES,
                 "samples_per_source_class": SAMPLES_PER_SOURCE_CLASS,
+                "selection_batch_size": SELECTION_BATCH_SIZE,
                 "selection_rule": "up to 100 correctly classified test samples per non-benign source class; skip zero-available cells",
                 "correctly_classified_only": True,
             },
@@ -134,16 +143,22 @@ def _select_correct_source_samples(
     device: str,
     class_id: int,
     max_samples: int,
+    selection_batch_size: int = SELECTION_BATCH_SIZE,
 ) -> np.ndarray:
     class_indices = np.where(y_test == class_id)[0]
     if len(class_indices) == 0:
         raise RuntimeError(f"No test samples found for class_id={class_id}")
 
-    preds = predict_labels(
-        classifier,
-        torch.from_numpy(x_test[class_indices].astype(np.float32)),
-        device=device,
-    ).numpy()
+    pred_batches: list[np.ndarray] = []
+    for start in range(0, len(class_indices), selection_batch_size):
+        batch_indices = class_indices[start : start + selection_batch_size]
+        preds = predict_labels(
+            classifier,
+            torch.from_numpy(x_test[batch_indices].astype(np.float32)),
+            device=device,
+        ).numpy()
+        pred_batches.append(preds)
+    preds = np.concatenate(pred_batches, axis=0)
     keep = class_indices[preds == class_id]
     return keep[:max_samples]
 
@@ -153,6 +168,198 @@ def _conditional_rate(numerator_mask: torch.Tensor, denominator_mask: torch.Tens
     if denom == 0:
         return 0.0
     return float((numerator_mask & denominator_mask).float().sum().item() / denom)
+
+
+def _masked_rate(mask: torch.Tensor | None) -> float | None:
+    if mask is None:
+        return None
+    if mask.numel() == 0:
+        return 0.0
+    return float(mask.float().mean().item())
+
+
+def _raw_g1g8_validity(x_adv: torch.Tensor, scaler: Any) -> torch.Tensor:
+    x_np = x_adv.detach().cpu().numpy().astype(np.float64)
+    x_raw = scaler.inverse_transform(x_np)
+    result = validate_batch(x_raw, FEATURE_NAMES)
+    return torch.from_numpy(result.overall_valid.astype(np.bool_))
+
+
+def _sum_restart_counts(rows: list[dict[str, Any]]) -> list[int] | None:
+    counts_by_row = [
+        row.get("restart_success_counts")
+        for row in rows
+        if isinstance(row.get("restart_success_counts"), list)
+    ]
+    if not counts_by_row:
+        return None
+    max_len = max(len(counts) for counts in counts_by_row)
+    summed = [0 for _ in range(max_len)]
+    for counts in counts_by_row:
+        for idx, value in enumerate(counts):
+            summed[idx] += int(value)
+    return summed
+
+
+def _candidate_metrics(
+    *,
+    class_id: int,
+    x_batch: torch.Tensor,
+    y_batch: torch.Tensor,
+    x_adv: torch.Tensor,
+    z_adv: torch.Tensor,
+    z_orig: torch.Tensor,
+    vae: torch.nn.Module,
+    classifier: torch.nn.Module,
+    mask: PerturbationMask,
+    protocol_validator: ProtocolValidator,
+    detector: MahalanobisOutlierDetector,
+    scaler: Any,
+    device: str,
+) -> dict[str, torch.Tensor]:
+    with torch.no_grad():
+        logits_after = classifier_logits(classifier, x_adv.to(device), device=device).cpu()
+        pred_after = torch.argmax(logits_after, dim=1)
+        success_mask = pred_after != y_batch.cpu()
+        protocol_valid = protocol_validator.validate(x_adv, already_scaled=True).cpu()
+        mask_compliance = mask.verify(x_adv.cpu(), x_batch.cpu())["all_compliant"].cpu()
+        raw_valid = _raw_g1g8_validity(x_adv.cpu(), scaler)
+        joint_valid = protocol_valid & mask_compliance & raw_valid
+        z_reencoded, _ = vae.encode(x_adv.to(device))
+        outlier_mask = detector.outlier_mask(class_id, z_reencoded.cpu()).cpu()
+        input_l2 = torch.linalg.norm(x_adv.cpu() - x_batch.cpu(), dim=1)
+        latent_l2 = torch.linalg.norm(z_adv.cpu() - z_orig.cpu(), dim=1)
+        objective = _per_sample_objective(
+            logits_after,
+            y_batch.cpu(),
+            targeted=False,
+            target_class=0,
+        )
+
+    return {
+        "pred_after": pred_after,
+        "success_mask": success_mask,
+        "protocol_valid": protocol_valid,
+        "mask_compliance": mask_compliance,
+        "raw_valid": raw_valid,
+        "joint_valid": joint_valid,
+        "outlier_mask": outlier_mask,
+        "input_l2": input_l2,
+        "latent_l2": latent_l2,
+        "objective": objective,
+    }
+
+
+def _empty_best(batch_size: int) -> dict[str, Any]:
+    return {
+        "x_adv": None,
+        "z_adv": None,
+        "selected_restart": torch.zeros(batch_size, dtype=torch.long),
+        "pred_after": torch.zeros(batch_size, dtype=torch.long),
+        "success_mask": torch.zeros(batch_size, dtype=torch.bool),
+        "protocol_valid": torch.zeros(batch_size, dtype=torch.bool),
+        "mask_compliance": torch.zeros(batch_size, dtype=torch.bool),
+        "raw_valid": torch.zeros(batch_size, dtype=torch.bool),
+        "joint_valid": torch.zeros(batch_size, dtype=torch.bool),
+        "outlier_mask": torch.ones(batch_size, dtype=torch.bool),
+        "input_l2": torch.full((batch_size,), float("inf")),
+        "latent_l2": torch.full((batch_size,), float("inf")),
+        "objective": torch.full((batch_size,), float("-inf")),
+    }
+
+
+def _merge_candidate(
+    *,
+    best: dict[str, Any],
+    candidate_x: torch.Tensor,
+    candidate_z: torch.Tensor,
+    candidate_metrics: dict[str, torch.Tensor],
+    restart_idx: int,
+) -> None:
+    if best["x_adv"] is None or best["z_adv"] is None:
+        best["x_adv"] = candidate_x.cpu().clone()
+        best["z_adv"] = candidate_z.cpu().clone()
+        best["selected_restart"] = torch.full(
+            (candidate_x.shape[0],),
+            int(restart_idx),
+            dtype=torch.long,
+        )
+        for key, value in candidate_metrics.items():
+            best[key] = value.cpu().clone()
+        return
+
+    current_success = best["success_mask"]
+    current_joint = best["joint_valid"]
+    current_l2 = best["input_l2"]
+    current_objective = best["objective"]
+
+    candidate_success = candidate_metrics["success_mask"]
+    candidate_joint = candidate_metrics["joint_valid"]
+    candidate_l2 = candidate_metrics["input_l2"]
+    candidate_objective = candidate_metrics["objective"]
+
+    improved = candidate_success & (~current_success)
+    improved |= (candidate_success == current_success) & candidate_joint & (~current_joint)
+    improved |= (
+        (candidate_success == current_success)
+        & (candidate_joint == current_joint)
+        & (candidate_l2 < current_l2)
+    )
+    improved |= (
+        (candidate_success == current_success)
+        & (candidate_joint == current_joint)
+        & (candidate_l2 == current_l2)
+        & (candidate_objective > current_objective)
+    )
+
+    if improved.any():
+        assert best["x_adv"] is not None
+        assert best["z_adv"] is not None
+        best["x_adv"][improved] = candidate_x.cpu()[improved]
+        best["z_adv"][improved] = candidate_z.cpu()[improved]
+        best["selected_restart"][improved] = int(restart_idx)
+        for key, value in candidate_metrics.items():
+            best[key][improved] = value.cpu()[improved]
+
+
+def _row_from_best(best: dict[str, Any], *, class_id: int, n: int) -> dict[str, Any]:
+    success_mask = best["success_mask"]
+    protocol_valid = best["protocol_valid"]
+    mask_compliance = best["mask_compliance"]
+    raw_valid = best["raw_valid"]
+    joint_valid = best["joint_valid"]
+    invalid_mask = ~joint_valid
+    outlier_mask = best["outlier_mask"]
+
+    successful_joint = int((success_mask & joint_valid).sum().item())
+    return {
+        "class_name": CLASSES[class_id],
+        "pred_after": best["pred_after"].numpy().tolist(),
+        "success_mask": success_mask.numpy().tolist(),
+        "protocol_valid_mask": protocol_valid.numpy().tolist(),
+        "mask_compliance_mask": mask_compliance.numpy().tolist(),
+        "raw_g1g8_valid_mask": raw_valid.numpy().tolist(),
+        "joint_valid_mask": joint_valid.numpy().tolist(),
+        "selected_restart": best["selected_restart"].numpy().tolist(),
+        "n": int(n),
+        "asr_overall": _masked_rate(success_mask),
+        "asr_valid_only": _conditional_rate(success_mask, joint_valid),
+        "asr_invalid_only": _conditional_rate(success_mask, invalid_mask),
+        "protocol_validity_rate": _masked_rate(protocol_valid),
+        "mask_compliance_rate": _masked_rate(mask_compliance),
+        "raw_g1g8_validity_rate": _masked_rate(raw_valid),
+        "joint_validity_rate": _masked_rate(joint_valid),
+        "idsr": _masked_rate(~outlier_mask),
+        "mean_l2_input": float(best["input_l2"].mean().item()),
+        "mean_l2_latent": float(best["latent_l2"].mean().item()),
+        "valid_count": int(joint_valid.sum().item()),
+        "invalid_count": int(invalid_mask.sum().item()),
+        "successful_total_count": int(success_mask.sum().item()),
+        "successful_valid_count": successful_joint,
+        "successful_invalid_count": int((success_mask & invalid_mask).sum().item()),
+        "successful_joint_valid_count": successful_joint,
+        "selected_restart_mean": float(best["selected_restart"].float().mean().item()),
+    }
 
 
 def _evaluate_latent_attack(
@@ -177,75 +384,152 @@ def _evaluate_latent_attack(
     num_iterations: int,
     learning_rate: float,
     convergence_threshold: float,
+    num_restarts: int = 1,
+    restart_strategy: str = "encoded",
+    z_initializers: torch.Tensor | None = None,
+    restart_labels: list[str] | None = None,
+    adaptive_pgd: bool = True,
+    checkpoint_interval: int = 10,
+    rho: float = 0.75,
+    min_alpha: float = 1e-4,
 ) -> dict[str, Any]:
-    if attack_name == "latent-pgd":
-        x_adv, z_adv, metadata = latent_pgd_attack(
-            vae=vae,
-            classifier=classifier,
-            mask=mask,
-            x_original=x_batch,
-            y_true=y_batch,
-            scaler=scaler,
-            epsilon=epsilon,
-            alpha=alpha,
-            num_steps=num_steps,
-            random_start=random_start,
-            device=device,
-        )
-    elif attack_name == "latent-cw":
-        x_adv, z_adv, metadata = latent_cw_attack(
-            vae=vae,
-            classifier=classifier,
-            mask=mask,
-            x_original=x_batch,
-            y_true=y_batch,
-            scaler=scaler,
-            lambda_conf=lambda_conf,
-            kappa=kappa,
-            num_iterations=num_iterations,
-            learning_rate=learning_rate,
-            convergence_threshold=convergence_threshold,
-            device=device,
-        )
-    else:
+    def run_one_restart(
+        restart_z: torch.Tensor | None,
+        label: str,
+    ) -> tuple[torch.Tensor, torch.Tensor, dict[str, Any]]:
+        init = restart_z.unsqueeze(0) if restart_z is not None else None
+        if attack_name == "latent-pgd":
+            return latent_pgd_attack(
+                vae=vae,
+                classifier=classifier,
+                mask=mask,
+                x_original=x_batch,
+                y_true=y_batch,
+                scaler=scaler,
+                epsilon=epsilon,
+                alpha=alpha,
+                num_steps=num_steps,
+                random_start=random_start if init is None else False,
+                device=device,
+                num_restarts=1 if init is not None else int(num_restarts),
+                restart_strategy=label,
+                z_initializers=init,
+                adaptive_pgd=adaptive_pgd,
+                checkpoint_interval=checkpoint_interval,
+                rho=rho,
+                min_alpha=min_alpha,
+            )
+        if attack_name == "latent-cw":
+            return latent_cw_attack(
+                vae=vae,
+                classifier=classifier,
+                mask=mask,
+                x_original=x_batch,
+                y_true=y_batch,
+                scaler=scaler,
+                lambda_conf=lambda_conf,
+                kappa=kappa,
+                num_iterations=num_iterations,
+                learning_rate=learning_rate,
+                convergence_threshold=convergence_threshold,
+                device=device,
+                num_restarts=1 if init is not None else int(num_restarts),
+                restart_strategy=label,
+                z_initializers=init,
+            )
         raise KeyError(f"Unsupported latent attack: {attack_name}")
 
-    with torch.no_grad():
-        logits_after = classifier_logits(classifier, x_adv.to(device), device=device).cpu()
-        pred_after = torch.argmax(logits_after, dim=1)
-        success_mask = pred_after != y_batch.cpu()
-        protocol_valid = protocol_validator.validate(x_adv, already_scaled=True).cpu()
-        mask_compliance = mask.verify(x_adv.cpu(), x_batch.cpu())["all_compliant"].cpu()
-        joint_valid = protocol_valid & mask_compliance
-        invalid_mask = ~joint_valid
-        z_reencoded, _ = vae.encode(x_adv.to(device))
-        outlier_mask = detector.outlier_mask(class_id, z_reencoded.cpu()).cpu()
-        input_l2 = torch.linalg.norm(x_adv.cpu() - x_batch.cpu(), dim=1)
-        latent_l2 = torch.linalg.norm(z_adv.cpu() - metadata["z_orig"].cpu(), dim=1)
+    best = _empty_best(int(x_batch.shape[0]))
+    restart_success_counts: list[int] = []
+    labels_used: list[str] = []
 
-    return {
-        "class_name": CLASSES[class_id],
-        "pred_after": pred_after.numpy().tolist(),
-        "success_mask": success_mask.numpy().tolist(),
-        "protocol_valid_mask": protocol_valid.numpy().tolist(),
-        "mask_compliance_mask": mask_compliance.numpy().tolist(),
-        "joint_valid_mask": joint_valid.numpy().tolist(),
-        "n": int(x_batch.shape[0]),
-        "asr_overall": float(success_mask.float().mean().item()),
-        "asr_valid_only": _conditional_rate(success_mask, joint_valid),
-        "asr_invalid_only": _conditional_rate(success_mask, invalid_mask),
-        "protocol_validity_rate": float(protocol_valid.float().mean().item()),
-        "mask_compliance_rate": float(mask_compliance.float().mean().item()),
-        "joint_validity_rate": float(joint_valid.float().mean().item()),
-        "idsr": float((~outlier_mask).float().mean().item()),
-        "mean_l2_input": float(input_l2.mean().item()),
-        "mean_l2_latent": float(latent_l2.mean().item()),
-        "valid_count": int(joint_valid.sum().item()),
-        "invalid_count": int(invalid_mask.sum().item()),
-        "successful_total_count": int(success_mask.sum().item()),
-        "successful_valid_count": int((success_mask & joint_valid).sum().item()),
-        "successful_invalid_count": int((success_mask & invalid_mask).sum().item()),
-    }
+    if z_initializers is not None:
+        restart_tensor = z_initializers.detach().to(device=device, dtype=torch.float32)
+        if restart_tensor.ndim == 2:
+            restart_tensor = restart_tensor.unsqueeze(0)
+        if restart_tensor.ndim != 3:
+            raise ValueError(
+                "z_initializers must have shape (batch, latent_dim) or "
+                f"(num_restarts, batch, latent_dim), got {tuple(restart_tensor.shape)}"
+            )
+        labels = restart_labels or [f"restart_{idx}" for idx in range(restart_tensor.shape[0])]
+        if len(labels) != restart_tensor.shape[0]:
+            raise ValueError(
+                f"restart_labels length {len(labels)} does not match "
+                f"z_initializers count {restart_tensor.shape[0]}"
+            )
+
+        for restart_idx, restart_z in enumerate(restart_tensor):
+            x_adv, z_adv, metadata = run_one_restart(restart_z, labels[restart_idx])
+            z_orig = metadata["z_orig"]
+            if not isinstance(z_orig, torch.Tensor):
+                raise TypeError("latent attack metadata['z_orig'] must be a tensor")
+            metrics = _candidate_metrics(
+                class_id=class_id,
+                x_batch=x_batch.cpu(),
+                y_batch=y_batch.cpu(),
+                x_adv=x_adv.cpu(),
+                z_adv=z_adv.cpu(),
+                z_orig=z_orig.cpu(),
+                vae=vae,
+                classifier=classifier,
+                mask=mask,
+                protocol_validator=protocol_validator,
+                detector=detector,
+                scaler=scaler,
+                device=device,
+            )
+            restart_success_counts.append(int(metrics["success_mask"].sum().item()))
+            labels_used.append(str(labels[restart_idx]))
+            _merge_candidate(
+                best=best,
+                candidate_x=x_adv.cpu(),
+                candidate_z=z_adv.cpu(),
+                candidate_metrics=metrics,
+                restart_idx=restart_idx,
+            )
+    else:
+        x_adv, z_adv, metadata = run_one_restart(None, str(restart_strategy))
+        z_orig = metadata["z_orig"]
+        if not isinstance(z_orig, torch.Tensor):
+            raise TypeError("latent attack metadata['z_orig'] must be a tensor")
+        metrics = _candidate_metrics(
+            class_id=class_id,
+            x_batch=x_batch.cpu(),
+            y_batch=y_batch.cpu(),
+            x_adv=x_adv.cpu(),
+            z_adv=z_adv.cpu(),
+            z_orig=z_orig.cpu(),
+            vae=vae,
+            classifier=classifier,
+            mask=mask,
+            protocol_validator=protocol_validator,
+            detector=detector,
+            scaler=scaler,
+            device=device,
+        )
+        _merge_candidate(
+            best=best,
+            candidate_x=x_adv.cpu(),
+            candidate_z=z_adv.cpu(),
+            candidate_metrics=metrics,
+            restart_idx=0,
+        )
+        selected_restart = metadata.get("selected_restart")
+        if isinstance(selected_restart, torch.Tensor):
+            best["selected_restart"] = selected_restart.detach().cpu().long()
+        restart_counts = metadata.get("restart_success_counts", [])
+        restart_success_counts = (
+            [int(value) for value in restart_counts]
+            if isinstance(restart_counts, list)
+            else [int(metrics["success_mask"].sum().item())]
+        )
+        labels_used = [str(restart_strategy)]
+
+    row = _row_from_best(best, class_id=class_id, n=int(x_batch.shape[0]))
+    row["restart_success_counts"] = restart_success_counts
+    row["restart_labels"] = labels_used
+    return row
 
 
 def _evaluate_input_attack(
@@ -326,6 +610,11 @@ def _evaluate_input_attack(
         "successful_total_count": int(success_mask.sum().item()),
         "successful_valid_count": int((success_mask & joint_valid).sum().item()),
         "successful_invalid_count": int((success_mask & invalid_mask).sum().item()),
+        "successful_joint_valid_count": int((success_mask & joint_valid).sum().item()),
+        "raw_g1g8_validity_rate": None,
+        "selected_restart_mean": None,
+        "restart_success_counts": None,
+        "restart_labels": None,
     }
 
 
@@ -336,6 +625,9 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
     latent_l2_rows = [row for row in rows if row["mean_l2_latent"] is not None]
     idsr_rows = [row for row in rows if row["idsr"] is not None]
+    raw_rows = [row for row in rows if row.get("raw_g1g8_validity_rate") is not None]
+    restart_rows = [row for row in rows if row.get("selected_restart_mean") is not None]
+    successful_joint = sum(int(row.get("successful_joint_valid_count", 0)) for row in rows)
 
     return {
         "n": int(total_n),
@@ -348,6 +640,19 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "idsr": float(sum(row["idsr"] * row["n"] for row in idsr_rows) / total_n) if idsr_rows else None,
         "mean_l2_input": float(sum(row["mean_l2_input"] * row["n"] for row in rows) / total_n),
         "mean_l2_latent": float(sum(row["mean_l2_latent"] * row["n"] for row in latent_l2_rows) / total_n) if latent_l2_rows else None,
+        "raw_g1g8_validity_rate": (
+            float(sum(row["raw_g1g8_validity_rate"] * row["n"] for row in raw_rows) / total_n)
+            if raw_rows
+            else None
+        ),
+        "successful_joint_valid_count": successful_joint,
+        "selected_restart_mean": (
+            float(sum(row["selected_restart_mean"] * row["n"] for row in restart_rows) / total_n)
+            if restart_rows
+            else None
+        ),
+        "restart_success_counts": _sum_restart_counts(rows),
+        "restart_labels": rows[0].get("restart_labels") if rows else None,
     }
 
 
@@ -364,11 +669,16 @@ def _fmt_float(value: Any) -> str:
 
 
 def _write_csv(path: Path, rows: list[dict[str, Any]], columns: list[str]) -> None:
+    def csv_cell(value: Any) -> Any:
+        if isinstance(value, (list, dict)):
+            return json.dumps(value)
+        return value
+
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=columns, extrasaction="ignore")
         writer.writeheader()
-        if rows:
-            writer.writerows(rows)
+        for row in rows:
+            writer.writerow({key: csv_cell(row.get(key, "")) for key in columns})
 
 
 def _write_summary_md(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -381,10 +691,12 @@ def _write_summary_md(path: Path, rows: list[dict[str, Any]]) -> None:
         "ASR Invalid",
         "Protocol",
         "Mask",
+        "Raw G1-G8",
         "Joint Valid",
         "IDSR",
         "L2 Input",
         "L2 Latent",
+        "Sel Restart",
     ]
     lines = [
         "# Attack Rerun Summary",
@@ -407,10 +719,12 @@ def _write_summary_md(path: Path, rows: list[dict[str, Any]]) -> None:
                     _fmt_pct(row["asr_invalid_only"]),
                     _fmt_pct(row["protocol_validity_rate"]),
                     _fmt_pct(row["mask_compliance_rate"]),
+                    _fmt_pct(row.get("raw_g1g8_validity_rate")),
                     _fmt_pct(row["joint_validity_rate"]),
                     _fmt_pct(row["idsr"]),
                     _fmt_float(row["mean_l2_input"]),
                     _fmt_float(row["mean_l2_latent"]),
+                    _fmt_float(row.get("selected_restart_mean")),
                 ]
             )
             + " |"
@@ -432,6 +746,15 @@ def _build_per_sample_rows(
     success_mask = np.asarray(metrics["success_mask"], dtype=np.bool_)
     protocol_valid_mask = np.asarray(metrics["protocol_valid_mask"], dtype=np.bool_)
     mask_compliance_mask = np.asarray(metrics["mask_compliance_mask"], dtype=np.bool_)
+    raw_valid_mask = np.asarray(
+        metrics.get("raw_g1g8_valid_mask", np.ones_like(success_mask)),
+        dtype=np.bool_,
+    )
+    joint_valid_mask = np.asarray(metrics["joint_valid_mask"], dtype=np.bool_)
+    selected_restart = np.asarray(
+        metrics.get("selected_restart", np.zeros_like(y_true_np)),
+        dtype=np.int64,
+    )
 
     rows: list[dict[str, Any]] = []
     for pos, sample_id in enumerate(sample_indices.tolist()):
@@ -442,7 +765,10 @@ def _build_per_sample_rows(
                 "predicted_label": CLASSES[int(pred_after[pos])],
                 "protocol_valid": bool(protocol_valid_mask[pos]),
                 "mask_valid": bool(mask_compliance_mask[pos]),
+                "raw_g1g8_valid": bool(raw_valid_mask[pos]),
+                "joint_valid": bool(joint_valid_mask[pos]),
                 "success": bool(success_mask[pos]),
+                "selected_restart": int(selected_restart[pos]),
                 "attack_type": attack_name,
                 "model_name": model_name,
                 "model_tag": model_tag,
@@ -648,6 +974,11 @@ def main() -> None:
             "idsr",
             "mean_l2_input",
             "mean_l2_latent",
+            "raw_g1g8_validity_rate",
+            "successful_joint_valid_count",
+            "selected_restart_mean",
+            "restart_success_counts",
+            "restart_labels",
         ],
     )
     _write_csv(
@@ -659,7 +990,10 @@ def main() -> None:
             "predicted_label",
             "protocol_valid",
             "mask_valid",
+            "raw_g1g8_valid",
+            "joint_valid",
             "success",
+            "selected_restart",
             "attack_type",
             "model_name",
             "model_tag",
@@ -683,6 +1017,8 @@ def main() -> None:
             f"ASR_valid={_fmt_pct(row['asr_valid_only']):>8s} "
             f"Proto={_fmt_pct(row['protocol_validity_rate']):>8s} "
             f"Mask={_fmt_pct(row['mask_compliance_rate']):>8s} "
+            f"Raw={_fmt_pct(row.get('raw_g1g8_validity_rate')):>8s} "
+            f"Joint={_fmt_pct(row['joint_validity_rate']):>8s} "
             f"IDSR={_fmt_pct(row['idsr']) if row['idsr'] is not None else 'NA':>7s} "
             f"L2_in={_fmt_float(row['mean_l2_input']):>8s} "
             f"L2_z={_fmt_float(row['mean_l2_latent']):>8s}"

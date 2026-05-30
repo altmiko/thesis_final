@@ -6,6 +6,8 @@ from typing import Dict, List
 
 VALID_PROTOCOLS = {0, 1, 2, 6, 17, 47}
 FLOAT_TOL = 0.01
+VAR_REL_TOL = 0.05
+VAR_ABS_TOL = FLOAT_TOL
 
 
 @dataclass
@@ -105,11 +107,13 @@ def validate_batch(X: np.ndarray, feature_names: List[str]) -> ValidationResult:
         V['R_avg_in_range'] = (df['AVG'].values < (df['Min'].values - FLOAT_TOL)) | \
                               (df['AVG'].values > (df['Max'].values + FLOAT_TOL))
 
-    # G6 — Variance = Std^2 (5% tolerance)
+    # G6 — Variance = Std^2. Use relative tolerance away from zero, but allow
+    # small absolute round-trip noise when the physically correct value is zero.
     if has('Std') and has('Variance'):
         exp = df['Std'].values ** 2
-        err = np.abs(df['Variance'].values - exp) / (exp + 1e-8)
-        V['R_var_eq_std_sq'] = err > 0.05
+        abs_err = np.abs(df['Variance'].values - exp)
+        rel_err = abs_err / (np.abs(exp) + 1e-8)
+        V['R_var_eq_std_sq'] = (abs_err > VAR_ABS_TOL) & (rel_err > VAR_REL_TOL)
 
     # G7 — TTL / Time_To_Live range [0, 255]
     if has('Time_To_Live'):

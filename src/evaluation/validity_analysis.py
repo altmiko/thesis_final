@@ -31,13 +31,18 @@ def parse_attack_filename(npz_path: str) -> Dict[str, Any]:
         raise ValueError(f"Unexpected attack file name format: {Path(npz_path).name}")
 
     # Support model tags that include underscores by taking the last two tokens
-    # as attack and eps, with the rest forming the model name.
-    if len(parts) < 4:
-        raise ValueError(f"Unexpected attack file name format: {Path(npz_path).name}")
-
-    eps_str = parts[-1]
-    attack_name = parts[-2].lower()
-    model_name = "_".join(parts[1:-2])
+    # as attack and eps, with the rest forming the model name. Restart-aware
+    # files add a trailing token such as r10.
+    num_restarts: Optional[int] = None
+    if parts[-1].lower().startswith("r") and parts[-1][1:].isdigit():
+        num_restarts = int(parts[-1][1:])
+        eps_str = parts[-2]
+        attack_name = parts[-3].lower()
+        model_name = "_".join(parts[1:-3])
+    else:
+        eps_str = parts[-1]
+        attack_name = parts[-2].lower()
+        model_name = "_".join(parts[1:-2])
     if not model_name:
         raise ValueError(f"Missing model name in attack file: {Path(npz_path).name}")
     eps = float(eps_str) if eps_str.upper() != "N/A" else 0.0
@@ -47,6 +52,7 @@ def parse_attack_filename(npz_path: str) -> Dict[str, Any]:
         "attack": attack_name,
         "eps": eps,
         "eps_label": eps_str,
+        "num_restarts": num_restarts,
         "file_stem": stem,
     }
 

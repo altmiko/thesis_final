@@ -21,7 +21,7 @@ from src.attack.adversarial_attacks import load_model
 from src.attack.adversarial_attacks import run_attack_with_restarts
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data" / "processed"
 MODELS_DIR = ROOT / "models"
 RESULTS_DIR = ROOT / "results" / "attacks"
