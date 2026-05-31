@@ -32,12 +32,27 @@ from attack.latent_infra import (  # noqa: E402
     predict_labels,
     set_global_seed,
 )
+from attack.latent_gmm import LatentGMMPrior, fit_or_load_latent_gmm  # noqa: E402
 from attack.latent_pgd import classifier_logits, latent_pgd_attack  # noqa: E402
 from attack.latent_pgd import _per_sample_objective  # noqa: E402
+from attack.latent_restarts import (  # noqa: E402
+    DEFAULT_EPSILON_BY_CLASS_NAME,
+    DEFAULT_EPSILON_BY_CLASS_SPEC,
+    DEFAULT_GMM_COMPONENTS,
+    DEFAULT_GMM_FIT_MAX_SAMPLES,
+    DEFAULT_GMM_SPLIT,
+    DEFAULT_NUM_RESTARTS,
+    DEFAULT_RESTART_STRATEGY,
+    build_latent_restart_initializers,
+    class_float_value,
+    parse_class_float_map,
+    strategy_uses_gmm,
+)
 from attack.validator import validate_batch  # noqa: E402
 from preprocessing.feature_groups import FEATURE_NAMES  # noqa: E402
 from vae.config import CLASS_TO_ID, CLASSES  # noqa: E402
 
+DEFAULT_VAE_RUN_TAG = "gaussian_anticollapse_beta05_freebits01_20260529_173512"
 SAMPLES_PER_SOURCE_CLASS = 100
 SELECTION_BATCH_SIZE = 1024
 SOURCE_CLASSES = [name for name in CLASSES if name != "Benign"]
@@ -70,46 +85,154 @@ SUMMARY_COLUMNS = [
 ]
 
 
-def _config_snapshot(seed: int, device: str) -> dict[str, Any]:
-    snapshot = phase0_config_snapshot(seed, device)
+def _load_json(path: Path) -> Any:
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _resolve_vae_paths(args: argparse.Namespace) -> tuple[str, Path, Path]:
+    run_tag = str(args.vae_run_tag).strip()
+    manifest_path = Path(args.vae_manifest) if args.vae_manifest else None
+    diagnostics_dir = Path(args.vae_diagnostics_dir) if args.vae_diagnostics_dir else None
+
+    if manifest_path is None:
+        if not run_tag:
+            raise ValueError("--vae-run-tag is required when --vae-manifest is not supplied")
+        manifest_path = _REPO_ROOT / "results" / "vae" / run_tag / "vae_run_manifest.json"
+
+    manifest_path = manifest_path.resolve()
+    if not manifest_path.exists():
+        raise FileNotFoundError(f"VAE manifest not found: {manifest_path}")
+
+    if diagnostics_dir is None:
+        diagnostics_dir = (_REPO_ROOT / "results" / "vae" / run_tag) if run_tag else manifest_path.parent
+    diagnostics_dir = diagnostics_dir.resolve()
+    if not diagnostics_dir.exists():
+        raise FileNotFoundError(f"VAE diagnostics directory not found: {diagnostics_dir}")
+
+    if not run_tag:
+        run_tag = manifest_path.parent.name
+    return run_tag, manifest_path, diagnostics_dir
+
+
+def _resolve_model_specs(models_arg: str) -> list[dict[str, str]]:
+    requested = [item.strip().lower() for item in models_arg.split(",") if item.strip()]
+    if not requested or requested == ["all"]:
+        return list(MODEL_SPECS)
+
+    by_tag = {str(spec["tag"]): spec for spec in MODEL_SPECS}
+    unknown = [tag for tag in requested if tag not in by_tag]
+    if unknown:
+        raise ValueError(f"Unknown model tags {unknown}; valid tags: {sorted(by_tag)} or all")
+    return [by_tag[tag] for tag in requested]
+
+
+def _resolve_attack_order(attacks_arg: str) -> list[str]:
+    requested = [item.strip().lower() for item in attacks_arg.split(",") if item.strip()]
+    if not requested or requested == ["all"]:
+        return list(ATTACK_ORDER)
+
+    unknown = [attack for attack in requested if attack not in ATTACK_ORDER]
+    if unknown:
+        raise ValueError(f"Unknown attacks {unknown}; valid attacks: {ATTACK_ORDER} or all")
+    return requested
+
+
+def _load_collapsed_dims_for_run(
+    *,
+    diagnostics_dir: Path,
+    manifest: dict[str, Any],
+) -> dict[int, list[int]]:
+    collapsed: dict[int, list[int]] = {}
+    manifest_diagnostics = manifest.get("diagnostics", {})
+
+    for class_name in CLASSES:
+        class_id = CLASS_TO_ID[class_name]
+        diag_path = diagnostics_dir / f"diagnostics_{class_name}.json"
+        manifest_diag = manifest_diagnostics.get(class_name, {})
+        if not diag_path.exists() and manifest_diag.get("path"):
+            diag_path = Path(str(manifest_diag["path"]))
+        if not diag_path.exists():
+            raise FileNotFoundError(f"Diagnostics not found for {class_name}: {diag_path}")
+        diag = _load_json(diag_path)
+        collapsed[class_id] = list(diag["posterior_collapse"]["collapsed_dim_indices"])
+    return collapsed
+
+
+def _config_snapshot(
+    *,
+    args: argparse.Namespace,
+    run_tag: str,
+    manifest_path: Path,
+    diagnostics_dir: Path,
+    manifest: dict[str, Any],
+    model_specs: list[dict[str, str]],
+    attack_order: list[str],
+) -> dict[str, Any]:
+    input_alpha = float(args.input_alpha if args.input_alpha is not None else 0.05)
+    snapshot = phase0_config_snapshot(args.seed, args.device)
     snapshot.update(
         {
             "phase": "all_models_rerun",
             "split": "test",
-            "models": MODEL_SPECS,
+            "vae_run": {
+                "run_tag": run_tag,
+                "manifest_path": str(manifest_path),
+                "diagnostics_dir": str(diagnostics_dir),
+                "checkpoint_paths": {
+                    class_name: manifest["checkpoints"][class_name]["path"]
+                    for class_name in CLASSES
+                },
+            },
+            "models": model_specs,
             "sampling": {
                 "source_classes": SOURCE_CLASSES,
-                "samples_per_source_class": SAMPLES_PER_SOURCE_CLASS,
-                "selection_batch_size": SELECTION_BATCH_SIZE,
-                "selection_rule": "up to 100 correctly classified test samples per non-benign source class; skip zero-available cells",
+                "samples_per_source_class": int(args.samples_per_class),
+                "selection_batch_size": int(args.selection_batch_size),
+                "selection_rule": "up to N correctly classified test samples per non-benign source class; skip zero-available cells",
                 "correctly_classified_only": True,
             },
             "attacks": {
+                "selected": attack_order,
                 "latent-pgd": {
-                    "epsilon": 0.5,
-                    "alpha": 0.05,
-                    "num_steps": 40,
-                    "random_start": True,
+                    "epsilon_fallback": float(args.epsilon),
+                    "epsilon_by_class": str(args.epsilon_by_class),
+                    "alpha": None if args.alpha is None else float(args.alpha),
+                    "alpha_ratio": float(args.alpha_ratio),
+                    "num_steps": int(args.num_steps),
+                    "random_start": bool(args.random_start),
+                    "adaptive_pgd": bool(args.adaptive_pgd),
+                    "checkpoint_interval": int(args.checkpoint_interval),
+                    "rho": float(args.rho),
+                    "min_alpha": float(args.min_alpha),
+                    "num_restarts": int(args.num_restarts),
+                    "restart_strategy": str(args.restart_strategy),
+                    "gmm_split": str(args.gmm_split),
+                    "gmm_components": int(args.gmm_components),
+                    "gmm_fit_max_samples": args.gmm_fit_max_samples,
                 },
                 "latent-cw": {
-                    "lambda_conf": 1.0,
-                    "kappa": 0.0,
-                    "num_iterations": 200,
-                    "learning_rate": 0.01,
-                    "convergence_threshold": 1e-5,
+                    "lambda_conf": float(args.lambda_conf),
+                    "kappa": float(args.kappa),
+                    "num_iterations": int(args.num_iterations),
+                    "learning_rate": float(args.learning_rate),
+                    "convergence_threshold": float(args.convergence_threshold),
+                    "num_restarts": int(args.num_restarts),
+                    "restart_strategy": str(args.restart_strategy),
+                    "cw_init_radius_by_class": str(args.cw_init_radius_by_class),
                 },
                 "input-pgd": {
-                    "epsilon": 0.5,
-                    "alpha": 0.05,
-                    "num_steps": 40,
-                    "random_start": True,
+                    "epsilon": float(args.input_epsilon),
+                    "alpha": input_alpha,
+                    "num_steps": int(args.num_steps),
+                    "random_start": bool(args.random_start),
                 },
                 "input-cw": {
-                    "lambda_conf": 1.0,
-                    "kappa": 0.0,
-                    "num_iterations": 200,
-                    "learning_rate": 0.01,
-                    "convergence_threshold": 1e-5,
+                    "lambda_conf": float(args.lambda_conf),
+                    "kappa": float(args.kappa),
+                    "num_iterations": int(args.num_iterations),
+                    "learning_rate": float(args.learning_rate),
+                    "convergence_threshold": float(args.convergence_threshold),
                 },
             },
         }
@@ -117,9 +240,14 @@ def _config_snapshot(seed: int, device: str) -> dict[str, Any]:
     return snapshot
 
 
-def _fit_detector(router: AttackRouter, device: str) -> MahalanobisOutlierDetector:
+def _fit_detector(
+    router: AttackRouter,
+    device: str,
+    *,
+    collapsed_by_class: dict[int, list[int]] | None = None,
+) -> MahalanobisOutlierDetector:
     split_val = load_split("val")
-    collapsed_by_class = load_collapsed_dims()
+    collapsed_by_class = collapsed_by_class or load_collapsed_dims()
     detector = MahalanobisOutlierDetector(latent_dim=16)
     for class_id, _class_name in enumerate(CLASSES):
         ds = build_per_class_dataset(
@@ -781,12 +909,48 @@ def _build_per_sample_rows(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Rerun latent/input PGD and C&W across all 8-class neural baselines.")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--device", default="cpu")
+    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--vae-run-tag", default=DEFAULT_VAE_RUN_TAG)
+    parser.add_argument("--vae-manifest", default=None)
+    parser.add_argument("--vae-diagnostics-dir", default=None)
+    parser.add_argument("--models", default="all", help="Comma-separated model tags or all")
+    parser.add_argument("--attacks", default=",".join(ATTACK_ORDER), help="Comma-separated attacks or all")
+    parser.add_argument("--samples-per-class", type=int, default=SAMPLES_PER_SOURCE_CLASS)
+    parser.add_argument("--selection-batch-size", type=int, default=8192)
     parser.add_argument("--epsilon", type=float, default=0.5)
-    parser.add_argument("--alpha", type=float, default=0.05)
+    parser.add_argument(
+        "--epsilon-by-class",
+        default=DEFAULT_EPSILON_BY_CLASS_SPEC,
+        help="Latent epsilon map, e.g. Web=1.0,DoS=0.8; empty uses built-in defaults.",
+    )
+    parser.add_argument(
+        "--alpha",
+        type=float,
+        default=None,
+        help="Optional global latent PGD alpha override; default is class epsilon * alpha-ratio.",
+    )
+    parser.add_argument("--alpha-ratio", type=float, default=0.1)
+    parser.add_argument("--input-epsilon", type=float, default=0.5)
+    parser.add_argument("--input-alpha", type=float, default=0.05)
     parser.add_argument("--num-steps", type=int, default=40)
     parser.add_argument("--random-start", action="store_true", default=True)
     parser.add_argument("--no-random-start", dest="random_start", action="store_false")
+    parser.add_argument("--adaptive-pgd", dest="adaptive_pgd", action="store_true", default=True)
+    parser.add_argument("--no-adaptive-pgd", dest="adaptive_pgd", action="store_false")
+    parser.add_argument("--checkpoint-interval", type=int, default=10)
+    parser.add_argument("--rho", type=float, default=0.75)
+    parser.add_argument("--min-alpha", type=float, default=1e-4)
+    parser.add_argument("--num-restarts", type=int, default=DEFAULT_NUM_RESTARTS)
+    parser.add_argument("--restart-strategy", default=DEFAULT_RESTART_STRATEGY)
+    parser.add_argument("--gmm-split", default=DEFAULT_GMM_SPLIT, choices=["train", "val", "test"])
+    parser.add_argument("--gmm-components", type=int, default=DEFAULT_GMM_COMPONENTS)
+    parser.add_argument("--gmm-fit-max-samples", type=int, default=DEFAULT_GMM_FIT_MAX_SAMPLES)
+    parser.add_argument("--force-refit-gmm", action="store_true")
+    parser.add_argument(
+        "--cw-init-radius-by-class",
+        default="",
+        help="Class radius map for clipping CW restart seeds; default mirrors epsilon-by-class.",
+    )
     parser.add_argument("--lambda-conf", type=float, default=1.0)
     parser.add_argument("--kappa", type=float, default=0.0)
     parser.add_argument("--num-iterations", type=int, default=200)
@@ -794,21 +958,71 @@ def main() -> None:
     parser.add_argument("--convergence-threshold", type=float, default=1e-5)
     args = parser.parse_args()
 
+    if args.num_restarts < 1:
+        raise ValueError("--num-restarts must be >= 1")
+    epsilon_by_class = parse_class_float_map(
+        args.epsilon_by_class,
+        default_by_class_name=DEFAULT_EPSILON_BY_CLASS_NAME,
+    )
+    cw_radius_by_class = parse_class_float_map(
+        args.cw_init_radius_by_class,
+        default_by_class_name={
+            class_name: class_float_value(CLASS_TO_ID[class_name], epsilon_by_class, args.epsilon)
+            for class_name in CLASSES
+        },
+    )
+    model_specs = _resolve_model_specs(args.models)
+    attack_order = _resolve_attack_order(args.attacks)
+    run_tag, manifest_path, diagnostics_dir = _resolve_vae_paths(args)
+    manifest = _load_json(manifest_path)
+    collapsed_by_class = _load_collapsed_dims_for_run(
+        diagnostics_dir=diagnostics_dir,
+        manifest=manifest,
+    )
+
     set_global_seed(args.seed)
     run_logger = AttackRunLogger.create(
         phase_name="all_models_rerun",
         seed=args.seed,
-        config_snapshot=_config_snapshot(args.seed, args.device),
+        config_snapshot=_config_snapshot(
+            args=args,
+            run_tag=run_tag,
+            manifest_path=manifest_path,
+            diagnostics_dir=diagnostics_dir,
+            manifest=manifest,
+            model_specs=model_specs,
+            attack_order=attack_order,
+        ),
     )
 
     router = AttackRouter(device=args.device)
+    router.manifest = manifest
     mask = PerturbationMask.from_preprocessing_artifacts()
     protocol_validator = ProtocolValidator(router.scaler)
     split_test = load_split("test")
-    detector = _fit_detector(router, args.device)
+    detector = _fit_detector(router, args.device, collapsed_by_class=collapsed_by_class)
+
+    uses_gmm = strategy_uses_gmm(args.restart_strategy) and any(
+        attack.startswith("latent-") for attack in attack_order
+    )
+    gmm_priors: dict[int, LatentGMMPrior] = {}
+    if uses_gmm:
+        for class_name in SOURCE_CLASSES:
+            class_id = CLASS_TO_ID[class_name]
+            print(f"[GMM] {class_name}: fitting/loading latent prior")
+            gmm_priors[class_id] = fit_or_load_latent_gmm(
+                router=router,
+                class_id=class_id,
+                split_name=args.gmm_split,
+                n_components=args.gmm_components,
+                max_fit_samples=args.gmm_fit_max_samples,
+                seed=args.seed,
+                device=args.device,
+                force_refit=args.force_refit_gmm,
+            )
 
     classifiers: dict[str, torch.nn.Module] = {}
-    for spec in MODEL_SPECS:
+    for spec in model_specs:
         ckpt_path = _REPO_ROOT / "models" / spec["checkpoint"]
         classifiers[spec["tag"]] = load_model(
             model_path=str(ckpt_path),
@@ -822,7 +1036,7 @@ def main() -> None:
     summary_rows: list[dict[str, Any]] = []
     skipped_cells: list[dict[str, Any]] = []
 
-    for spec in MODEL_SPECS:
+    for spec in model_specs:
         classifier = classifiers[spec["tag"]]
         selected_indices_by_class: dict[int, np.ndarray] = {}
         for class_name in SOURCE_CLASSES:
@@ -833,11 +1047,13 @@ def main() -> None:
                 classifier=classifier,
                 device=args.device,
                 class_id=class_id,
-                max_samples=SAMPLES_PER_SOURCE_CLASS,
+                max_samples=args.samples_per_class,
+                selection_batch_size=args.selection_batch_size,
             )
             if selected_indices_by_class[class_id].size == 0:
                 skipped_cells.append(
                     {
+                        "vae_run_tag": run_tag,
                         "model": spec["label"],
                         "model_tag": spec["tag"],
                         "class_name": class_name,
@@ -845,7 +1061,7 @@ def main() -> None:
                     }
                 )
 
-        for attack_name in ATTACK_ORDER:
+        for attack_name in attack_order:
             attack_rows: list[dict[str, Any]] = []
             for class_name in SOURCE_CLASSES:
                 class_id = CLASS_TO_ID[class_name]
@@ -857,6 +1073,29 @@ def main() -> None:
 
                 if attack_name.startswith("latent-"):
                     vae = router.get_vae(class_id)
+                    class_epsilon = class_float_value(class_id, epsilon_by_class, args.epsilon)
+                    class_alpha = (
+                        float(args.alpha)
+                        if args.alpha is not None
+                        else float(class_epsilon) * float(args.alpha_ratio)
+                    )
+                    init_radius = (
+                        class_float_value(class_id, cw_radius_by_class, class_epsilon)
+                        if attack_name == "latent-cw"
+                        else class_epsilon
+                    )
+                    z_initializers, restart_labels = build_latent_restart_initializers(
+                        vae=vae,
+                        x_batch=x_batch,
+                        gmm_prior=gmm_priors.get(class_id),
+                        epsilon=init_radius,
+                        num_restarts=args.num_restarts,
+                        restart_strategy=args.restart_strategy,
+                        seed=args.seed,
+                        class_id=class_id,
+                        device=args.device,
+                        project_to_epsilon=True,
+                    )
                     metrics = _evaluate_latent_attack(
                         attack_name=attack_name,
                         class_id=class_id,
@@ -869,8 +1108,8 @@ def main() -> None:
                         detector=detector,
                         scaler=router.scaler,
                         device=args.device,
-                        epsilon=args.epsilon,
-                        alpha=args.alpha,
+                        epsilon=class_epsilon,
+                        alpha=class_alpha,
                         num_steps=args.num_steps,
                         random_start=args.random_start,
                         lambda_conf=args.lambda_conf,
@@ -878,8 +1117,17 @@ def main() -> None:
                         num_iterations=args.num_iterations,
                         learning_rate=args.learning_rate,
                         convergence_threshold=args.convergence_threshold,
+                        num_restarts=args.num_restarts,
+                        restart_strategy=args.restart_strategy,
+                        z_initializers=z_initializers,
+                        restart_labels=restart_labels,
+                        adaptive_pgd=args.adaptive_pgd,
+                        checkpoint_interval=args.checkpoint_interval,
+                        rho=args.rho,
+                        min_alpha=args.min_alpha,
                     )
                 else:
+                    input_alpha = args.input_alpha if args.input_alpha is not None else 0.05
                     metrics = _evaluate_input_attack(
                         attack_name=attack_name,
                         class_id=class_id,
@@ -889,8 +1137,8 @@ def main() -> None:
                         mask=mask,
                         protocol_validator=protocol_validator,
                         device=args.device,
-                        epsilon=args.epsilon,
-                        alpha=args.alpha,
+                        epsilon=args.input_epsilon,
+                        alpha=input_alpha,
                         num_steps=args.num_steps,
                         random_start=args.random_start,
                         lambda_conf=args.lambda_conf,
@@ -900,6 +1148,7 @@ def main() -> None:
                         convergence_threshold=args.convergence_threshold,
                     )
 
+                metrics["vae_run_tag"] = run_tag
                 metrics["model"] = spec["label"]
                 metrics["model_tag"] = spec["tag"]
                 metrics["attack"] = attack_name
@@ -920,6 +1169,7 @@ def main() -> None:
             if not attack_rows:
                 summary_rows.append(
                     {
+                        "vae_run_tag": run_tag,
                         "model": spec["label"],
                         "model_tag": spec["tag"],
                         "attack": attack_name,
@@ -933,20 +1183,27 @@ def main() -> None:
                         "idsr": None,
                         "mean_l2_input": None,
                         "mean_l2_latent": None,
+                        "raw_g1g8_validity_rate": None,
+                        "successful_joint_valid_count": None,
+                        "selected_restart_mean": None,
+                        "restart_success_counts": None,
+                        "restart_labels": None,
                     }
                 )
                 continue
 
             summary = _aggregate_rows(attack_rows)
+            summary["vae_run_tag"] = run_tag
             summary["model"] = spec["label"]
             summary["model_tag"] = spec["tag"]
             summary["attack"] = attack_name
             summary_rows.append(summary)
 
-    summary_rows.sort(key=lambda row: (row["model"], ATTACK_ORDER.index(row["attack"])))
+    summary_rows.sort(key=lambda row: (row["model"], attack_order.index(row["attack"])))
     per_class_rows.sort(key=lambda row: (row["model"], row["attack"], row["class_name"]))
 
     payload = {
+        "vae_run_tag": run_tag,
         "summary": summary_rows,
         "per_class": per_class_rows,
         "per_sample": per_sample_rows,
@@ -955,11 +1212,12 @@ def main() -> None:
     with open(run_logger.run_dir / "all_results.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
 
-    _write_csv(run_logger.run_dir / "summary.csv", summary_rows, ["model_tag"] + SUMMARY_COLUMNS)
+    _write_csv(run_logger.run_dir / "summary.csv", summary_rows, ["vae_run_tag", "model_tag"] + SUMMARY_COLUMNS)
     _write_csv(
         run_logger.run_dir / "per_class.csv",
         per_class_rows,
         [
+            "vae_run_tag",
             "model",
             "model_tag",
             "attack",
@@ -1003,11 +1261,12 @@ def main() -> None:
     _write_csv(
         run_logger.run_dir / "skipped_cells.csv",
         skipped_cells,
-        ["model", "model_tag", "class_name", "reason"],
+        ["vae_run_tag", "model", "model_tag", "class_name", "reason"],
     )
     _write_summary_md(run_logger.run_dir / "summary.md", summary_rows)
 
     print("=== All-Model Attack Rerun Summary ===")
+    print(f"VAE run tag: {run_tag}")
     print(f"Output directory: {run_logger.run_dir}")
     print()
     for row in summary_rows:
