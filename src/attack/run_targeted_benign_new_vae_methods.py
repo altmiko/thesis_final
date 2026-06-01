@@ -61,6 +61,14 @@ def _build_command(args: argparse.Namespace, method: str) -> list[str]:
         str(args.num_restarts),
         "--restart-strategy",
         str(args.restart_strategy),
+        "--target-loss",
+        str(args.target_loss),
+        "--target-class",
+        str(args.target_class),
+        "--kappa",
+        str(args.kappa),
+        "--lambda-latent-l2",
+        str(args.lambda_latent_l2),
         "--gmm-split",
         str(args.gmm_split),
         "--gmm-components",
@@ -91,6 +99,10 @@ def main() -> None:
     parser.add_argument("--num-steps", type=int, default=40)
     parser.add_argument("--num-restarts", type=int, default=5)
     parser.add_argument("--restart-strategy", default="encoded+jitter+gmm")
+    parser.add_argument("--target-loss", default="ce", choices=["ce", "cw-margin"])
+    parser.add_argument("--target-class", default="Benign", choices=["Benign"])
+    parser.add_argument("--kappa", type=float, default=0.0)
+    parser.add_argument("--lambda-latent-l2", type=float, default=0.0)
     parser.add_argument("--gmm-split", default="val", choices=["train", "val", "test"])
     parser.add_argument("--gmm-components", type=int, default=5)
     parser.add_argument("--gmm-fit-max-samples", type=int, default=50000)

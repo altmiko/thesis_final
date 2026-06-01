@@ -14,3 +14,6 @@ checkpoints/*
 !checkpoints/.gitkeep
 outputs/*
 !outputs/.gitkeep
+
+# Model artifacts
+*.pkl

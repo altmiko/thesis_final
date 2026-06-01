@@ -13,6 +13,7 @@ from attack.latent_infra import (
 
 
 MetadataValue = torch.Tensor | float | int | bool | str | list[int] | list[float]
+TARGET_LOSS_CHOICES = {"ce", "cw-margin"}
 
 
 def classifier_logits(classifier: Any, x_batch: torch.Tensor, *, device: str) -> torch.Tensor:
@@ -34,13 +35,73 @@ def _target_tensor(y_true: torch.Tensor, target_class: int) -> torch.Tensor:
     return torch.full_like(y_true, int(target_class), dtype=torch.long)
 
 
+def target_logit_margin(
+    logits: torch.Tensor,
+    *,
+    target_class: int,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    target = int(target_class)
+    if target < 0 or target >= int(logits.shape[1]):
+        raise ValueError(f"target_class={target} is outside logits width {logits.shape[1]}")
+
+    target_logits = logits[:, target]
+    masked_logits = logits.clone()
+    masked_logits[:, target] = float("-inf")
+    max_other_logits = masked_logits.max(dim=1).values
+    margin = target_logits - max_other_logits
+    return margin, target_logits, max_other_logits
+
+
+def _targeted_cw_margin_loss(
+    logits: torch.Tensor,
+    *,
+    target_class: int,
+    kappa: float,
+    lambda_latent_l2: float,
+    z_current: torch.Tensor | None,
+    z_orig: torch.Tensor | None,
+) -> torch.Tensor:
+    _margin, target_logits, max_other_logits = target_logit_margin(
+        logits,
+        target_class=int(target_class),
+    )
+    cw_term = torch.clamp(max_other_logits - target_logits, min=-float(kappa))
+    if float(lambda_latent_l2) == 0.0:
+        return cw_term
+    if z_current is None or z_orig is None:
+        raise ValueError("cw-margin target loss with lambda_latent_l2 requires z_current and z_orig")
+    latent_l2 = torch.linalg.norm(z_current - z_orig, dim=1)
+    return cw_term + float(lambda_latent_l2) * latent_l2
+
+
 def _objective_loss(
     logits: torch.Tensor,
     y_true: torch.Tensor,
     *,
     targeted: bool,
     target_class: int,
+    target_loss: str = "ce",
+    kappa: float = 0.0,
+    lambda_latent_l2: float = 0.0,
+    z_current: torch.Tensor | None = None,
+    z_orig: torch.Tensor | None = None,
 ) -> torch.Tensor:
+    target_loss_key = str(target_loss).strip().lower()
+    if target_loss_key not in TARGET_LOSS_CHOICES:
+        raise ValueError(f"Unknown target_loss={target_loss!r}; valid choices: {sorted(TARGET_LOSS_CHOICES)}")
+
+    if targeted and target_loss_key == "cw-margin":
+        # latent_pgd_attack performs gradient ascent, so maximize the negative
+        # of the CW-style minimization objective.
+        return -_targeted_cw_margin_loss(
+            logits,
+            target_class=int(target_class),
+            kappa=float(kappa),
+            lambda_latent_l2=float(lambda_latent_l2),
+            z_current=z_current,
+            z_orig=z_orig,
+        ).mean()
+
     if targeted:
         return -F.cross_entropy(logits, _target_tensor(y_true, target_class))
     return F.cross_entropy(logits, y_true)
@@ -52,7 +113,26 @@ def _per_sample_objective(
     *,
     targeted: bool,
     target_class: int,
+    target_loss: str = "ce",
+    kappa: float = 0.0,
+    lambda_latent_l2: float = 0.0,
+    z_current: torch.Tensor | None = None,
+    z_orig: torch.Tensor | None = None,
 ) -> torch.Tensor:
+    target_loss_key = str(target_loss).strip().lower()
+    if target_loss_key not in TARGET_LOSS_CHOICES:
+        raise ValueError(f"Unknown target_loss={target_loss!r}; valid choices: {sorted(TARGET_LOSS_CHOICES)}")
+
+    if targeted and target_loss_key == "cw-margin":
+        return -_targeted_cw_margin_loss(
+            logits,
+            target_class=int(target_class),
+            kappa=float(kappa),
+            lambda_latent_l2=float(lambda_latent_l2),
+            z_current=z_current,
+            z_orig=z_orig,
+        )
+
     if targeted:
         return -F.cross_entropy(
             logits,
@@ -149,7 +229,14 @@ def latent_pgd_attack(
     checkpoint_interval: int = 10,
     rho: float = 0.75,
     min_alpha: float = 1e-4,
+    target_loss: str = "ce",
+    kappa: float = 0.0,
+    lambda_latent_l2: float = 0.0,
 ) -> tuple[torch.Tensor, torch.Tensor, dict[str, MetadataValue]]:
+    target_loss_key = str(target_loss).strip().lower()
+    if target_loss_key not in TARGET_LOSS_CHOICES:
+        raise ValueError(f"Unknown target_loss={target_loss!r}; valid choices: {sorted(TARGET_LOSS_CHOICES)}")
+
     x_original = x_original.to(device=device, dtype=torch.float32)
     y_true = y_true.to(device=device, dtype=torch.long)
 
@@ -173,6 +260,9 @@ def latent_pgd_attack(
             "alpha": float(alpha),
             "targeted": bool(targeted),
             "target_class": int(target_class),
+            "target_loss": target_loss_key,
+            "kappa": float(kappa),
+            "lambda_latent_l2": float(lambda_latent_l2),
             "num_restarts": int(num_restarts),
             "restart_strategy": str(restart_strategy),
             "adaptive_pgd": bool(adaptive_pgd),
@@ -232,6 +322,11 @@ def latent_pgd_attack(
                 y_true,
                 targeted=bool(targeted),
                 target_class=int(target_class),
+                target_loss=target_loss_key,
+                kappa=float(kappa),
+                lambda_latent_l2=float(lambda_latent_l2),
+                z_current=z_adv,
+                z_orig=z_orig,
             )
             grad = torch.autograd.grad(loss, z_adv, retain_graph=False, create_graph=False)[0]
             loss_scalar = float(loss.item())
@@ -275,6 +370,11 @@ def latent_pgd_attack(
                 y_true,
                 targeted=bool(targeted),
                 target_class=int(target_class),
+                target_loss=target_loss_key,
+                kappa=float(kappa),
+                lambda_latent_l2=float(lambda_latent_l2),
+                z_current=z_adv,
+                z_orig=z_orig,
             )
             input_l2 = torch.linalg.norm(x_adv_final - x_original, dim=1)
             restart_success_counts.append(int(success.float().sum().item()))
@@ -317,6 +417,9 @@ def latent_pgd_attack(
         "alpha": float(alpha),
         "targeted": bool(targeted),
         "target_class": int(target_class),
+        "target_loss": target_loss_key,
+        "kappa": float(kappa),
+        "lambda_latent_l2": float(lambda_latent_l2),
         "num_restarts": int(len(z_starts)),
         "restart_strategy": str(restart_strategy),
         "adaptive_pgd": bool(adaptive_pgd),

@@ -1,0 +1,154 @@
+==========================================================================================
+TREE BASELINE TRAINING
+models: ['rf', 'xgb']
+tasks: ['binary', '8class', '34class']
+xgb_device: cuda
+rf_max_samples: 0.4
+rf_min_samples_leaf: 25
+rf_n_jobs: -1
+limit_samples: None
+seed: 42
+==========================================================================================
+
+------------------------------------------------------------------------------------------
+Starting: task=binary, model=rf, device=cpu
+X_train shape: (3100958, 39)  num_classes: 2
+loss_weighting_decision: Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.
+    [rf] params={'n_estimators': 200, 'max_depth': 20} val_macro_f1=0.809267 (35.2s)
+    [rf] params={'n_estimators': 300, 'max_depth': 20} val_macro_f1=0.809679 (50.4s)
+    [rf] params={'n_estimators': 200, 'max_depth': 30} val_macro_f1=0.813288 (33.8s)
+    [rf] params={'n_estimators': 300, 'max_depth': 30} val_macro_f1=0.813473 (49.8s)
+  selected params={'n_estimators': 300, 'max_depth': 30} (val_macro_f1=0.813473)
+
+******************************************************************************************
+TEST RESULTS [binary:rf]
+test_loss: 0.065935
+accuracy: 0.971789
+macro_f1: 0.813900
+weighted_f1: 0.969838
+******************************************************************************************
+Saved model: D:\thesis_final\models\rf_binary.pkl
+Saved reports: D:\thesis_final\results\rf_binary_classification_report.json
+
+------------------------------------------------------------------------------------------
+Starting: task=binary, model=xgb, device=cuda
+X_train shape: (3100958, 39)  num_classes: 2
+loss_weighting_decision: Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.
+C:\Users\T2530985\.conda\envs\thesis\lib\site-packages\xgboost\core.py:751: UserWarning: [06:21:42] WARNING: C:\actions-runner\_work\xgboost\xgboost\src\common\error_msg.cc:62: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
+Potential solutions:
+- Use a data structure that matches the device ordinal in the booster.
+- Set the device for booster before call to inplace_predict.
+
+This warning will only be shown once.
+
+  return func(**kwargs)
+    [xgb] params={'max_depth': 6, 'learning_rate': 0.1} val_macro_f1=0.829517 (4.8s)
+    [xgb] params={'max_depth': 10, 'learning_rate': 0.1} val_macro_f1=0.833893 (5.9s)
+    [xgb] params={'max_depth': 6, 'learning_rate': 0.3} val_macro_f1=0.832032 (3.6s)
+    [xgb] params={'max_depth': 10, 'learning_rate': 0.3} val_macro_f1=0.832092 (2.6s)
+  selected params={'max_depth': 10, 'learning_rate': 0.1} (val_macro_f1=0.833893)
+C:\Users\T2530985\.conda\envs\thesis\lib\site-packages\sklearn\metrics\_classification.py:259: UserWarning: The y_prob values do not sum to one. Make sure to pass probabilities.
+  warnings.warn(
+
+******************************************************************************************
+TEST RESULTS [binary:xgb]
+test_loss: 0.061160
+accuracy: 0.973317
+macro_f1: 0.834887
+weighted_f1: 0.972420
+******************************************************************************************
+Saved model: D:\thesis_final\models\xgb_binary.pkl
+Saved reports: D:\thesis_final\results\xgb_binary_classification_report.json
+
+------------------------------------------------------------------------------------------
+Starting: task=8class, model=rf, device=cpu
+X_train shape: (3100958, 39)  num_classes: 8
+loss_weighting_decision: Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.
+    [rf] params={'n_estimators': 200, 'max_depth': 20} val_macro_f1=0.662738 (48.7s)
+    [rf] params={'n_estimators': 300, 'max_depth': 20} val_macro_f1=0.662916 (74.2s)
+    [rf] params={'n_estimators': 200, 'max_depth': 30} val_macro_f1=0.664543 (50.9s)
+    [rf] params={'n_estimators': 300, 'max_depth': 30} val_macro_f1=0.664396 (74.5s)
+  selected params={'n_estimators': 200, 'max_depth': 30} (val_macro_f1=0.664543)
+
+******************************************************************************************
+TEST RESULTS [8class:rf]
+test_loss: 0.316076
+accuracy: 0.855505
+macro_f1: 0.662529
+weighted_f1: 0.850309
+******************************************************************************************
+Saved model: D:\thesis_final\models\rf_8class.pkl
+Saved reports: D:\thesis_final\results\rf_8class_classification_report.json
+
+------------------------------------------------------------------------------------------
+Starting: task=8class, model=xgb, device=cuda
+X_train shape: (3100958, 39)  num_classes: 8
+loss_weighting_decision: Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.
+    [xgb] params={'max_depth': 6, 'learning_rate': 0.1} val_macro_f1=0.703621 (34.6s)
+    [xgb] params={'max_depth': 10, 'learning_rate': 0.1} val_macro_f1=0.710825 (49.6s)
+    [xgb] params={'max_depth': 6, 'learning_rate': 0.3} val_macro_f1=0.709966 (34.9s)
+    [xgb] params={'max_depth': 10, 'learning_rate': 0.3} val_macro_f1=0.708293 (19.1s)
+  selected params={'max_depth': 10, 'learning_rate': 0.1} (val_macro_f1=0.710825)
+C:\Users\T2530985\.conda\envs\thesis\lib\site-packages\sklearn\metrics\_classification.py:259: UserWarning: The y_prob values do not sum to one. Make sure to pass probabilities.
+  warnings.warn(
+
+******************************************************************************************
+TEST RESULTS [8class:xgb]
+test_loss: 0.294800
+accuracy: 0.861423
+macro_f1: 0.709387
+weighted_f1: 0.857655
+******************************************************************************************
+Saved model: D:\thesis_final\models\xgb_8class.pkl
+Saved reports: D:\thesis_final\results\xgb_8class_classification_report.json
+
+------------------------------------------------------------------------------------------
+Starting: task=34class, model=rf, device=cpu
+X_train shape: (3100958, 39)  num_classes: 34
+loss_weighting_decision: Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.
+    [rf] params={'n_estimators': 200, 'max_depth': 20} val_macro_f1=0.591632 (60.1s)
+    [rf] params={'n_estimators': 300, 'max_depth': 20} val_macro_f1=0.590906 (88.0s)
+    [rf] params={'n_estimators': 200, 'max_depth': 30} val_macro_f1=0.598188 (57.6s)
+    [rf] params={'n_estimators': 300, 'max_depth': 30} val_macro_f1=0.597903 (88.9s)
+  selected params={'n_estimators': 200, 'max_depth': 30} (val_macro_f1=0.598188)
+
+******************************************************************************************
+TEST RESULTS [34class:rf]
+test_loss: 0.533938
+accuracy: 0.771937
+macro_f1: 0.598534
+weighted_f1: 0.761093
+******************************************************************************************
+Saved model: D:\thesis_final\models\rf_34class.pkl
+Saved reports: D:\thesis_final\results\rf_34class_classification_report.json
+
+------------------------------------------------------------------------------------------
+Starting: task=34class, model=xgb, device=cuda
+X_train shape: (3100958, 39)  num_classes: 34
+loss_weighting_decision: Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.
+    [xgb] params={'max_depth': 6, 'learning_rate': 0.1} val_macro_f1=0.626727 (239.0s)
+    [xgb] params={'max_depth': 10, 'learning_rate': 0.1} val_macro_f1=0.630700 (173.4s)
+    [xgb] params={'max_depth': 6, 'learning_rate': 0.3} val_macro_f1=0.626749 (122.2s)
+    [xgb] params={'max_depth': 10, 'learning_rate': 0.3} val_macro_f1=0.624193 (69.1s)
+  selected params={'max_depth': 10, 'learning_rate': 0.1} (val_macro_f1=0.630700)
+C:\Users\T2530985\.conda\envs\thesis\lib\site-packages\sklearn\metrics\_classification.py:259: UserWarning: The y_prob values do not sum to one. Make sure to pass probabilities.
+  warnings.warn(
+
+******************************************************************************************
+TEST RESULTS [34class:xgb]
+test_loss: 0.493097
+accuracy: 0.782158
+macro_f1: 0.631109
+weighted_f1: 0.774875
+******************************************************************************************
+Saved model: D:\thesis_final\models\xgb_34class.pkl
+Saved reports: D:\thesis_final\results\xgb_34class_classification_report.json
+
+All tree tasks complete. Summary:
+binary  rf   | acc=0.971789 | macro_f1=0.813900 | weighted_f1=0.969838
+binary  xgb  | acc=0.973317 | macro_f1=0.834887 | weighted_f1=0.972420
+8class  rf   | acc=0.855505 | macro_f1=0.662529 | weighted_f1=0.850309
+8class  xgb  | acc=0.861423 | macro_f1=0.709387 | weighted_f1=0.857655
+34class rf   | acc=0.771937 | macro_f1=0.598534 | weighted_f1=0.761093
+34class xgb  | acc=0.782158 | macro_f1=0.631109 | weighted_f1=0.774875
+Saved summary: D:\thesis_final\results\tree_models_all_tasks_summary.json

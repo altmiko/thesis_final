@@ -16,7 +16,7 @@
     "roc_auc_macro_ovr": 0.9810715574575243,
     "roc_auc_weighted_ovr": 0.9870896082360053,
     "roc_plot": "results\\baseline_review\\roc_curves\\34class_mlp_roc_auc.png",
-    "runtime_sec": 13.744478225708008
+    "runtime_sec": 14.171035528182983
   },
   "classification_report": {
     "BACKDOOR_MALWARE": {

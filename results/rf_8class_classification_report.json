@@ -1,0 +1,134 @@
+{
+  "model": "rf",
+  "task": "8class",
+  "num_classes": 8,
+  "loss_weighting": "excluded",
+  "loss_weighting_decision": "Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.",
+  "provided_class_weights_for_reference": [
+    2.7688708305358887,
+    44.218544006347656,
+    0.27012959122657776,
+    0.8279925584793091,
+    0.9229657053947449,
+    1.0997240543365479,
+    1.4907591342926025,
+    23.26788902282715
+  ],
+  "test_loss": 0.316075662986583,
+  "accuracy": 0.8555048149636338,
+  "macro_f1": 0.6625286489565316,
+  "weighted_f1": 0.8503093794919324,
+  "per_class_f1": {
+    "0": 0.6669811320754717,
+    "1": 0.20951018948873792,
+    "2": 0.8961746418756594,
+    "3": 0.6524022095189158,
+    "4": 0.99767917518888,
+    "5": 0.8367392188019659,
+    "6": 0.899612020414123,
+    "7": 0.14113060428849902
+  },
+  "classification_report": {
+    "0": {
+      "precision": 0.7007323385276141,
+      "recall": 0.6363318165908295,
+      "f1-score": 0.6669811320754717,
+      "support": 39998.0
+    },
+    "1": {
+      "precision": 1.0,
+      "recall": 0.11701277955271565,
+      "f1-score": 0.20951018948873792,
+      "support": 2504.0
+    },
+    "2": {
+      "precision": 0.8765512721539506,
+      "recall": 0.91669674914143,
+      "f1-score": 0.8961746418756594,
+      "support": 409984.0
+    },
+    "3": {
+      "precision": 0.7044534412955465,
+      "recall": 0.6075137378041943,
+      "f1-score": 0.6524022095189158,
+      "support": 133755.0
+    },
+    "4": {
+      "precision": 0.9994062452959575,
+      "recall": 0.9959580638709248,
+      "f1-score": 0.99767917518888,
+      "support": 119992.0
+    },
+    "5": {
+      "precision": 0.7822564625204046,
+      "recall": 0.899379375403406,
+      "f1-score": 0.8367392188019659,
+      "support": 100705.0
+    },
+    "6": {
+      "precision": 0.9304051430297278,
+      "recall": 0.8707918859619604,
+      "f1-score": 0.899612020414123,
+      "support": 74291.0
+    },
+    "7": {
+      "precision": 0.9757412398921833,
+      "recall": 0.07606640050430763,
+      "f1-score": 0.14113060428849902,
+      "support": 4759.0
+    },
+    "accuracy": 0.8555048149636338,
+    "macro avg": {
+      "precision": 0.8711932678394231,
+      "recall": 0.6399688511037209,
+      "f1-score": 0.6625286489565316,
+      "support": 885988.0
+    },
+    "weighted avg": {
+      "precision": 0.8539508787532303,
+      "recall": 0.8555048149636338,
+      "f1-score": 0.8503093794919324,
+      "support": 885988.0
+    }
+  },
+  "selection_metric": "val_macro_f1",
+  "selected_hyperparameters": {
+    "n_estimators": 200,
+    "max_depth": 30
+  },
+  "val_macro_f1": 0.6645433088358307,
+  "tuning": [
+    {
+      "params": {
+        "n_estimators": 200,
+        "max_depth": 20
+      },
+      "val_macro_f1": 0.6627383108348327,
+      "fit_seconds": 48.69521379470825
+    },
+    {
+      "params": {
+        "n_estimators": 300,
+        "max_depth": 20
+      },
+      "val_macro_f1": 0.6629156068204689,
+      "fit_seconds": 74.22526907920837
+    },
+    {
+      "params": {
+        "n_estimators": 200,
+        "max_depth": 30
+      },
+      "val_macro_f1": 0.6645433088358307,
+      "fit_seconds": 50.877092123031616
+    },
+    {
+      "params": {
+        "n_estimators": 300,
+        "max_depth": 30
+      },
+      "val_macro_f1": 0.6643960935075769,
+      "fit_seconds": 74.47098302841187
+    }
+  ]
+}

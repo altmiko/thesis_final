@@ -41,7 +41,7 @@ from attack.latent_infra import (  # noqa: E402
     predict_labels,
     set_global_seed,
 )
-from attack.latent_pgd import classifier_logits, latent_pgd_attack  # noqa: E402
+from attack.latent_pgd import classifier_logits, latent_pgd_attack, target_logit_margin  # noqa: E402
 from attack.validator import validate_batch  # noqa: E402
 from preprocessing.feature_groups import FEATURE_NAMES  # noqa: E402
 from vae.config import CLASS_TO_ID, CLASSES  # noqa: E402
@@ -62,6 +62,10 @@ SUMMARY_COLUMNS = [
     "model",
     "model_tag",
     "attack",
+    "target_class",
+    "target_loss",
+    "kappa",
+    "lambda_latent_l2",
     "n",
     "benign_target_success_rate",
     "benign_target_success_joint_rate",
@@ -74,6 +78,10 @@ SUMMARY_COLUMNS = [
     "mean_l2_input",
     "mean_l2_latent",
     "mean_selected_restart",
+    "benign_margin_mean",
+    "target_confidence_mean",
+    "near_miss_rate_margin_gt_neg_0p5",
+    "near_miss_rate_margin_gt_neg_0p1",
 ]
 PER_CLASS_COLUMNS = SUMMARY_COLUMNS + ["class_name", "restart_target_success_counts"]
 PER_SAMPLE_COLUMNS = [
@@ -86,12 +94,19 @@ PER_SAMPLE_COLUMNS = [
     "pred_before",
     "pred_after",
     "target_class",
+    "target_loss",
+    "kappa",
+    "lambda_latent_l2",
     "target_success",
     "protocol_valid",
     "mask_valid",
     "raw_g1g8_valid",
     "joint_valid",
     "selected_restart",
+    "benign_logit",
+    "max_other_logit",
+    "benign_margin",
+    "target_confidence",
 ]
 
 
@@ -199,6 +214,10 @@ def _config_snapshot(
                 "restart_strategy": str(args.restart_strategy),
                 "targeted": True,
                 "target_class": TARGET_CLASS_ID,
+                "target_class_name": str(args.target_class),
+                "target_loss": str(args.target_loss),
+                "kappa": float(args.kappa),
+                "lambda_latent_l2": float(args.lambda_latent_l2),
                 "selection_policy": "target success, then joint validity, then lower input L2",
             },
             "gmm": {
@@ -383,6 +402,11 @@ def _candidate_metrics(
         logits_after = classifier_logits(classifier, x_adv.to(device), device=device).cpu()
         pred_after = torch.argmax(logits_after, dim=1)
         target_success = pred_after == TARGET_CLASS_ID
+        benign_margin, benign_logit, max_other_logit = target_logit_margin(
+            logits_after,
+            target_class=TARGET_CLASS_ID,
+        )
+        target_confidence = torch.softmax(logits_after, dim=1)[:, TARGET_CLASS_ID]
         protocol_valid = protocol_validator.validate(x_adv, already_scaled=True).cpu()
         mask_valid = mask.verify(x_adv.cpu(), x_batch.cpu())["all_compliant"].cpu()
         raw_valid = _raw_g1g8_validity(x_adv.cpu(), scaler)
@@ -402,6 +426,10 @@ def _candidate_metrics(
         "outlier_mask": outlier_mask,
         "input_l2": input_l2,
         "latent_l2": latent_l2,
+        "benign_logit": benign_logit,
+        "max_other_logit": max_other_logit,
+        "benign_margin": benign_margin,
+        "target_confidence": target_confidence,
     }
 
 
@@ -420,6 +448,9 @@ def _run_targeted_pgd_restart_pool(
     epsilon: float,
     alpha: float,
     num_steps: int,
+    target_loss: str,
+    kappa: float,
+    lambda_latent_l2: float,
     z_starts: list[torch.Tensor],
     restart_labels: list[str],
 ) -> dict[str, Any]:
@@ -442,6 +473,9 @@ def _run_targeted_pgd_restart_pool(
             device=device,
             targeted=True,
             target_class=TARGET_CLASS_ID,
+            target_loss=target_loss,
+            kappa=kappa,
+            lambda_latent_l2=lambda_latent_l2,
             num_restarts=1,
             restart_strategy=restart_labels[restart_idx],
             z_initializers=z_start.unsqueeze(0),
@@ -532,16 +566,26 @@ def _row_from_best(
     model_tag: str,
     class_name: str,
     best: dict[str, Any],
+    target_loss: str,
+    kappa: float,
+    lambda_latent_l2: float,
 ) -> dict[str, Any]:
     target_success = best["target_success"]
     joint_valid = best["joint_valid"]
     in_distribution = ~best["outlier_mask"]
+    benign_margin = best["benign_margin"].float()
+    target_confidence = best["target_confidence"].float()
+    failed_target = ~target_success
 
     return {
         "vae_run_tag": vae_run_tag,
         "model": model_label,
         "model_tag": model_tag,
         "attack": "targeted_benign_latent_pgd",
+        "target_class": TARGET_CLASS_NAME,
+        "target_loss": str(target_loss),
+        "kappa": float(kappa),
+        "lambda_latent_l2": float(lambda_latent_l2),
         "class_name": class_name,
         "n": int(target_success.numel()),
         "benign_target_success_rate": _rate(target_success),
@@ -555,6 +599,10 @@ def _row_from_best(
         "mean_l2_input": float(best["input_l2"].float().mean().item()),
         "mean_l2_latent": float(best["latent_l2"].float().mean().item()),
         "mean_selected_restart": float(best["selected_restart"].float().mean().item()),
+        "benign_margin_mean": float(benign_margin.mean().item()),
+        "target_confidence_mean": float(target_confidence.mean().item()),
+        "near_miss_rate_margin_gt_neg_0p5": _rate(failed_target & (benign_margin > -0.5)),
+        "near_miss_rate_margin_gt_neg_0p1": _rate(failed_target & (benign_margin > -0.1)),
         "restart_target_success_counts": json.dumps(best["restart_target_success_counts"]),
     }
 
@@ -577,6 +625,10 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "model": rows[0]["model"],
         "model_tag": rows[0]["model_tag"],
         "attack": "targeted_benign_latent_pgd",
+        "target_class": rows[0].get("target_class", TARGET_CLASS_NAME),
+        "target_loss": rows[0].get("target_loss", "ce"),
+        "kappa": float(rows[0].get("kappa", 0.0)),
+        "lambda_latent_l2": float(rows[0].get("lambda_latent_l2", 0.0)),
         "n": int(total_n),
         "benign_target_success_rate": weighted("benign_target_success_rate"),
         "benign_target_success_joint_rate": weighted("benign_target_success_joint_rate"),
@@ -591,6 +643,10 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "mean_l2_input": weighted("mean_l2_input"),
         "mean_l2_latent": weighted("mean_l2_latent"),
         "mean_selected_restart": weighted("mean_selected_restart"),
+        "benign_margin_mean": weighted("benign_margin_mean"),
+        "target_confidence_mean": weighted("target_confidence_mean"),
+        "near_miss_rate_margin_gt_neg_0p5": weighted("near_miss_rate_margin_gt_neg_0p5"),
+        "near_miss_rate_margin_gt_neg_0p1": weighted("near_miss_rate_margin_gt_neg_0p1"),
     }
 
 
@@ -604,6 +660,9 @@ def _build_per_sample_rows(
     y_batch: torch.Tensor,
     pred_before: torch.Tensor,
     best: dict[str, Any],
+    target_loss: str,
+    kappa: float,
+    lambda_latent_l2: float,
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     y_np = y_batch.cpu().numpy()
@@ -615,6 +674,10 @@ def _build_per_sample_rows(
     raw_np = best["raw_valid"].cpu().numpy()
     joint_np = best["joint_valid"].cpu().numpy()
     selected_restart_np = best["selected_restart"].cpu().numpy()
+    benign_logit_np = best["benign_logit"].cpu().numpy()
+    max_other_logit_np = best["max_other_logit"].cpu().numpy()
+    benign_margin_np = best["benign_margin"].cpu().numpy()
+    target_confidence_np = best["target_confidence"].cpu().numpy()
 
     for pos, sample_id in enumerate(sample_indices.tolist()):
         rows.append(
@@ -628,12 +691,19 @@ def _build_per_sample_rows(
                 "pred_before": CLASSES[int(pred_before_np[pos])],
                 "pred_after": CLASSES[int(pred_after_np[pos])],
                 "target_class": TARGET_CLASS_NAME,
+                "target_loss": str(target_loss),
+                "kappa": float(kappa),
+                "lambda_latent_l2": float(lambda_latent_l2),
                 "target_success": bool(target_success_np[pos]),
                 "protocol_valid": bool(protocol_np[pos]),
                 "mask_valid": bool(mask_np[pos]),
                 "raw_g1g8_valid": bool(raw_np[pos]),
                 "joint_valid": bool(joint_np[pos]),
                 "selected_restart": int(selected_restart_np[pos]),
+                "benign_logit": float(benign_logit_np[pos]),
+                "max_other_logit": float(max_other_logit_np[pos]),
+                "benign_margin": float(benign_margin_np[pos]),
+                "target_confidence": float(target_confidence_np[pos]),
             }
         )
     return rows
@@ -670,6 +740,20 @@ def main() -> None:
     parser.add_argument("--num-steps", type=int, default=40)
     parser.add_argument("--num-restarts", type=int, default=5)
     parser.add_argument("--restart-strategy", default="encoded+jitter+gmm")
+    parser.add_argument(
+        "--target-loss",
+        default="ce",
+        choices=["ce", "cw-margin"],
+        help="Targeted classifier objective. 'ce' preserves the legacy targeted CE path.",
+    )
+    parser.add_argument(
+        "--target-class",
+        default=TARGET_CLASS_NAME,
+        choices=[TARGET_CLASS_NAME],
+        help="Target class for this runner. P3 targeted-benign attacks use Benign only.",
+    )
+    parser.add_argument("--kappa", type=float, default=0.0)
+    parser.add_argument("--lambda-latent-l2", type=float, default=0.0)
     parser.add_argument("--gmm-split", default="val", choices=["train", "val", "test"])
     parser.add_argument("--gmm-components", type=int, default=5)
     parser.add_argument("--gmm-fit-max-samples", type=int, default=50000)
@@ -692,6 +776,8 @@ def main() -> None:
         help="Optional output root; defaults to outputs/latent_attacks.",
     )
     args = parser.parse_args()
+    if args.target_class != TARGET_CLASS_NAME:
+        raise ValueError(f"This runner only supports --target-class {TARGET_CLASS_NAME!r}")
 
     set_global_seed(args.seed)
     run_tag, manifest_path, diagnostics_dir = _resolve_vae_paths(args)
@@ -824,6 +910,9 @@ def main() -> None:
                 epsilon=args.epsilon,
                 alpha=args.alpha,
                 num_steps=args.num_steps,
+                target_loss=args.target_loss,
+                kappa=args.kappa,
+                lambda_latent_l2=args.lambda_latent_l2,
                 z_starts=z_starts,
                 restart_labels=restart_labels,
             )
@@ -834,6 +923,9 @@ def main() -> None:
                 model_tag=spec["tag"],
                 class_name=class_name,
                 best=best,
+                target_loss=args.target_loss,
+                kappa=args.kappa,
+                lambda_latent_l2=args.lambda_latent_l2,
             )
             model_rows.append(row)
             per_class_rows.append(row)
@@ -847,6 +939,9 @@ def main() -> None:
                     y_batch=y_batch,
                     pred_before=pred_before,
                     best=best,
+                    target_loss=args.target_loss,
+                    kappa=args.kappa,
+                    lambda_latent_l2=args.lambda_latent_l2,
                 )
             )
 
@@ -866,6 +961,13 @@ def main() -> None:
                 z_adv=best["z_adv"].cpu().numpy(),
                 selected_restart=best["selected_restart"].cpu().numpy(),
                 restart_labels=np.asarray(restart_labels),
+                benign_logit=best["benign_logit"].cpu().numpy(),
+                max_other_logit=best["max_other_logit"].cpu().numpy(),
+                benign_margin=best["benign_margin"].cpu().numpy(),
+                target_confidence=best["target_confidence"].cpu().numpy(),
+                target_loss=np.asarray(args.target_loss),
+                kappa=np.asarray(float(args.kappa), dtype=np.float32),
+                lambda_latent_l2=np.asarray(float(args.lambda_latent_l2), dtype=np.float32),
             )
             run_logger.log(json.dumps(row))
 
@@ -892,6 +994,9 @@ def main() -> None:
         "per_sample": per_sample_rows,
         "skipped_cells": skipped_cells,
         "target_class": TARGET_CLASS_NAME,
+        "target_loss": args.target_loss,
+        "kappa": float(args.kappa),
+        "lambda_latent_l2": float(args.lambda_latent_l2),
         "restart_strategy": args.restart_strategy,
     }
     with open(run_logger.run_dir / "targeted_benign_results.json", "w", encoding="utf-8") as f:

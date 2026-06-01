@@ -1,0 +1,86 @@
+{
+  "model": "rf",
+  "task": "binary",
+  "num_classes": 2,
+  "loss_weighting": "excluded",
+  "loss_weighting_decision": "Class weights excluded because stratified sampling already balances the training set; applying original-distribution weights would over-penalize majority classes in the balanced sample.",
+  "provided_class_weights_for_reference": [
+    11.075483322143555,
+    0.5236395597457886
+  ],
+  "test_loss": 0.06593481045784529,
+  "accuracy": 0.9717885569556247,
+  "macro_f1": 0.8138995550248158,
+  "weighted_f1": 0.9698377622290758,
+  "per_class_f1": {
+    "0": 0.6424842304006408,
+    "1": 0.9853148796489907
+  },
+  "classification_report": {
+    "0": {
+      "precision": 0.7507604880494735,
+      "recall": 0.5615030751537576,
+      "f1-score": 0.6424842304006408,
+      "support": 39998.0
+    },
+    "1": {
+      "precision": 0.9795122612207137,
+      "recall": 0.9911866570526838,
+      "f1-score": 0.9853148796489907,
+      "support": 845990.0
+    },
+    "accuracy": 0.9717885569556247,
+    "macro avg": {
+      "precision": 0.8651363746350935,
+      "recall": 0.7763448661032207,
+      "f1-score": 0.8138995550248158,
+      "support": 885988.0
+    },
+    "weighted avg": {
+      "precision": 0.9691852438984664,
+      "recall": 0.9717885569556247,
+      "f1-score": 0.9698377622290758,
+      "support": 885988.0
+    }
+  },
+  "selection_metric": "val_macro_f1",
+  "selected_hyperparameters": {
+    "n_estimators": 300,
+    "max_depth": 30
+  },
+  "val_macro_f1": 0.8134731659612129,
+  "tuning": [
+    {
+      "params": {
+        "n_estimators": 200,
+        "max_depth": 20
+      },
+      "val_macro_f1": 0.8092665800678727,
+      "fit_seconds": 35.19449853897095
+    },
+    {
+      "params": {
+        "n_estimators": 300,
+        "max_depth": 20
+      },
+      "val_macro_f1": 0.8096790820816524,
+      "fit_seconds": 50.3835711479187
+    },
+    {
+      "params": {
+        "n_estimators": 200,
+        "max_depth": 30
+      },
+      "val_macro_f1": 0.8132879517677235,
+      "fit_seconds": 33.80360984802246
+    },
+    {
+      "params": {
+        "n_estimators": 300,
+        "max_depth": 30
+      },
+      "val_macro_f1": 0.8134731659612129,
+      "fit_seconds": 49.8448851108551
+    }
+  ]
+}

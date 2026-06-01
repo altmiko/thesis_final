@@ -7,7 +7,9 @@
     "cnn",
     "lstm",
     "serial",
-    "dualpath"
+    "dualpath",
+    "rf",
+    "xgb"
   ],
   "tasks": [
     "binary",

@@ -16,7 +16,7 @@
     "roc_auc_macro_ovr": 0.9753791023810461,
     "roc_auc_weighted_ovr": 0.9753791023810461,
     "roc_plot": "results\\baseline_review\\roc_curves\\binary_cnn_roc_auc.png",
-    "runtime_sec": 1.1077828407287598
+    "runtime_sec": 1.0715348720550537
   },
   "classification_report": {
     "Benign": {

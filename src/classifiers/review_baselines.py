@@ -21,6 +21,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -40,16 +41,25 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.classifiers.models import get_model
+from src.classifiers.tree_baselines import TREE_MODEL_TYPES
+from src.classifiers.tree_baselines import align_proba_columns
 
 
-MODEL_TYPES: Tuple[str, ...] = ("mlp", "cnn", "lstm", "serial", "dualpath")
+NN_MODEL_TYPES: Tuple[str, ...] = ("mlp", "cnn", "lstm", "serial", "dualpath")
+MODEL_TYPES: Tuple[str, ...] = NN_MODEL_TYPES + TREE_MODEL_TYPES
 MODEL_DISPLAY_NAMES: Dict[str, str] = {
     "mlp": "MLP",
     "cnn": "CNN",
     "lstm": "LSTM",
     "serial": "CNN-LSTM",
     "dualpath": "DualPath",
+    "rf": "RandomForest",
+    "xgb": "XGBoost",
 }
+
+
+def is_tree_model(model_type: str) -> bool:
+    return model_type in TREE_MODEL_TYPES
 
 
 @dataclass(frozen=True)
@@ -119,7 +129,13 @@ def load_model(
     num_features: int,
     models_dir: Path,
     device: torch.device,
-) -> torch.nn.Module:
+):
+    if is_tree_model(model_type):
+        model_path = models_dir / f"{model_type}_{task.name}.pkl"
+        if not model_path.exists():
+            raise FileNotFoundError(f"Missing checkpoint: {model_path.resolve()}")
+        return joblib.load(model_path)
+
     model_path = models_dir / f"{model_type}_{task.name}.pt"
     if not model_path.exists():
         raise FileNotFoundError(f"Missing checkpoint: {model_path.resolve()}")
@@ -138,11 +154,27 @@ def iter_batches(n_items: int, batch_size: int) -> Iterable[Tuple[int, int]]:
 
 
 def predict_probabilities(
-    model: torch.nn.Module,
+    model,
     x_test: np.ndarray,
     batch_size: int,
     device: torch.device,
+    num_classes: int | None = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
+    # Tree estimators (RandomForest / XGBoost) expose predict_proba and run on
+    # NumPy directly; align their class columns to the full 0..K-1 label range.
+    if hasattr(model, "predict_proba"):
+        if num_classes is None:
+            num_classes = int(np.max(np.asarray(model.classes_)) + 1)
+        n_items = int(x_test.shape[0])
+        probs = np.empty((n_items, num_classes), dtype=np.float32)
+        preds = np.empty(n_items, dtype=np.int64)
+        for start, end in iter_batches(n_items, batch_size):
+            xb_np = np.asarray(x_test[start:end], dtype=np.float32)
+            batch_probs = align_proba_columns(model.predict_proba(xb_np), model.classes_, num_classes)
+            probs[start:end] = batch_probs.astype(np.float32)
+            preds[start:end] = np.argmax(batch_probs, axis=1)
+        return probs, preds
+
     n_items = int(x_test.shape[0])
     logits_probe = None
 
@@ -296,7 +328,7 @@ def evaluate_model_task(
     start_time = time.time()
     labels = np.arange(task.num_classes)
     model = load_model(model_type, task, int(x_test.shape[1]), models_dir, device)
-    probs, y_pred = predict_probabilities(model, x_test, batch_size, device)
+    probs, y_pred = predict_probabilities(model, x_test, batch_size, device, num_classes=task.num_classes)
 
     accuracy = float(accuracy_score(y_test, y_pred))
     macro_precision = float(precision_score(y_test, y_pred, labels=labels, average="macro", zero_division=0))
