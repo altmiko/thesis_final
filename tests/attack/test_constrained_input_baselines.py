@@ -40,6 +40,16 @@ def _tiny_classifier() -> torch.nn.Module:
     return model
 
 
+class _NumberTargetToyClassifier(torch.nn.Module):
+    """Tiny deterministic model with class 0 reachable by increasing Number."""
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        logits = torch.full((x.shape[0], 8), -10.0, device=x.device, dtype=x.dtype)
+        logits[:, 0] = x[:, FEATURE_NAMES.index("Number")]
+        logits[:, 1] = 1.0 - x[:, FEATURE_NAMES.index("Number")]
+        return logits
+
+
 def test_hard_projection_satisfies_structured_rules():
     scaler = _load_scaler()
     mask = PerturbationMask.from_preprocessing_artifacts(_REPO_ROOT)
@@ -157,6 +167,41 @@ def test_constrained_pgd_smoke_and_validity_gain():
     ).validity_rate
 
 
+def test_constrained_pgd_targeted_benign_reaches_target_on_toy_model():
+    scaler = _load_scaler()
+    mask = PerturbationMask.from_preprocessing_artifacts(_REPO_ROOT)
+    projection = VAEConstraintProjection(scaler, mask, enable_physics=True, device="cpu")
+    classifier = _NumberTargetToyClassifier().eval()
+
+    x0 = torch.from_numpy(_real_scaled_samples(8))
+    y = torch.ones(8, dtype=torch.long)
+
+    with torch.no_grad():
+        pred_before = classifier(projection.project(x0, x0, mode="hard")).argmax(dim=1)
+
+    x_adv, meta = constrained_input_pgd_attack(
+        classifier=classifier,
+        projection=projection,
+        x_original=x0,
+        y_true=y,
+        epsilon=0.5,
+        alpha=0.5,
+        num_steps=2,
+        random_start=False,
+        device="cpu",
+        targeted=True,
+        target_class=0,
+    )
+
+    with torch.no_grad():
+        pred_after = classifier(x_adv).argmax(dim=1)
+
+    assert torch.all(pred_before == 1)
+    assert torch.all(pred_after == 0)
+    assert meta["targeted"] is True
+    assert meta["target_class"] == 0
+
+
 def test_constrained_cw_smoke():
     scaler = _load_scaler()
     mask = PerturbationMask.from_preprocessing_artifacts(_REPO_ROOT)
@@ -184,10 +229,49 @@ def test_constrained_cw_smoke():
     assert "best_success_mask" in meta
 
 
+def test_constrained_cw_targeted_benign_reaches_target_on_toy_model():
+    scaler = _load_scaler()
+    mask = PerturbationMask.from_preprocessing_artifacts(_REPO_ROOT)
+    projection = VAEConstraintProjection(scaler, mask, enable_physics=True, device="cpu")
+    classifier = _NumberTargetToyClassifier().eval()
+
+    x0 = torch.from_numpy(_real_scaled_samples(8))
+    y = torch.ones(8, dtype=torch.long)
+
+    with torch.no_grad():
+        pred_before = classifier(projection.project(x0, x0, mode="hard")).argmax(dim=1)
+
+    x_adv, meta = constrained_input_cw_attack(
+        classifier=classifier,
+        projection=projection,
+        x_original=x0,
+        y_true=y,
+        lambda_conf=10.0,
+        kappa=0.0,
+        num_iterations=20,
+        learning_rate=0.2,
+        convergence_threshold=1e-9,
+        device="cpu",
+        targeted=True,
+        target_class=0,
+    )
+
+    with torch.no_grad():
+        pred_after = classifier(x_adv).argmax(dim=1)
+
+    assert torch.all(pred_before == 1)
+    assert torch.all(pred_after == 0)
+    assert meta["targeted"] is True
+    assert meta["target_class"] == 0
+    assert torch.all(meta["best_success_mask"])
+
+
 if __name__ == "__main__":
     test_hard_projection_satisfies_structured_rules()
     test_parity_with_vae_structured_decoder()
     test_soft_projection_is_differentiable()
     test_constrained_pgd_smoke_and_validity_gain()
+    test_constrained_pgd_targeted_benign_reaches_target_on_toy_model()
     test_constrained_cw_smoke()
+    test_constrained_cw_targeted_benign_reaches_target_on_toy_model()
     print("Constrained input baseline tests passed.")

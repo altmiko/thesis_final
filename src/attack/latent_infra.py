@@ -23,7 +23,7 @@ from preprocessing.feature_groups import (
 )
 from vae.config import CLASS_TO_ID, CLASSES, ID_TO_CLASS
 from vae.dataset import PerClassDataset
-from vae.model import MixedInputBetaVAE
+from vae.model import PROTOCOL_REFERENCE_BUFFERS, MixedInputBetaVAE
 from vae.schema import PROTOCOL_ALLOWLIST, get_partition, scaled_to_raw_protocol
 from vae.train import _load_8class_labels
 from vae.train_all import _resolve_model_hparams
@@ -339,35 +339,17 @@ class AttackRouter:
         ckpt = torch.load(str(ckpt_path), map_location=self.device, weights_only=False)
         ckpt_config = ckpt.get("config", {})
 
-        resolved_hparams = _resolve_model_hparams(ckpt_config, class_name)
-        if len(resolved_hparams) == 9:
-            (
-                latent_dim,
-                encoder_hidden,
-                decoder_hidden,
-                protocol_embed_dim,
-                use_structured_continuous_decoder,
-                use_structured_physics_decoder,
-                structured_continuous_mode,
-                structured_std_floor,
-                latent_logvar_bounds,
-            ) = resolved_hparams
-        elif len(resolved_hparams) == 8:
-            (
-                latent_dim,
-                encoder_hidden,
-                decoder_hidden,
-                protocol_embed_dim,
-                use_structured_continuous_decoder,
-                structured_continuous_mode,
-                structured_std_floor,
-                latent_logvar_bounds,
-            ) = resolved_hparams
-            use_structured_physics_decoder = False
-        else:
-            raise ValueError(
-                f"Unexpected _resolve_model_hparams arity={len(resolved_hparams)} for class {class_name}"
-            )
+        (
+            latent_dim,
+            encoder_hidden,
+            decoder_hidden,
+            protocol_embed_dim,
+            use_structured_continuous_decoder,
+            use_structured_physics_decoder,
+            structured_continuous_mode,
+            structured_std_floor,
+            latent_logvar_bounds,
+        ) = _resolve_model_hparams(ckpt_config, class_name)
 
         vae = MixedInputBetaVAE(
             partition=self.partition,
@@ -382,7 +364,18 @@ class AttackRouter:
             structured_std_floor=structured_std_floor,
             latent_logvar_bounds=latent_logvar_bounds,
         )
-        vae.load_state_dict(ckpt["state_dict"], strict=False)
+        # Load strictly so a mis-resolved architecture (wrong decoder_hidden,
+        # latent_dim, etc.) surfaces instead of silently running against a
+        # partly-random decoder. The protocol-reference buffers are the only keys
+        # allowed to be missing — they are overwritten by
+        # register_protocol_references below — and nothing should be unexpected.
+        missing, unexpected = vae.load_state_dict(ckpt["state_dict"], strict=False)
+        missing_real = [k for k in missing if k not in PROTOCOL_REFERENCE_BUFFERS]
+        if missing_real or unexpected:
+            raise RuntimeError(
+                f"State dict mismatch loading VAE for class {class_name}: "
+                f"missing={missing_real}, unexpected={list(unexpected)}"
+            )
         vae.register_protocol_references(self.scaler)
         vae = vae.to(self.device)
         vae.eval()

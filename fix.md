@@ -128,6 +128,10 @@ compute the macro/weighted AUC directly from `auc_by_class`, skipping `NaN`s.
 
 ## 🟠 7. `decode_to_39` accepts any `mode` and silently treats non‑`"soft"` as hard  **[by inspection]**
 
+> ✅ **RESOLVED (2026‑06‑02).** Added `if mode not in {"soft","hard"}: raise ValueError(...)`
+> at the top of `decode_to_39` (`src/vae/model.py`). Covered by
+> `tests/vae/test_vae_guards.py::test_decode_to_39_rejects_invalid_mode` (TDD red→green).
+
 **File:** `src/vae/model.py:391-394`
 
 ```python
@@ -198,6 +202,12 @@ attack/model scripts already do this) and accept a `--data-dir`/`--out-dir` over
 
 ## VAE / CPGD / latent‑attack deep dive
 
+> ✅ **All items in this section (#7, #12–#17) were applied and verified on 2026‑06‑02**
+> (branch `version2`). New tests: `tests/vae/test_vae_guards.py`,
+> `tests/attack/test_latent_cw_fixes.py`. Whole‑tree byte‑compile clean; existing
+> `tests/attack/test_constrained_input_baselines.py` still passes; `get_vae` strict‑loads all
+> real checkpoints.
+
 Focused second pass over the VAE core (`model`, `schema`, `losses`, `dataset`, `config`,
 `diagnostics`, `physics_validator`), the constrained‑input ("CPGD") attack
 (`constrained_input_baselines` + runner), and the latent attacks (`latent_pgd`, `latent_cw`,
@@ -214,6 +224,11 @@ low‑severity**; none corrupts current results.
 
 ### 🟠 12. `get_vae` loads checkpoints with `strict=False`, masking architecture mismatch  **[by inspection]**
 
+> ✅ **RESOLVED (2026‑06‑02).** `get_vae` now captures `missing, unexpected = load_state_dict(..., strict=False)`
+> and raises `RuntimeError` unless every missing key is a known protocol‑reference buffer
+> (new `PROTOCOL_REFERENCE_BUFFERS` constant in `src/vae/model.py`) and `unexpected` is empty.
+> Verified live: strict load accepts all real class checkpoints and `encode` works post‑load.
+
 **File:** `src/attack/latent_infra.py:385`
 
 `vae.load_state_dict(ckpt["state_dict"], strict=False)`. If `_resolve_model_hparams` ever resolves
@@ -227,6 +242,12 @@ capture `missing, unexpected = load_state_dict(..., strict=False)` and assert bo
 the known protocol‑reference buffer names).
 
 ### 🟡 13. Targeted `latent_cw` uses the wrong CW objective and an inconsistent success test (dormant)  **[by inspection]**
+
+> ✅ **RESOLVED (2026‑06‑02).** Targeted objective now uses the cw‑margin
+> `max_other_excluding_target − target_logit` via `target_logit_margin` (matching `latent_pgd`),
+> and the inner per‑restart success now uses the canonical `_attack_success_mask`
+> (argmax==target), consistent with the final selector. Covered by
+> `tests/attack/test_latent_cw_fixes.py` (targeted/untargeted argmax‑consistency).
 
 **File:** `src/attack/latent_cw.py:125-133` (objective), `:154-162` (inner success), `:195` (final selector)
 
@@ -247,6 +268,11 @@ target`), so an inner "success" can be a real non‑success.
 
 ### 🟡 14. `latent_cw` internal multi‑restart is a no‑op without GMM initializers (dormant)  **[verified by inspection]**
 
+> ✅ **RESOLVED (2026‑06‑02).** Added a `restart_jitter: float = 0.05` parameter threaded as the
+> jitter `epsilon` into `_normalise_z_initializers`, so restarts actually differ when no explicit
+> `z_initializers` are supplied (ignored when GMM seeds are provided). Recorded in metadata. TDD
+> via `tests/attack/test_latent_cw_fixes.py::test_latent_cw_default_restart_jitter_is_nonzero`.
+
 **File:** `src/attack/latent_cw.py:78-85`, with `_normalise_z_initializers` in `latent_pgd.py:194-203`
 
 `latent_cw` calls `_normalise_z_initializers(epsilon=0.0, random_start=False)`. With
@@ -265,6 +291,10 @@ Not wrong output in practice: `run_phase3`/`export_new_vae` use the default `num
 
 ### 🟡 15. `MixedInputBetaVAE.encode` silently returns wrong embeddings if references not registered  **[by inspection]**
 
+> ✅ **RESOLVED (2026‑06‑02).** `encode` now raises `RuntimeError("call register_protocol_references(scaler)
+> before encode()")` when `ref_proto_scaled` is still the all‑zero placeholder. Covered by
+> `tests/vae/test_vae_guards.py::test_encode_requires_registered_references` (TDD red→green).
+
 **File:** `src/vae/model.py:317-322` (use), `:155` (registration)
 
 The placeholder `ref_proto_scaled` buffer is all zeros, so `argmin` is always 0 → every sample embeds
@@ -276,6 +306,11 @@ RuntimeError("call register_protocol_references(scaler) before encode()")`.
 
 ### 🟡 16. Inner soft‑vs‑hard success inconsistency in `latent_cw`  **[by inspection]**
 
+> ✅ **RESOLVED (2026‑06‑02).** The inner per‑restart success/best‑delta tracking now decodes with
+> `mode="hard"` (anchored to `x_orig_dec_hard`), matching the final cross‑restart selector. Note this
+> marginally changes the live untargeted single‑restart path — which low‑L2 delta wins inside a
+> restart is now hard‑consistent — as anticipated here.
+
 **File:** `src/attack/latent_cw.py:144` (inner, `mode="soft"`) vs `:187` (final, `mode="hard"`)
 
 Per‑restart `best_delta` is chosen using **soft**‑projection success, while the final cross‑restart
@@ -284,6 +319,9 @@ pick and the reported success use **hard**. The constrained‑input CW uses hard
 affects which low‑L2 delta wins *inside* a restart — minor. Align to hard for consistency.
 
 ### 🟡 17. Dead `len(resolved_hparams)==8` branch in `get_vae`  **[verified]**
+
+> ✅ **RESOLVED (2026‑06‑02).** Replaced the `len(...)` dispatch with a direct 9‑tuple unpack of
+> `_resolve_model_hparams(...)` (always 9 elements), removing the unreachable 8‑tuple branch.
 
 **File:** `src/attack/latent_infra.py:355-366`
 

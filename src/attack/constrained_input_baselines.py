@@ -17,6 +17,44 @@ _CONTINUOUS_IDX = _PARTITION["continuous_idx"]
 _BINARY_IDX = _PARTITION["independent_binary_idx"] + _PARTITION["derived_binary_idx"]
 
 
+def _target_tensor(y_true: torch.Tensor, target_class: int) -> torch.Tensor:
+    return torch.full_like(y_true, int(target_class), dtype=torch.long)
+
+
+def _validate_target_class(logits: torch.Tensor, target_class: int) -> int:
+    target = int(target_class)
+    if target < 0 or target >= int(logits.shape[1]):
+        raise ValueError(f"target_class={target} is outside logits width {logits.shape[1]}")
+    return target
+
+
+def _target_logit_margin(
+    logits: torch.Tensor,
+    *,
+    target_class: int,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    target = _validate_target_class(logits, target_class)
+    target_logits = logits[:, target]
+    masked_logits = logits.clone()
+    masked_logits[:, target] = float("-inf")
+    max_other_logits = masked_logits.max(dim=1).values
+    margin = target_logits - max_other_logits
+    return margin, target_logits, max_other_logits
+
+
+def _success_mask(
+    logits: torch.Tensor,
+    y_true: torch.Tensor,
+    *,
+    targeted: bool,
+    target_class: int,
+) -> torch.Tensor:
+    pred = torch.argmax(logits, dim=1)
+    if targeted:
+        return pred == int(target_class)
+    return pred != y_true
+
+
 class VAEConstraintProjection:
     """VAE structured-decoder constraints applied directly to scaled inputs."""
 
@@ -164,6 +202,8 @@ def constrained_input_pgd_attack(
     num_steps: int,
     random_start: bool,
     device: str,
+    targeted: bool = False,
+    target_class: int = 0,
 ) -> tuple[torch.Tensor, dict[str, Any]]:
     x_original = x_original.to(device=device, dtype=torch.float32)
     y_true = y_true.to(device=device, dtype=torch.long)
@@ -179,6 +219,8 @@ def constrained_input_pgd_attack(
             "random_start": bool(random_start),
             "epsilon": float(epsilon),
             "alpha": float(alpha),
+            "targeted": bool(targeted),
+            "target_class": int(target_class),
             "zero_budget_passthrough": True,
             "constraint_projection": True,
             "x_orig": x_original.detach(),
@@ -195,7 +237,10 @@ def constrained_input_pgd_attack(
         x_adv = x_adv.detach().requires_grad_(True)
         x_projected = projection.project(x_adv, x_original, mode="soft")
         logits = classifier_logits(classifier, x_projected, device=device)
-        loss = F.cross_entropy(logits, y_true)
+        if targeted:
+            loss = -F.cross_entropy(logits, _target_tensor(y_true, target_class))
+        else:
+            loss = F.cross_entropy(logits, y_true)
         grad = torch.autograd.grad(loss, x_adv, retain_graph=False, create_graph=False)[0]
 
         with torch.no_grad():
@@ -213,6 +258,8 @@ def constrained_input_pgd_attack(
         "random_start": bool(random_start),
         "epsilon": float(epsilon),
         "alpha": float(alpha),
+        "targeted": bool(targeted),
+        "target_class": int(target_class),
         "zero_budget_passthrough": False,
         "constraint_projection": True,
         "x_orig": x_original.detach(),
@@ -232,6 +279,8 @@ def constrained_input_cw_attack(
     learning_rate: float,
     convergence_threshold: float,
     device: str,
+    targeted: bool = False,
+    target_class: int = 0,
 ) -> tuple[torch.Tensor, dict[str, Any]]:
     x_original = x_original.to(device=device, dtype=torch.float32)
     y_true = y_true.to(device=device, dtype=torch.long)
@@ -248,6 +297,8 @@ def constrained_input_cw_attack(
             "lambda_conf": float(lambda_conf),
             "kappa": float(kappa),
             "convergence_threshold": float(convergence_threshold),
+            "targeted": bool(targeted),
+            "target_class": int(target_class),
             "zero_budget_passthrough": True,
             "constraint_projection": True,
             "iterations_run": 0,
@@ -274,11 +325,18 @@ def constrained_input_cw_attack(
 
         x_current = projection.project(x_original + delta, x_original, mode="soft")
         logits = classifier_logits(classifier, x_current, device=device)
-        true_logits = logits.gather(1, y_true.unsqueeze(1)).squeeze(1)
-        masked_logits = logits.clone()
-        masked_logits.scatter_(1, y_true.unsqueeze(1), float("-inf"))
-        other_logits = masked_logits.max(dim=1).values
-        margin = true_logits - other_logits
+        if targeted:
+            _margin, target_logits, max_other_logits = _target_logit_margin(
+                logits,
+                target_class=int(target_class),
+            )
+            margin = max_other_logits - target_logits
+        else:
+            true_logits = logits.gather(1, y_true.unsqueeze(1)).squeeze(1)
+            masked_logits = logits.clone()
+            masked_logits.scatter_(1, y_true.unsqueeze(1), float("-inf"))
+            other_logits = masked_logits.max(dim=1).values
+            margin = true_logits - other_logits
 
         conf_term = torch.clamp(margin + float(kappa), min=0.0)
         delta_l2_sq = delta.reshape(delta.shape[0], -1).pow(2).sum(dim=1)
@@ -290,11 +348,12 @@ def constrained_input_cw_attack(
         with torch.no_grad():
             x_hard = projection.project(x_original + delta.detach(), x_original, mode="hard")
             logits_post = classifier_logits(classifier, x_hard, device=device)
-            true_logits_post = logits_post.gather(1, y_true.unsqueeze(1)).squeeze(1)
-            masked_logits_post = logits_post.clone()
-            masked_logits_post.scatter_(1, y_true.unsqueeze(1), float("-inf"))
-            other_logits_post = masked_logits_post.max(dim=1).values
-            success_mask = (true_logits_post - other_logits_post) <= 0.0
+            success_mask = _success_mask(
+                logits_post,
+                y_true,
+                targeted=bool(targeted),
+                target_class=int(target_class),
+            )
 
             delta_l2 = torch.linalg.norm(delta.detach().reshape(delta.shape[0], -1), dim=1)
             improved = success_mask & (delta_l2 < best_delta_l2)
@@ -327,6 +386,8 @@ def constrained_input_cw_attack(
         "lambda_conf": float(lambda_conf),
         "kappa": float(kappa),
         "convergence_threshold": float(convergence_threshold),
+        "targeted": bool(targeted),
+        "target_class": int(target_class),
         "zero_budget_passthrough": False,
         "constraint_projection": True,
         "iterations_run": int(iterations_run),

@@ -44,6 +44,7 @@ DEFAULT_VAE_RUN_TAG = "gaussian_anticollapse_beta05_freebits01_20260529_173512"
 SAMPLES_PER_SOURCE_CLASS = 100
 SELECTION_BATCH_SIZE = 8192
 SOURCE_CLASSES = [name for name in CLASSES if name != "Benign"]
+BENIGN_TARGET_CLASS = CLASS_TO_ID["Benign"]
 MODEL_SPECS = [
     {"tag": "mlp", "label": "MLP", "checkpoint": "mlp_8class.pt"},
     {"tag": "cnn", "label": "CNN", "checkpoint": "cnn_8class.pt"},
@@ -51,10 +52,17 @@ MODEL_SPECS = [
     {"tag": "serial", "label": "CNN-LSTM", "checkpoint": "serial_8class.pt"},
     {"tag": "dualpath", "label": "DualPath", "checkpoint": "dualpath_8class.pt"},
 ]
-ATTACK_ORDER = ["cinput-pgd", "cinput-cw"]
+ATTACK_ORDER = [
+    "cinput-pgd",
+    "cinput-cw",
+    "cinput-pgd-target-benign",
+    "cinput-cw-target-benign",
+]
 SUMMARY_COLUMNS = [
     "model",
     "attack",
+    "attack_goal",
+    "target_class",
     "n",
     "asr_overall",
     "asr_valid_only",
@@ -71,6 +79,14 @@ SUMMARY_COLUMNS = [
     "restart_success_counts",
     "restart_labels",
 ]
+
+
+def _attack_goal(attack_name: str) -> str:
+    return "target-benign" if attack_name.endswith("-target-benign") else "untargeted"
+
+
+def _is_targeted_benign_attack(attack_name: str) -> bool:
+    return _attack_goal(attack_name) == "target-benign"
 
 
 def _load_json(path: Path) -> Any:
@@ -174,6 +190,17 @@ def _config_snapshot(
                     "alpha": float(args.input_alpha),
                     "num_steps": int(args.num_steps),
                     "random_start": bool(args.random_start),
+                    "targeted": False,
+                    "target_class": None,
+                    "constraint_projection": "full+physics",
+                },
+                "cinput-pgd-target-benign": {
+                    "epsilon": float(args.input_epsilon),
+                    "alpha": float(args.input_alpha),
+                    "num_steps": int(args.num_steps),
+                    "random_start": bool(args.random_start),
+                    "targeted": True,
+                    "target_class": "Benign",
                     "constraint_projection": "full+physics",
                 },
                 "cinput-cw": {
@@ -182,6 +209,18 @@ def _config_snapshot(
                     "num_iterations": int(args.num_iterations),
                     "learning_rate": float(args.learning_rate),
                     "convergence_threshold": float(args.convergence_threshold),
+                    "targeted": False,
+                    "target_class": None,
+                    "constraint_projection": "full+physics",
+                },
+                "cinput-cw-target-benign": {
+                    "lambda_conf": float(args.lambda_conf),
+                    "kappa": float(args.kappa),
+                    "num_iterations": int(args.num_iterations),
+                    "learning_rate": float(args.learning_rate),
+                    "convergence_threshold": float(args.convergence_threshold),
+                    "targeted": True,
+                    "target_class": "Benign",
                     "constraint_projection": "full+physics",
                 },
             },
@@ -278,7 +317,11 @@ def _evaluate(
     device: str,
     args: argparse.Namespace,
 ) -> dict[str, Any]:
-    if attack_name == "cinput-pgd":
+    targeted = _is_targeted_benign_attack(attack_name)
+    target_class = BENIGN_TARGET_CLASS if targeted else -1
+    target_class_name = CLASSES[target_class] if targeted else None
+
+    if attack_name in {"cinput-pgd", "cinput-pgd-target-benign"}:
         x_adv, _metadata = constrained_input_pgd_attack(
             classifier=classifier,
             projection=projection,
@@ -289,8 +332,10 @@ def _evaluate(
             num_steps=args.num_steps,
             random_start=args.random_start,
             device=device,
+            targeted=targeted,
+            target_class=BENIGN_TARGET_CLASS,
         )
-    elif attack_name == "cinput-cw":
+    elif attack_name in {"cinput-cw", "cinput-cw-target-benign"}:
         x_adv, _metadata = constrained_input_cw_attack(
             classifier=classifier,
             projection=projection,
@@ -302,6 +347,8 @@ def _evaluate(
             learning_rate=args.learning_rate,
             convergence_threshold=args.convergence_threshold,
             device=device,
+            targeted=targeted,
+            target_class=BENIGN_TARGET_CLASS,
         )
     else:
         raise KeyError(f"Unsupported attack: {attack_name}")
@@ -309,7 +356,10 @@ def _evaluate(
     with torch.no_grad():
         logits_after = classifier_logits(classifier, x_adv.to(device), device=device).cpu()
         pred_after = torch.argmax(logits_after, dim=1)
-        success_mask = pred_after != y_batch.cpu()
+        if targeted:
+            success_mask = pred_after == BENIGN_TARGET_CLASS
+        else:
+            success_mask = pred_after != y_batch.cpu()
         protocol_valid = protocol_validator.validate(x_adv, already_scaled=True).cpu()
         mask_compliance = mask.verify(x_adv.cpu(), x_batch.cpu())["all_compliant"].cpu()
         raw_valid = _raw_g1g8_validity(x_adv.cpu(), scaler)
@@ -322,6 +372,8 @@ def _evaluate(
     successful_joint = int((success_mask & joint_valid).sum().item())
     return {
         "class_name": CLASSES[class_id],
+        "attack_goal": _attack_goal(attack_name),
+        "target_class": target_class_name,
         "pred_after": pred_after.numpy().tolist(),
         "success_mask": success_mask.numpy().tolist(),
         "protocol_valid_mask": protocol_valid.numpy().tolist(),
@@ -357,6 +409,8 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
     total_valid = sum(row["valid_count"] for row in rows)
     total_invalid = sum(row["invalid_count"] for row in rows)
     return {
+        "attack_goal": rows[0].get("attack_goal") if rows else None,
+        "target_class": rows[0].get("target_class") if rows else None,
         "n": int(total_n),
         "asr_overall": float(sum(row["successful_total_count"] for row in rows) / total_n),
         "asr_valid_only": (
@@ -422,6 +476,8 @@ def _write_summary_md(path: Path, rows: list[dict[str, Any]], samples_per_class:
     headers = [
         "Model",
         "Attack",
+        "Goal",
+        "Target",
         "N",
         "ASR",
         "ASR Valid",
@@ -449,6 +505,8 @@ def _write_summary_md(path: Path, rows: list[dict[str, Any]], samples_per_class:
                 [
                     str(row["model"]),
                     str(row["attack"]),
+                    str(row.get("attack_goal") or ""),
+                    str(row.get("target_class") or ""),
                     str(row["n"]),
                     _fmt_pct(row["asr_overall"]),
                     _fmt_pct(row["asr_valid_only"]),
@@ -482,6 +540,9 @@ def _build_per_sample_rows(
     mask_compliance_mask = np.asarray(metrics["mask_compliance_mask"], dtype=np.bool_)
     raw_valid_mask = np.asarray(metrics["raw_g1g8_valid_mask"], dtype=np.bool_)
     joint_valid_mask = np.asarray(metrics["joint_valid_mask"], dtype=np.bool_)
+    attack_goal = str(metrics.get("attack_goal") or _attack_goal(attack_name))
+    target_class = metrics.get("target_class")
+    is_targeted = attack_goal == "target-benign"
 
     rows: list[dict[str, Any]] = []
     for pos, sample_id in enumerate(sample_indices.tolist()):
@@ -495,8 +556,11 @@ def _build_per_sample_rows(
                 "raw_g1g8_valid": bool(raw_valid_mask[pos]),
                 "joint_valid": bool(joint_valid_mask[pos]),
                 "success": bool(success_mask[pos]),
+                "target_success": bool(success_mask[pos]) if is_targeted else None,
                 "selected_restart": 0,
                 "attack_type": attack_name,
+                "attack_goal": attack_goal,
+                "target_class": target_class,
                 "model_name": model_name,
                 "model_tag": model_tag,
                 "source_class": metrics["class_name"],
@@ -506,7 +570,9 @@ def _build_per_sample_rows(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Constraint-augmented input PGD/CW across 8-class models.")
+    parser = argparse.ArgumentParser(
+        description="Constraint-augmented input PGD/CW and target-Benign variants across 8-class models."
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--vae-run-tag", default=DEFAULT_VAE_RUN_TAG)
@@ -655,6 +721,8 @@ def main() -> None:
                         "model": spec["label"],
                         "model_tag": spec["tag"],
                         "attack": attack_name,
+                        "attack_goal": _attack_goal(attack_name),
+                        "target_class": "Benign" if _is_targeted_benign_attack(attack_name) else None,
                         "n": 0,
                         "asr_overall": None,
                         "asr_valid_only": None,
@@ -703,6 +771,8 @@ def main() -> None:
             "model",
             "model_tag",
             "attack",
+            "attack_goal",
+            "target_class",
             "class_name",
             "n",
             "asr_overall",
@@ -733,8 +803,11 @@ def main() -> None:
             "raw_g1g8_valid",
             "joint_valid",
             "success",
+            "target_success",
             "selected_restart",
             "attack_type",
+            "attack_goal",
+            "target_class",
             "model_name",
             "model_tag",
             "source_class",

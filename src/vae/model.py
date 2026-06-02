@@ -28,6 +28,25 @@ logger = logging.getLogger(__name__)
 
 _N_PROTOCOL_CLASSES: int = len(PROTOCOL_ALLOWLIST)  # 6
 
+# Persistent buffers populated by ``register_protocol_references(scaler)``. These
+# start as zero/one placeholders, so a checkpoint that predates them (or was saved
+# before references were registered) may legitimately lack these keys — they get
+# overwritten immediately after load. Loaders may therefore tolerate *only these*
+# as missing keys when otherwise loading strictly.
+PROTOCOL_REFERENCE_BUFFERS: frozenset[str] = frozenset(
+    {
+        "ref_proto_scaled",
+        "continuous_center",
+        "continuous_scale",
+        "independent_binary_center",
+        "independent_binary_scale",
+        "derived_binary_center",
+        "derived_binary_scale",
+        "protocol_center",
+        "protocol_scale",
+    }
+)
+
 
 def _continuous_pos(partition: dict, full_feature_idx: int) -> int:
     return partition["continuous_idx"].index(full_feature_idx)
@@ -306,6 +325,15 @@ class MixedInputBetaVAE(nn.Module):
     def encode(self, x_39: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         device = x_39.device
 
+        # The placeholder ref_proto_scaled buffer is all zeros, so without a
+        # prior register_protocol_references(scaler) call every sample would
+        # silently embed as protocol index 0 (argmin over identical distances).
+        # Refuse rather than produce wrong embeddings.
+        if torch.count_nonzero(self.ref_proto_scaled) == 0:
+            raise RuntimeError(
+                "call register_protocol_references(scaler) before encode()"
+            )
+
         x_continuous = x_39[:, self.partition["continuous_idx"]]
         x_ind_bin = x_39[:, self.partition["independent_binary_idx"]]
 
@@ -381,6 +409,12 @@ class MixedInputBetaVAE(nn.Module):
         # ``scaler`` is retained for backward compatibility with existing callers
         # but is no longer required: every scaled value below is produced from
         # buffers registered by ``register_protocol_references``.
+        if mode not in {"soft", "hard"}:
+            # A silent fallthrough here would flip binary outputs to a hard
+            # threshold on any typo, changing attack semantics inside every
+            # PGD/CW inner step. Match the validation in
+            # constrained_input_baselines._structure_raw.
+            raise ValueError(f"decode_to_39 mode must be 'soft' or 'hard', got {mode!r}")
         device = z.device
         N = z.shape[0]
 

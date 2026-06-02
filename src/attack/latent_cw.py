@@ -15,6 +15,7 @@ from attack.latent_pgd import (
     _normalise_z_initializers,
     _per_sample_objective,
     classifier_logits,
+    target_logit_margin,
 )
 
 
@@ -37,6 +38,7 @@ def latent_cw_attack(
     num_restarts: int = 1,
     restart_strategy: str = "encoded",
     z_initializers: torch.Tensor | None = None,
+    restart_jitter: float = 0.05,
 ) -> tuple[torch.Tensor, torch.Tensor, dict[str, MetadataValue]]:
     x_original = x_original.to(device=device, dtype=torch.float32)
     y_true = y_true.to(device=device, dtype=torch.long)
@@ -64,6 +66,7 @@ def latent_cw_attack(
             "target_class": int(target_class),
             "num_restarts": int(num_restarts),
             "restart_strategy": str(restart_strategy),
+            "restart_jitter": float(restart_jitter),
             "zero_budget_passthrough": True,
             "anchored_decoder_residual": True,
             "iterations_run": 0,
@@ -75,9 +78,14 @@ def latent_cw_attack(
         }
         return x_passthrough.detach(), z_orig.detach(), metadata
 
+    # A non-zero jitter is required for the internal multi-restart loop to do
+    # anything when no explicit z_initializers are supplied: with epsilon=0 every
+    # restart would start at exactly z_orig and Adam is deterministic, so all
+    # restarts would be identical (fix.md #14). When z_initializers are provided
+    # (e.g. GMM seeds) this jitter is ignored by _normalise_z_initializers.
     z_starts = _normalise_z_initializers(
         z_orig=z_orig,
-        epsilon=0.0,
+        epsilon=float(restart_jitter),
         random_start=False,
         num_restarts=int(num_restarts),
         z_initializers=z_initializers,
@@ -123,9 +131,15 @@ def latent_cw_attack(
             true_logits = logits.gather(1, y_true.unsqueeze(1)).squeeze(1)
 
             if targeted:
-                target = torch.full_like(y_true, int(target_class), dtype=torch.long)
-                target_logits = logits.gather(1, target.unsqueeze(1)).squeeze(1)
-                margin = true_logits - target_logits
+                # Targeted CW must drive the target logit above the best
+                # competing class (max over all others excluding the target),
+                # not merely above the true class. Reuse latent_pgd's cw-margin
+                # formulation so the objective matches the argmax==target success
+                # test (fix.md #13).
+                _t_margin, target_logits, max_other_logits = target_logit_margin(
+                    logits, target_class=int(target_class)
+                )
+                margin = max_other_logits - target_logits
             else:
                 masked_logits = logits.clone()
                 masked_logits.scatter_(1, y_true.unsqueeze(1), float("-inf"))
@@ -141,25 +155,25 @@ def latent_cw_attack(
 
             with torch.no_grad():
                 z_post = z_orig + delta.detach()
-                x_post_dec, _ = vae.decode_to_39(z_post, scaler, mode="soft")
+                # Track the best per-restart delta using the same hard-projection
+                # decode and argmax-based success criterion as the final
+                # cross-restart selector (fix.md #13, #16), so the low-L2 delta
+                # chosen inside a restart is consistent with the reported success
+                # (and correct for the targeted case).
+                x_post_dec, _ = vae.decode_to_39(z_post, scaler, mode="hard")
                 x_post = apply_decoder_residual(
                     x_decoded=x_post_dec,
-                    x_anchor_decoded=x_orig_dec_soft,
+                    x_anchor_decoded=x_orig_dec_hard,
                     x_original=x_original,
                     mask=mask,
                 )
                 logits_post = classifier_logits(classifier, x_post, device=device)
-                true_logits_post = logits_post.gather(1, y_true.unsqueeze(1)).squeeze(1)
-
-                if targeted:
-                    target = torch.full_like(y_true, int(target_class), dtype=torch.long)
-                    target_logits_post = logits_post.gather(1, target.unsqueeze(1)).squeeze(1)
-                    success_mask = (true_logits_post - target_logits_post) <= 0.0
-                else:
-                    masked_logits_post = logits_post.clone()
-                    masked_logits_post.scatter_(1, y_true.unsqueeze(1), float("-inf"))
-                    other_logits_post = masked_logits_post.max(dim=1).values
-                    success_mask = (true_logits_post - other_logits_post) <= 0.0
+                success_mask = _attack_success_mask(
+                    logits_post,
+                    y_true,
+                    targeted=bool(targeted),
+                    target_class=int(target_class),
+                )
 
                 delta_l2 = torch.linalg.norm(delta.detach(), dim=1)
                 improved = success_mask & ((~best_restart_success) | (delta_l2 < best_delta_l2))
@@ -249,6 +263,7 @@ def latent_cw_attack(
         "target_class": int(target_class),
         "num_restarts": int(len(z_starts)),
         "restart_strategy": str(restart_strategy),
+        "restart_jitter": float(restart_jitter),
         "zero_budget_passthrough": False,
         "anchored_decoder_residual": True,
         "iterations_run": int(max_iterations_run),

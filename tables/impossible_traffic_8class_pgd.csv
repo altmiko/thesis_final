@@ -1,188 +1,187 @@
 example_rank,sample_index,clean_prediction,adv_prediction,feature,clean_value,adv_value,delta,violates_rule,violated_rules,violation_description
-1,1,2,3,ARP,0.0,-0.3,-0.3,True,R_binary_ARP,ARP must be binary (0/1); got -0.3000
-1,1,2,3,AVG,60.0,215.4,155.4,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=59.5500, AVG=215.4000, Max=60.0000"
-1,1,2,3,DHCP,0.0,0.3,0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got 0.3000
-1,1,2,3,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
-1,1,2,3,HTTP,0.0,-0.3,-0.3,True,R_binary_HTTP,HTTP must be binary (0/1); got -0.3000
-1,1,2,3,HTTPS,0.0,-0.3,-0.3,True,R_binary_HTTPS,HTTPS must be binary (0/1); got -0.3000
-1,1,2,3,ICMP,0.0,-0.3,-0.3,True,R_binary_ICMP,ICMP must be binary (0/1); got -0.3000
-1,1,2,3,IGMP,0.0,-0.3,-0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got -0.3000
-1,1,2,3,IPv,1.0,0.7,-0.3,True,R_binary_IPv,IPv must be binary (0/1); got 0.7000
-1,1,2,3,IRC,0.0,-0.3,-0.3,True,R_binary_IRC,IRC must be binary (0/1); got -0.3000
-1,1,2,3,LLC,1.0,0.7,-0.3,True,R_binary_LLC,LLC must be binary (0/1); got 0.7000
-1,1,2,3,Max,60.0,60.0,0.0,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=59.5500, AVG=215.4000, Max=60.0000"
-1,1,2,3,Min,60.0,59.55,-0.45,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=59.5500, AVG=215.4000, Max=60.0000"
-1,1,2,3,Protocol Type,6.0,9.3,3.3,True,R_protocol_valid; R_proto_tcp,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 9.3000 | TCP indicator implies Protocol Type should be 6"
-1,1,2,3,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
-1,1,2,3,SSH,0.0,-0.3,-0.3,True,R_binary_SSH,SSH must be binary (0/1); got -0.3000
-1,1,2,3,Std,0.0,63.1536,63.1536,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=63.1536, Variance=-3323.6506"
-1,1,2,3,TCP,1.0,1.3,0.3,True,R_binary_TCP; R_proto_tcp,TCP must be binary (0/1); got 1.3000 | TCP indicator implies Protocol Type should be 6
-1,1,2,3,Telnet,0.0,-0.3,-0.3,True,R_binary_Telnet,Telnet must be binary (0/1); got -0.3000
-1,1,2,3,UDP,0.0,0.3,0.3,True,R_binary_UDP,UDP must be binary (0/1); got 0.3000
-1,1,2,3,Variance,0.0,-3323.6506,-3323.6506,True,R_nonneg_Variance; R_var_eq_std_sq,"Variance must be non-negative; got -3323.6506 | Variance should match Std^2 (within tolerance); Std=63.1536, Variance=-3323.6506"
-1,1,2,3,ece_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ece_flag_number,ece_flag_number must be non-negative; got -0.3000
-1,1,2,3,fin_count,0.0,-0.225,-0.225,True,R_nonneg_fin_count,fin_count must be non-negative; got -0.2250
-1,1,2,3,rst_count,0.0,-0.225,-0.225,True,R_nonneg_rst_count,rst_count must be non-negative; got -0.2250
-1,1,2,3,Header_Length,20.0,23.624,3.624,False,,
-1,1,2,3,Number,100.0,73.0,-27.0,False,,
-1,1,2,3,Rate,12566.0732,6996.8979,-5569.1753,False,,
-1,1,2,3,Time_To_Live,64.0,63.427,-0.573,False,,
-1,1,2,3,Tot size,60.0,215.4,155.4,False,,
-1,1,2,3,Tot sum,6000.0,20681.6992,14681.6992,False,,
-1,1,2,3,ack_count,100.0,97.9,-2.1,False,,
-1,1,2,3,ack_flag_number,1.0,1.3,0.3,False,,
-1,1,2,3,cwr_flag_number,0.0,0.3,0.3,False,,
-1,1,2,3,fin_flag_number,0.0,0.3,0.3,False,,
-1,1,2,3,psh_flag_number,1.0,0.7,-0.3,False,,
-1,1,2,3,rst_flag_number,0.0,0.3,0.3,False,,
-1,1,2,3,syn_count,0.0,0.075,0.075,False,,
-1,1,2,3,syn_flag_number,0.0,0.3,0.3,False,,
-2,2,2,4,ARP,0.0,-0.225,-0.225,True,R_binary_ARP,ARP must be binary (0/1); got -0.2250
-2,2,2,4,DHCP,0.0,0.3,0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got 0.3000
-2,2,2,4,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
-2,2,2,4,HTTP,0.0,0.3,0.3,True,R_binary_HTTP,HTTP must be binary (0/1); got 0.3000
-2,2,2,4,HTTPS,0.0,0.15,0.15,True,R_binary_HTTPS,HTTPS must be binary (0/1); got 0.1500
-2,2,2,4,ICMP,0.0,-0.3,-0.3,True,R_binary_ICMP,ICMP must be binary (0/1); got -0.3000
-2,2,2,4,IGMP,0.0,-0.3,-0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got -0.3000
-2,2,2,4,IPv,1.0,0.7,-0.3,True,R_binary_IPv,IPv must be binary (0/1); got 0.7000
-2,2,2,4,IRC,0.0,-0.225,-0.225,True,R_binary_IRC,IRC must be binary (0/1); got -0.2250
-2,2,2,4,LLC,1.0,0.7,-0.3,True,R_binary_LLC,LLC must be binary (0/1); got 0.7000
-2,2,2,4,Protocol Type,17.0,20.3,3.3,True,R_protocol_valid,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 20.3000"
-2,2,2,4,Rate,1121.6938,-6303.8726,-7425.5664,True,R_nonneg_Rate,Rate must be non-negative; got -6303.8726
-2,2,2,4,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
-2,2,2,4,SSH,0.0,0.3,0.3,True,R_binary_SSH,SSH must be binary (0/1); got 0.3000
-2,2,2,4,Std,601.3411,538.1875,-63.1536,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=538.1875, Variance=348316.5625"
-2,2,2,4,TCP,0.0,-0.3,-0.3,True,R_binary_TCP,TCP must be binary (0/1); got -0.3000
-2,2,2,4,Telnet,0.0,0.225,0.225,True,R_binary_Telnet,Telnet must be binary (0/1); got 0.2250
-2,2,2,4,UDP,0.0,0.3,0.3,True,R_binary_UDP,UDP must be binary (0/1); got 0.3000
-2,2,2,4,Variance,361611.1875,348316.5625,-13294.625,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=538.1875, Variance=348316.5625"
-2,2,2,4,cwr_flag_number,0.0,-0.3,-0.3,True,R_nonneg_cwr_flag_number,cwr_flag_number must be non-negative; got -0.3000
-2,2,2,4,ece_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ece_flag_number,ece_flag_number must be non-negative; got -0.3000
-2,2,2,4,fin_count,0.0,-0.075,-0.075,True,R_nonneg_fin_count,fin_count must be non-negative; got -0.0750
-2,2,2,4,fin_flag_number,0.0,-0.3,-0.3,True,R_nonneg_fin_flag_number,fin_flag_number must be non-negative; got -0.3000
-2,2,2,4,psh_flag_number,0.0,-0.3,-0.3,True,R_nonneg_psh_flag_number,psh_flag_number must be non-negative; got -0.3000
-2,2,2,4,rst_flag_number,0.0,-0.3,-0.3,True,R_nonneg_rst_flag_number,rst_flag_number must be non-negative; got -0.3000
-2,2,2,4,AVG,870.78,715.38,-155.4,False,,
-2,2,2,4,Header_Length,3.68,7.304,3.624,False,,
-2,2,2,4,Max,1514.0,1818.2,304.2,False,,
-2,2,2,4,Min,60.0,58.2,-1.8,False,,
-2,2,2,4,Number,100.0,73.0,-27.0,False,,
-2,2,2,4,Time_To_Live,59.52,59.9498,0.4298,False,,
-2,2,2,4,Tot size,870.78,715.38,-155.4,False,,
-2,2,2,4,Tot sum,87078.0,72396.2969,-14681.7031,False,,
-2,2,2,4,ack_count,0.0,2.1,2.1,False,,
-2,2,2,4,ack_flag_number,0.0,0.3,0.3,False,,
-2,2,2,4,rst_count,0.0,0.3,0.3,False,,
-2,2,2,4,syn_count,0.0,0.15,0.15,False,,
-2,2,2,4,syn_flag_number,0.0,0.225,0.225,False,,
-3,3,2,4,ARP,0.0,0.3,0.3,True,R_binary_ARP,ARP must be binary (0/1); got 0.3000
-3,3,2,4,AVG,60.0,215.4,155.4,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=61.8000, AVG=215.4000, Max=126.2968"
-3,3,2,4,DHCP,0.0,-0.3,-0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got -0.3000
-3,3,2,4,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
-3,3,2,4,HTTP,0.0,0.1712,0.1712,True,R_binary_HTTP,HTTP must be binary (0/1); got 0.1712
-3,3,2,4,HTTPS,0.0,-0.3,-0.3,True,R_binary_HTTPS,HTTPS must be binary (0/1); got -0.3000
-3,3,2,4,ICMP,0.0,0.0444,0.0444,True,R_binary_ICMP,ICMP must be binary (0/1); got 0.0444
-3,3,2,4,IGMP,0.0,0.3,0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got 0.3000
-3,3,2,4,IPv,1.0,0.7,-0.3,True,R_binary_IPv,IPv must be binary (0/1); got 0.7000
-3,3,2,4,IRC,0.0,-0.3,-0.3,True,R_binary_IRC,IRC must be binary (0/1); got -0.3000
-3,3,2,4,LLC,1.0,0.7,-0.3,True,R_binary_LLC,LLC must be binary (0/1); got 0.7000
-3,3,2,4,Max,60.0,126.2968,66.2968,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=61.8000, AVG=215.4000, Max=126.2968"
-3,3,2,4,Min,60.0,61.8,1.8,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=61.8000, AVG=215.4000, Max=126.2968"
-3,3,2,4,Protocol Type,17.0,20.3,3.3,True,R_protocol_valid; R_proto_udp,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 20.3000 | UDP indicator implies Protocol Type should be 17"
-3,3,2,4,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
-3,3,2,4,SSH,0.0,-0.3,-0.3,True,R_binary_SSH,SSH must be binary (0/1); got -0.3000
-3,3,2,4,Std,0.0,-47.3652,-47.3652,True,R_nonneg_Std; R_var_eq_std_sq,"Std must be non-negative; got -47.3652 | Variance should match Std^2 (within tolerance); Std=-47.3652, Variance=-13294.6006"
-3,3,2,4,TCP,0.0,-0.3,-0.3,True,R_binary_TCP,TCP must be binary (0/1); got -0.3000
-3,3,2,4,Telnet,0.0,0.3,0.3,True,R_binary_Telnet,Telnet must be binary (0/1); got 0.3000
-3,3,2,4,UDP,1.0,0.7,-0.3,True,R_binary_UDP; R_proto_udp,UDP must be binary (0/1); got 0.7000 | UDP indicator implies Protocol Type should be 17
-3,3,2,4,Variance,0.0,-13294.6006,-13294.6006,True,R_nonneg_Variance; R_var_eq_std_sq,"Variance must be non-negative; got -13294.6006 | Variance should match Std^2 (within tolerance); Std=-47.3652, Variance=-13294.6006"
-3,3,2,4,ack_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ack_flag_number,ack_flag_number must be non-negative; got -0.3000
-3,3,2,4,cwr_flag_number,0.0,-0.3,-0.3,True,R_nonneg_cwr_flag_number,cwr_flag_number must be non-negative; got -0.3000
-3,3,2,4,ece_flag_number,0.0,-0.075,-0.075,True,R_nonneg_ece_flag_number,ece_flag_number must be non-negative; got -0.0750
-3,3,2,4,fin_flag_number,0.0,-0.3,-0.3,True,R_nonneg_fin_flag_number,fin_flag_number must be non-negative; got -0.3000
-3,3,2,4,rst_flag_number,0.0,-0.3,-0.3,True,R_nonneg_rst_flag_number,rst_flag_number must be non-negative; got -0.3000
-3,3,2,4,syn_flag_number,0.0,-0.225,-0.225,True,R_nonneg_syn_flag_number,syn_flag_number must be non-negative; got -0.2250
-3,3,2,4,Header_Length,8.0,4.376,-3.624,False,,
-3,3,2,4,Number,100.0,73.0,-27.0,False,,
-3,3,2,4,Rate,40932.0195,33506.4531,-7425.5664,False,,
-3,3,2,4,Time_To_Live,64.0,64.4297,0.4297,False,,
-3,3,2,4,Tot size,60.0,215.4,155.4,False,,
-3,3,2,4,Tot sum,6000.0,20681.6992,14681.6992,False,,
-3,3,2,4,ack_count,0.0,2.0895,2.0895,False,,
-3,3,2,4,psh_flag_number,0.0,0.0511,0.0511,False,,
-3,3,2,4,rst_count,0.0,0.18,0.18,False,,
-3,3,2,4,syn_count,0.0,0.0609,0.0609,False,,
-4,6,3,2,ARP,0.0,-0.225,-0.225,True,R_binary_ARP,ARP must be binary (0/1); got -0.2250
-4,6,3,2,AVG,60.52,215.92,155.4,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=58.2000, AVG=215.9200, Max=-192.2000"
-4,6,3,2,DHCP,0.0,-0.3,-0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got -0.3000
-4,6,3,2,DNS,0.0,-0.15,-0.15,True,R_binary_DNS,DNS must be binary (0/1); got -0.1500
-4,6,3,2,HTTP,0.0,0.075,0.075,True,R_binary_HTTP,HTTP must be binary (0/1); got 0.0750
-4,6,3,2,HTTPS,0.0,0.075,0.075,True,R_binary_HTTPS,HTTPS must be binary (0/1); got 0.0750
-4,6,3,2,ICMP,0.0,0.3,0.3,True,R_binary_ICMP,ICMP must be binary (0/1); got 0.3000
-4,6,3,2,IGMP,0.0,-0.3,-0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got -0.3000
-4,6,3,2,IPv,1.0,1.15,0.15,True,R_binary_IPv,IPv must be binary (0/1); got 1.1500
-4,6,3,2,IRC,0.0,-0.3,-0.3,True,R_binary_IRC,IRC must be binary (0/1); got -0.3000
-4,6,3,2,LLC,1.0,1.3,0.3,True,R_binary_LLC,LLC must be binary (0/1); got 1.3000
-4,6,3,2,Max,112.0,-192.2,-304.2,True,R_nonneg_Max; R_min_leq_max; R_avg_in_range,"Max must be non-negative; got -192.2000 | Min must be <= Max; got Min=58.2000, Max=-192.2000 | AVG must lie in [Min, Max]; got Min=58.2000, AVG=215.9200, Max=-192.2000"
-4,6,3,2,Min,60.0,58.2,-1.8,True,R_min_leq_max; R_avg_in_range,"Min must be <= Max; got Min=58.2000, Max=-192.2000 | AVG must lie in [Min, Max]; got Min=58.2000, AVG=215.9200, Max=-192.2000"
-4,6,3,2,Number,100.0,79.75,-20.25,True,R_pkts_integer,Number (packet count) must be integer-like; got 79.7500
-4,6,3,2,Protocol Type,17.0,13.7,-3.3,True,R_protocol_valid; R_proto_udp,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 13.7000 | UDP indicator implies Protocol Type should be 17"
-4,6,3,2,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
-4,6,3,2,SSH,0.0,-0.225,-0.225,True,R_binary_SSH,SSH must be binary (0/1); got -0.2250
-4,6,3,2,Std,5.2,68.3536,63.1536,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=68.3536, Variance=13321.6396"
-4,6,3,2,TCP,0.0,0.3,0.3,True,R_binary_TCP,TCP must be binary (0/1); got 0.3000
-4,6,3,2,Telnet,0.0,-0.075,-0.075,True,R_binary_Telnet,Telnet must be binary (0/1); got -0.0750
-4,6,3,2,UDP,1.0,0.7,-0.3,True,R_binary_UDP; R_proto_udp,UDP must be binary (0/1); got 0.7000 | UDP indicator implies Protocol Type should be 17
-4,6,3,2,Variance,27.04,13321.6396,13294.5996,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=68.3536, Variance=13321.6396"
-4,6,3,2,ack_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ack_flag_number,ack_flag_number must be non-negative; got -0.3000
-4,6,3,2,cwr_flag_number,0.0,-0.3,-0.3,True,R_nonneg_cwr_flag_number,cwr_flag_number must be non-negative; got -0.3000
-4,6,3,2,fin_count,0.0,-0.3,-0.3,True,R_nonneg_fin_count,fin_count must be non-negative; got -0.3000
-4,6,3,2,syn_count,0.0,-0.075,-0.075,True,R_nonneg_syn_count,syn_count must be non-negative; got -0.0750
-4,6,3,2,syn_flag_number,0.0,-0.3,-0.3,True,R_nonneg_syn_flag_number,syn_flag_number must be non-negative; got -0.3000
-4,6,3,2,Header_Length,8.24,4.616,-3.624,False,,
-4,6,3,2,Rate,17434.1348,24859.7012,7425.5664,False,,
-4,6,3,2,Time_To_Live,64.59,64.017,-0.573,False,,
-4,6,3,2,Tot size,60.52,215.92,155.4,False,,
-4,6,3,2,Tot sum,6052.0,20733.6992,14681.6992,False,,
-4,6,3,2,ack_count,1.0,2.575,1.575,False,,
-4,6,3,2,ece_flag_number,0.0,0.3,0.3,False,,
-4,6,3,2,fin_flag_number,0.0,0.3,0.3,False,,
-4,6,3,2,psh_flag_number,0.0,0.3,0.3,False,,
-4,6,3,2,rst_flag_number,0.0,0.075,0.075,False,,
-5,7,2,3,ARP,0.0,-0.075,-0.075,True,R_binary_ARP,ARP must be binary (0/1); got -0.0750
-5,7,2,3,DHCP,0.0,0.3,0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got 0.3000
-5,7,2,3,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
-5,7,2,3,HTTP,0.0,-0.3,-0.3,True,R_binary_HTTP,HTTP must be binary (0/1); got -0.3000
-5,7,2,3,HTTPS,0.0,0.3,0.3,True,R_binary_HTTPS,HTTPS must be binary (0/1); got 0.3000
-5,7,2,3,IGMP,0.0,-0.3,-0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got -0.3000
-5,7,2,3,IPv,1.0,1.3,0.3,True,R_binary_IPv,IPv must be binary (0/1); got 1.3000
-5,7,2,3,IRC,0.0,0.225,0.225,True,R_binary_IRC,IRC must be binary (0/1); got 0.2250
-5,7,2,3,LLC,1.0,0.775,-0.225,True,R_binary_LLC,LLC must be binary (0/1); got 0.7750
-5,7,2,3,Protocol Type,6.0,2.7,-3.3,True,R_protocol_valid; R_proto_tcp,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 2.7000 | TCP indicator implies Protocol Type should be 6"
-5,7,2,3,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
-5,7,2,3,SSH,0.0,0.3,0.3,True,R_binary_SSH,SSH must be binary (0/1); got 0.3000
-5,7,2,3,Std,0.0,6.6404,6.6404,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=6.6404, Variance=13294.5996"
-5,7,2,3,TCP,1.0,1.3,0.3,True,R_binary_TCP; R_proto_tcp,TCP must be binary (0/1); got 1.3000 | TCP indicator implies Protocol Type should be 6
-5,7,2,3,Telnet,0.0,-0.3,-0.3,True,R_binary_Telnet,Telnet must be binary (0/1); got -0.3000
-5,7,2,3,Tot sum,6000.0,-8681.7002,-14681.7002,True,R_nonneg_Tot sum,Tot sum must be non-negative; got -8681.7002
-5,7,2,3,UDP,0.0,0.225,0.225,True,R_binary_UDP,UDP must be binary (0/1); got 0.2250
-5,7,2,3,Variance,0.0,13294.5996,13294.5996,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=6.6404, Variance=13294.5996"
-5,7,2,3,cwr_flag_number,0.0,-0.3,-0.3,True,R_nonneg_cwr_flag_number,cwr_flag_number must be non-negative; got -0.3000
-5,7,2,3,ece_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ece_flag_number,ece_flag_number must be non-negative; got -0.3000
-5,7,2,3,fin_count,0.0,-0.15,-0.15,True,R_nonneg_fin_count,fin_count must be non-negative; got -0.1500
-5,7,2,3,psh_flag_number,0.0,-0.225,-0.225,True,R_nonneg_psh_flag_number,psh_flag_number must be non-negative; got -0.2250
-5,7,2,3,AVG,60.0,176.55,116.55,False,,
-5,7,2,3,Header_Length,20.0,23.624,3.624,False,,
-5,7,2,3,Max,60.0,288.15,228.15,False,,
-5,7,2,3,Min,60.0,61.35,1.35,False,,
-5,7,2,3,Number,100.0,73.0,-27.0,False,,
-5,7,2,3,Rate,13213.7363,20639.3027,7425.5664,False,,
-5,7,2,3,Time_To_Live,64.0,64.4297,0.4297,False,,
-5,7,2,3,Tot size,60.0,215.4,155.4,False,,
-5,7,2,3,ack_count,0.0,1.05,1.05,False,,
-5,7,2,3,ack_flag_number,0.0,0.3,0.3,False,,
-5,7,2,3,fin_flag_number,0.0,0.225,0.225,False,,
-5,7,2,3,rst_count,0.0,0.3,0.3,False,,
-5,7,2,3,rst_flag_number,0.0,0.3,0.3,False,,
-5,7,2,3,syn_count,100.0,99.7,-0.3,False,,
-5,7,2,3,syn_flag_number,1.0,1.225,0.225,False,,
+1,0,2,4,ARP,0.0,-0.3,-0.3,True,R_binary_ARP,ARP must be binary (0/1); got -0.3000
+1,0,2,4,DHCP,0.0,0.3,0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got 0.3000
+1,0,2,4,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
+1,0,2,4,HTTP,0.0,0.3,0.3,True,R_binary_HTTP,HTTP must be binary (0/1); got 0.3000
+1,0,2,4,HTTPS,0.0,-0.3,-0.3,True,R_binary_HTTPS,HTTPS must be binary (0/1); got -0.3000
+1,0,2,4,ICMP,0.0,-0.3,-0.3,True,R_binary_ICMP,ICMP must be binary (0/1); got -0.3000
+1,0,2,4,IGMP,0.0,-0.3,-0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got -0.3000
+1,0,2,4,IPv,1.0,0.7,-0.3,True,R_binary_IPv,IPv must be binary (0/1); got 0.7000
+1,0,2,4,IRC,0.0,0.3,0.3,True,R_binary_IRC,IRC must be binary (0/1); got 0.3000
+1,0,2,4,Protocol Type,17.0,20.3,3.3,True,R_protocol_valid,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 20.3000"
+1,0,2,4,Rate,4137.333,-3288.2339,-7425.5669,True,R_nonneg_Rate,Rate must be non-negative; got -3288.2339
+1,0,2,4,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
+1,0,2,4,SSH,0.0,0.3,0.3,True,R_binary_SSH,SSH must be binary (0/1); got 0.3000
+1,0,2,4,Std,578.9018,515.7482,-63.1536,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=515.7482, Variance=321832.6562"
+1,0,2,4,TCP,0.0,-0.3,-0.3,True,R_binary_TCP,TCP must be binary (0/1); got -0.3000
+1,0,2,4,Telnet,0.0,0.3,0.3,True,R_binary_Telnet,Telnet must be binary (0/1); got 0.3000
+1,0,2,4,UDP,0.0,0.3,0.3,True,R_binary_UDP,UDP must be binary (0/1); got 0.3000
+1,0,2,4,Variance,335127.2812,321832.6562,-13294.625,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=515.7482, Variance=321832.6562"
+1,0,2,4,ece_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ece_flag_number,ece_flag_number must be non-negative; got -0.3000
+1,0,2,4,fin_count,0.0,-0.3,-0.3,True,R_nonneg_fin_count,fin_count must be non-negative; got -0.3000
+1,0,2,4,fin_flag_number,0.0,-0.3,-0.3,True,R_nonneg_fin_flag_number,fin_flag_number must be non-negative; got -0.3000
+1,0,2,4,psh_flag_number,0.0,-0.3,-0.3,True,R_nonneg_psh_flag_number,psh_flag_number must be non-negative; got -0.3000
+1,0,2,4,rst_flag_number,0.0,-0.3,-0.3,True,R_nonneg_rst_flag_number,rst_flag_number must be non-negative; got -0.3000
+1,0,2,4,syn_count,0.0,-0.3,-0.3,True,R_nonneg_syn_count,syn_count must be non-negative; got -0.3000
+1,0,2,4,syn_flag_number,0.0,-0.3,-0.3,True,R_nonneg_syn_flag_number,syn_flag_number must be non-negative; got -0.3000
+1,0,2,4,AVG,938.0,782.6,-155.4,False,,
+1,0,2,4,Header_Length,4.0,7.624,3.624,False,,
+1,0,2,4,Max,1514.0,1818.2,304.2,False,,
+1,0,2,4,Min,362.0,363.8,1.8,False,,
+1,0,2,4,Number,100.0,73.0,-27.0,False,,
+1,0,2,4,Time_To_Live,64.0,64.573,0.573,False,,
+1,0,2,4,Tot size,938.0,782.6,-155.4,False,,
+1,0,2,4,Tot sum,93800.0,79118.2969,-14681.7031,False,,
+1,0,2,4,ack_count,0.0,2.1,2.1,False,,
+1,0,2,4,ack_flag_number,0.0,0.3,0.3,False,,
+1,0,2,4,cwr_flag_number,0.0,0.3,0.3,False,,
+1,0,2,4,rst_count,0.0,0.3,0.3,False,,
+2,1,2,3,ARP,0.0,-0.3,-0.3,True,R_binary_ARP,ARP must be binary (0/1); got -0.3000
+2,1,2,3,AVG,60.0,215.4,155.4,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=59.5500, AVG=215.4000, Max=212.1000"
+2,1,2,3,DHCP,0.0,0.3,0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got 0.3000
+2,1,2,3,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
+2,1,2,3,HTTP,0.0,-0.3,-0.3,True,R_binary_HTTP,HTTP must be binary (0/1); got -0.3000
+2,1,2,3,HTTPS,0.0,-0.3,-0.3,True,R_binary_HTTPS,HTTPS must be binary (0/1); got -0.3000
+2,1,2,3,ICMP,0.0,-0.3,-0.3,True,R_binary_ICMP,ICMP must be binary (0/1); got -0.3000
+2,1,2,3,IGMP,0.0,-0.3,-0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got -0.3000
+2,1,2,3,IPv,1.0,0.7,-0.3,True,R_binary_IPv,IPv must be binary (0/1); got 0.7000
+2,1,2,3,IRC,0.0,-0.3,-0.3,True,R_binary_IRC,IRC must be binary (0/1); got -0.3000
+2,1,2,3,LLC,1.0,0.7,-0.3,True,R_binary_LLC,LLC must be binary (0/1); got 0.7000
+2,1,2,3,Max,60.0,212.1,152.1,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=59.5500, AVG=215.4000, Max=212.1000"
+2,1,2,3,Min,60.0,59.55,-0.45,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=59.5500, AVG=215.4000, Max=212.1000"
+2,1,2,3,Protocol Type,6.0,8.475,2.475,True,R_protocol_valid; R_proto_tcp,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 8.4750 | TCP indicator implies Protocol Type should be 6"
+2,1,2,3,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
+2,1,2,3,SSH,0.0,-0.3,-0.3,True,R_binary_SSH,SSH must be binary (0/1); got -0.3000
+2,1,2,3,Std,0.0,63.1536,63.1536,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=63.1536, Variance=-3323.6506"
+2,1,2,3,TCP,1.0,1.3,0.3,True,R_binary_TCP; R_proto_tcp,TCP must be binary (0/1); got 1.3000 | TCP indicator implies Protocol Type should be 6
+2,1,2,3,Telnet,0.0,-0.3,-0.3,True,R_binary_Telnet,Telnet must be binary (0/1); got -0.3000
+2,1,2,3,UDP,0.0,0.3,0.3,True,R_binary_UDP,UDP must be binary (0/1); got 0.3000
+2,1,2,3,Variance,0.0,-3323.6506,-3323.6506,True,R_nonneg_Variance; R_var_eq_std_sq,"Variance must be non-negative; got -3323.6506 | Variance should match Std^2 (within tolerance); Std=63.1536, Variance=-3323.6506"
+2,1,2,3,ece_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ece_flag_number,ece_flag_number must be non-negative; got -0.3000
+2,1,2,3,fin_count,0.0,-0.225,-0.225,True,R_nonneg_fin_count,fin_count must be non-negative; got -0.2250
+2,1,2,3,syn_count,0.0,-0.225,-0.225,True,R_nonneg_syn_count,syn_count must be non-negative; got -0.2250
+2,1,2,3,Header_Length,20.0,23.624,3.624,False,,
+2,1,2,3,Number,100.0,73.0,-27.0,False,,
+2,1,2,3,Rate,12566.0732,10709.6816,-1856.3916,False,,
+2,1,2,3,Time_To_Live,64.0,63.427,-0.573,False,,
+2,1,2,3,Tot size,60.0,215.4,155.4,False,,
+2,1,2,3,Tot sum,6000.0,20681.6992,14681.6992,False,,
+2,1,2,3,ack_count,100.0,97.9,-2.1,False,,
+2,1,2,3,ack_flag_number,1.0,1.3,0.3,False,,
+2,1,2,3,cwr_flag_number,0.0,0.3,0.3,False,,
+2,1,2,3,fin_flag_number,0.0,0.3,0.3,False,,
+2,1,2,3,psh_flag_number,1.0,0.7,-0.3,False,,
+2,1,2,3,rst_flag_number,0.0,0.3,0.3,False,,
+2,1,2,3,syn_flag_number,0.0,0.3,0.3,False,,
+3,2,2,4,ARP,0.0,0.225,0.225,True,R_binary_ARP,ARP must be binary (0/1); got 0.2250
+3,2,2,4,DHCP,0.0,0.3,0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got 0.3000
+3,2,2,4,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
+3,2,2,4,HTTP,0.0,0.3,0.3,True,R_binary_HTTP,HTTP must be binary (0/1); got 0.3000
+3,2,2,4,HTTPS,0.0,-0.15,-0.15,True,R_binary_HTTPS,HTTPS must be binary (0/1); got -0.1500
+3,2,2,4,ICMP,0.0,-0.3,-0.3,True,R_binary_ICMP,ICMP must be binary (0/1); got -0.3000
+3,2,2,4,IGMP,0.0,0.3,0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got 0.3000
+3,2,2,4,IPv,1.0,0.7,-0.3,True,R_binary_IPv,IPv must be binary (0/1); got 0.7000
+3,2,2,4,IRC,0.0,0.225,0.225,True,R_binary_IRC,IRC must be binary (0/1); got 0.2250
+3,2,2,4,LLC,1.0,0.7,-0.3,True,R_binary_LLC,LLC must be binary (0/1); got 0.7000
+3,2,2,4,Protocol Type,17.0,20.3,3.3,True,R_protocol_valid,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 20.3000"
+3,2,2,4,Rate,1121.6938,-6303.8726,-7425.5664,True,R_nonneg_Rate,Rate must be non-negative; got -6303.8726
+3,2,2,4,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
+3,2,2,4,SSH,0.0,0.3,0.3,True,R_binary_SSH,SSH must be binary (0/1); got 0.3000
+3,2,2,4,Std,601.3411,664.4947,63.1536,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=664.4947, Variance=348316.5625"
+3,2,2,4,TCP,0.0,-0.3,-0.3,True,R_binary_TCP,TCP must be binary (0/1); got -0.3000
+3,2,2,4,Telnet,0.0,0.3,0.3,True,R_binary_Telnet,Telnet must be binary (0/1); got 0.3000
+3,2,2,4,UDP,0.0,0.3,0.3,True,R_binary_UDP,UDP must be binary (0/1); got 0.3000
+3,2,2,4,Variance,361611.1875,348316.5625,-13294.625,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=664.4947, Variance=348316.5625"
+3,2,2,4,cwr_flag_number,0.0,-0.3,-0.3,True,R_nonneg_cwr_flag_number,cwr_flag_number must be non-negative; got -0.3000
+3,2,2,4,ece_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ece_flag_number,ece_flag_number must be non-negative; got -0.3000
+3,2,2,4,fin_count,0.0,-0.3,-0.3,True,R_nonneg_fin_count,fin_count must be non-negative; got -0.3000
+3,2,2,4,fin_flag_number,0.0,-0.3,-0.3,True,R_nonneg_fin_flag_number,fin_flag_number must be non-negative; got -0.3000
+3,2,2,4,psh_flag_number,0.0,-0.3,-0.3,True,R_nonneg_psh_flag_number,psh_flag_number must be non-negative; got -0.3000
+3,2,2,4,rst_flag_number,0.0,-0.3,-0.3,True,R_nonneg_rst_flag_number,rst_flag_number must be non-negative; got -0.3000
+3,2,2,4,syn_count,0.0,-0.3,-0.3,True,R_nonneg_syn_count,syn_count must be non-negative; got -0.3000
+3,2,2,4,AVG,870.78,715.38,-155.4,False,,
+3,2,2,4,Header_Length,3.68,7.304,3.624,False,,
+3,2,2,4,Max,1514.0,1818.2,304.2,False,,
+3,2,2,4,Min,60.0,58.2,-1.8,False,,
+3,2,2,4,Number,100.0,73.0,-27.0,False,,
+3,2,2,4,Time_To_Live,59.52,60.093,0.573,False,,
+3,2,2,4,Tot size,870.78,715.38,-155.4,False,,
+3,2,2,4,Tot sum,87078.0,72396.2969,-14681.7031,False,,
+3,2,2,4,ack_count,0.0,2.1,2.1,False,,
+3,2,2,4,ack_flag_number,0.0,0.3,0.3,False,,
+3,2,2,4,rst_count,0.0,0.3,0.3,False,,
+3,2,2,4,syn_flag_number,0.0,0.3,0.3,False,,
+4,3,2,4,ARP,0.0,0.3,0.3,True,R_binary_ARP,ARP must be binary (0/1); got 0.3000
+4,3,2,4,AVG,60.0,215.4,155.4,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=61.8000, AVG=215.4000, Max=4.6521"
+4,3,2,4,DHCP,0.0,-0.3,-0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got -0.3000
+4,3,2,4,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
+4,3,2,4,HTTPS,0.0,-0.3,-0.3,True,R_binary_HTTPS,HTTPS must be binary (0/1); got -0.3000
+4,3,2,4,ICMP,0.0,0.3,0.3,True,R_binary_ICMP,ICMP must be binary (0/1); got 0.3000
+4,3,2,4,IGMP,0.0,0.3,0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got 0.3000
+4,3,2,4,IPv,1.0,0.7,-0.3,True,R_binary_IPv,IPv must be binary (0/1); got 0.7000
+4,3,2,4,IRC,0.0,-0.3,-0.3,True,R_binary_IRC,IRC must be binary (0/1); got -0.3000
+4,3,2,4,LLC,1.0,0.7,-0.3,True,R_binary_LLC,LLC must be binary (0/1); got 0.7000
+4,3,2,4,Max,60.0,4.6521,-55.3479,True,R_min_leq_max; R_avg_in_range,"Min must be <= Max; got Min=61.8000, Max=4.6521 | AVG must lie in [Min, Max]; got Min=61.8000, AVG=215.4000, Max=4.6521"
+4,3,2,4,Min,60.0,61.8,1.8,True,R_min_leq_max; R_avg_in_range,"Min must be <= Max; got Min=61.8000, Max=4.6521 | AVG must lie in [Min, Max]; got Min=61.8000, AVG=215.4000, Max=4.6521"
+4,3,2,4,Number,100.0,79.75,-20.25,True,R_pkts_integer,Number (packet count) must be integer-like; got 79.7500
+4,3,2,4,Protocol Type,17.0,20.3,3.3,True,R_protocol_valid; R_proto_udp,"Protocol Type must map to allowed values {0,1,2,6,17,47}; got 20.3000 | UDP indicator implies Protocol Type should be 17"
+4,3,2,4,SMTP,0.0,-0.3,-0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got -0.3000
+4,3,2,4,SSH,0.0,-0.225,-0.225,True,R_binary_SSH,SSH must be binary (0/1); got -0.2250
+4,3,2,4,Std,0.0,-63.1536,-63.1536,True,R_nonneg_Std; R_var_eq_std_sq,"Std must be non-negative; got -63.1536 | Variance should match Std^2 (within tolerance); Std=-63.1536, Variance=-13294.6006"
+4,3,2,4,TCP,0.0,-0.225,-0.225,True,R_binary_TCP,TCP must be binary (0/1); got -0.2250
+4,3,2,4,Telnet,0.0,0.3,0.3,True,R_binary_Telnet,Telnet must be binary (0/1); got 0.3000
+4,3,2,4,UDP,1.0,0.7,-0.3,True,R_binary_UDP; R_proto_udp,UDP must be binary (0/1); got 0.7000 | UDP indicator implies Protocol Type should be 17
+4,3,2,4,Variance,0.0,-13294.6006,-13294.6006,True,R_nonneg_Variance; R_var_eq_std_sq,"Variance must be non-negative; got -13294.6006 | Variance should match Std^2 (within tolerance); Std=-63.1536, Variance=-13294.6006"
+4,3,2,4,ack_flag_number,0.0,-0.3,-0.3,True,R_nonneg_ack_flag_number,ack_flag_number must be non-negative; got -0.3000
+4,3,2,4,cwr_flag_number,0.0,-0.3,-0.3,True,R_nonneg_cwr_flag_number,cwr_flag_number must be non-negative; got -0.3000
+4,3,2,4,ece_flag_number,0.0,-0.15,-0.15,True,R_nonneg_ece_flag_number,ece_flag_number must be non-negative; got -0.1500
+4,3,2,4,fin_flag_number,0.0,-0.3,-0.3,True,R_nonneg_fin_flag_number,fin_flag_number must be non-negative; got -0.3000
+4,3,2,4,rst_count,0.0,-0.075,-0.075,True,R_nonneg_rst_count,rst_count must be non-negative; got -0.0750
+4,3,2,4,rst_flag_number,0.0,-0.3,-0.3,True,R_nonneg_rst_flag_number,rst_flag_number must be non-negative; got -0.3000
+4,3,2,4,syn_count,0.0,-0.0603,-0.0603,True,R_nonneg_syn_count,syn_count must be non-negative; got -0.0603
+4,3,2,4,syn_flag_number,0.0,-0.3,-0.3,True,R_nonneg_syn_flag_number,syn_flag_number must be non-negative; got -0.3000
+4,3,2,4,Header_Length,8.0,4.376,-3.624,False,,
+4,3,2,4,Rate,40932.0195,33506.4531,-7425.5664,False,,
+4,3,2,4,Time_To_Live,64.0,64.4297,0.4297,False,,
+4,3,2,4,Tot size,60.0,215.4,155.4,False,,
+4,3,2,4,Tot sum,6000.0,20681.6992,14681.6992,False,,
+4,3,2,4,ack_count,0.0,1.05,1.05,False,,
+4,3,2,4,fin_count,0.0,0.3,0.3,False,,
+4,3,2,4,psh_flag_number,0.0,0.0904,0.0904,False,,
+5,6,3,6,ARP,0.0,0.225,0.225,True,R_binary_ARP,ARP must be binary (0/1); got 0.2250
+5,6,3,6,AVG,60.52,215.92,155.4,True,R_avg_in_range,"AVG must lie in [Min, Max]; got Min=58.2000, AVG=215.9200, Max=-192.2000"
+5,6,3,6,DHCP,0.0,-0.3,-0.3,True,R_binary_DHCP,DHCP must be binary (0/1); got -0.3000
+5,6,3,6,DNS,0.0,0.3,0.3,True,R_binary_DNS,DNS must be binary (0/1); got 0.3000
+5,6,3,6,HTTP,0.0,-0.3,-0.3,True,R_binary_HTTP,HTTP must be binary (0/1); got -0.3000
+5,6,3,6,HTTPS,0.0,0.3,0.3,True,R_binary_HTTPS,HTTPS must be binary (0/1); got 0.3000
+5,6,3,6,ICMP,0.0,-0.3,-0.3,True,R_binary_ICMP,ICMP must be binary (0/1); got -0.3000
+5,6,3,6,IGMP,0.0,0.3,0.3,True,R_binary_IGMP,IGMP must be binary (0/1); got 0.3000
+5,6,3,6,IPv,1.0,0.7,-0.3,True,R_binary_IPv,IPv must be binary (0/1); got 0.7000
+5,6,3,6,IRC,0.0,0.075,0.075,True,R_binary_IRC,IRC must be binary (0/1); got 0.0750
+5,6,3,6,LLC,1.0,0.7,-0.3,True,R_binary_LLC,LLC must be binary (0/1); got 0.7000
+5,6,3,6,Max,112.0,-192.2,-304.2,True,R_nonneg_Max; R_min_leq_max; R_avg_in_range,"Max must be non-negative; got -192.2000 | Min must be <= Max; got Min=58.2000, Max=-192.2000 | AVG must lie in [Min, Max]; got Min=58.2000, AVG=215.9200, Max=-192.2000"
+5,6,3,6,Min,60.0,58.2,-1.8,True,R_min_leq_max; R_avg_in_range,"Min must be <= Max; got Min=58.2000, Max=-192.2000 | AVG must lie in [Min, Max]; got Min=58.2000, AVG=215.9200, Max=-192.2000"
+5,6,3,6,SMTP,0.0,0.3,0.3,True,R_binary_SMTP,SMTP must be binary (0/1); got 0.3000
+5,6,3,6,SSH,0.0,-0.3,-0.3,True,R_binary_SSH,SSH must be binary (0/1); got -0.3000
+5,6,3,6,Std,5.2,68.3536,63.1536,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=68.3536, Variance=13321.6396"
+5,6,3,6,TCP,0.0,-0.3,-0.3,True,R_binary_TCP,TCP must be binary (0/1); got -0.3000
+5,6,3,6,Telnet,0.0,-0.3,-0.3,True,R_binary_Telnet,Telnet must be binary (0/1); got -0.3000
+5,6,3,6,Tot sum,6052.0,-8629.7012,-14681.7012,True,R_nonneg_Tot sum,Tot sum must be non-negative; got -8629.7012
+5,6,3,6,UDP,1.0,0.85,-0.15,True,R_binary_UDP,UDP must be binary (0/1); got 0.8500
+5,6,3,6,Variance,27.04,13321.6396,13294.5996,True,R_var_eq_std_sq,"Variance should match Std^2 (within tolerance); Std=68.3536, Variance=13321.6396"
+5,6,3,6,ack_count,1.0,-1.1,-2.1,True,R_nonneg_ack_count,ack_count must be non-negative; got -1.1000
+5,6,3,6,cwr_flag_number,0.0,-0.3,-0.3,True,R_nonneg_cwr_flag_number,cwr_flag_number must be non-negative; got -0.3000
+5,6,3,6,fin_count,0.0,-0.3,-0.3,True,R_nonneg_fin_count,fin_count must be non-negative; got -0.3000
+5,6,3,6,rst_count,0.0,-0.3,-0.3,True,R_nonneg_rst_count,rst_count must be non-negative; got -0.3000
+5,6,3,6,syn_count,0.0,-0.3,-0.3,True,R_nonneg_syn_count,syn_count must be non-negative; got -0.3000
+5,6,3,6,Header_Length,8.24,11.864,3.624,False,,
+5,6,3,6,Number,100.0,73.0,-27.0,False,,
+5,6,3,6,Rate,17434.1348,11864.959,-5569.1758,False,,
+5,6,3,6,Time_To_Live,64.59,65.163,0.573,False,,
+5,6,3,6,Tot size,60.52,215.92,155.4,False,,
+5,6,3,6,ack_flag_number,0.0,0.3,0.3,False,,
+5,6,3,6,ece_flag_number,0.0,0.3,0.3,False,,
+5,6,3,6,fin_flag_number,0.0,0.3,0.3,False,,
+5,6,3,6,psh_flag_number,0.0,0.075,0.075,False,,
+5,6,3,6,rst_flag_number,0.0,0.3,0.3,False,,
+5,6,3,6,syn_flag_number,0.0,0.3,0.3,False,,
