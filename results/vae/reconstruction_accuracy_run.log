@@ -1,0 +1,42 @@
+01:26:12 [INFO] Device: cuda
+01:26:12 [INFO] Loading 8-class labels from D:\thesis_final\data\processed\y_val_cat.npy
+01:26:12 [INFO] === Class 0 (Benign) ===
+01:26:12 [INFO] Class 0: 19999 samples loaded
+01:26:13 [INFO] Benign: n=19999  cont_R2(median)=-0.0188  frac_R2>=0.5=0.3158  bin_acc=0.9933  proto_acc=0.9944  cat_exact=0.9112
+01:26:13 [INFO] === Class 1 (BruteForce) ===
+01:26:13 [INFO] Class 1: 1252 samples loaded
+01:26:13 [INFO] BruteForce: n=1252  cont_R2(median)=0.1139  frac_R2>=0.5=0.4500  bin_acc=0.9786  proto_acc=0.9832  cat_exact=0.7093
+01:26:13 [INFO] === Class 2 (DDoS) ===
+01:26:13 [INFO] Class 2: 204993 samples loaded
+01:26:14 [INFO] DDoS: n=204993  cont_R2(median)=0.9227  frac_R2>=0.5=0.7143  bin_acc=0.9993  proto_acc=0.9990  cat_exact=0.9905
+01:26:14 [INFO] === Class 3 (DoS) ===
+01:26:14 [INFO] Class 3: 66876 samples loaded
+01:26:15 [INFO] DoS: n=66876  cont_R2(median)=-0.0396  frac_R2>=0.5=0.2857  bin_acc=0.9991  proto_acc=0.9999  cat_exact=0.9871
+01:26:15 [INFO] === Class 4 (Mirai) ===
+01:26:15 [INFO] Class 4: 59996 samples loaded
+01:26:15 [INFO] Mirai: n=59996  cont_R2(median)=0.7162  frac_R2>=0.5=0.6111  bin_acc=0.9998  proto_acc=0.9991  cat_exact=0.9980
+01:26:15 [INFO] === Class 5 (Recon) ===
+01:26:15 [INFO] Class 5: 50353 samples loaded
+01:26:16 [INFO] Recon: n=50353  cont_R2(median)=0.8901  frac_R2>=0.5=0.5714  bin_acc=0.9975  proto_acc=0.9971  cat_exact=0.9684
+01:26:16 [INFO] === Class 6 (Spoofing) ===
+01:26:16 [INFO] Class 6: 37145 samples loaded
+01:26:16 [INFO] Spoofing: n=37145  cont_R2(median)=-0.0005  frac_R2>=0.5=0.3810  bin_acc=0.9976  proto_acc=0.9989  cat_exact=0.9666
+01:26:16 [INFO] === Class 7 (Web) ===
+01:26:16 [INFO] Class 7: 2380 samples loaded
+01:26:16 [INFO] Web: n=2380  cont_R2(median)=-0.0004  frac_R2>=0.5=0.3684  bin_acc=0.9851  proto_acc=0.9954  cat_exact=0.7987
+01:26:16 [INFO] Wrote D:\thesis_final\results\vae\reconstruction_accuracy.json
+01:26:16 [INFO] Wrote D:\thesis_final\results\vae\reconstruction_accuracy_summary.csv
+01:26:16 [INFO] Wrote D:\thesis_final\results\vae\reconstruction_accuracy_summary.md
+01:26:16 [INFO] === DONE ===
+
+=== VAE Reconstruction Accuracy (validation split) ===
+| class_name | n_val | continuous_median_r2 | continuous_frac_r2_ge_0p5 | continuous_median_nrmse | binary_mean_accuracy | protocol_accuracy | categorical_exact_match |
+| Benign | 19999 | -0.0188 | 0.3158 | 1.0094 | 0.9933 | 0.9944 | 0.9112 |
+| BruteForce | 1252 | 0.1139 | 0.4500 | 0.9393 | 0.9786 | 0.9832 | 0.7093 |
+| DDoS | 204993 | 0.9227 | 0.7143 | 0.2780 | 0.9993 | 0.9990 | 0.9905 |
+| DoS | 66876 | -0.0396 | 0.2857 | 1.0196 | 0.9991 | 0.9999 | 0.9871 |
+| Mirai | 59996 | 0.7162 | 0.6111 | 0.5324 | 0.9998 | 0.9991 | 0.9980 |
+| Recon | 50353 | 0.8901 | 0.5714 | 0.3315 | 0.9975 | 0.9971 | 0.9684 |
+| Spoofing | 37145 | -0.0005 | 0.3810 | 1.0003 | 0.9976 | 0.9989 | 0.9666 |
+| Web | 2380 | -0.0004 | 0.3684 | 1.0002 | 0.9851 | 0.9954 | 0.7987 |
+| OVERALL (weighted) | 442994 | 0.6186 | 0.5708 | 0.5298 | 0.9986 | 0.9986 | 0.9811 |
