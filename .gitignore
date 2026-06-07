@@ -20,3 +20,4 @@ outputs/*
 final (3) optimized.ipynb
 final (3).backup-before-opt.ipynb
 .gitignore
+.worktrees/
