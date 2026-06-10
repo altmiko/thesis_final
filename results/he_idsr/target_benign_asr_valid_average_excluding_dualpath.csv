@@ -1,0 +1,5 @@
+attack_method,ASR_valid,model_count
+targeted-benign-latent-pgd,0.042797619047619,4
+targeted-benign-latent-cw,0.0519523809523809,4
+cinput-pgd-target-benign,0.022214285714285673,4
+cinput-cw-target-benign,0.0767023809523809,4

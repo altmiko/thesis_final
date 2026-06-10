@@ -8,3 +8,4 @@ constrained-input,cinput-pgd,untargeted,3200,0.5259375,0.5259375,0.34875,0.17937
 constrained-input,cinput-cw,untargeted,3200,0.7621875,0.7621875,0.6059375,0.45375,1.0,1.0
 constrained-input,cinput-pgd-target-benign,target-benign,3200,0.0415625,0.0415625,0.3321875,0.0190625,1.0,1.0
 constrained-input,cinput-cw-target-benign,target-benign,3200,0.1078125,0.1078125,0.3790625,0.056875,1.0,1.0
+latent,targeted-benign-latent-cw,target-benign,3200,0.059375,0.0521875,0.906875,0.050625,1.0,1.0

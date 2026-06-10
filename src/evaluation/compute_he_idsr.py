@@ -61,6 +61,15 @@ DEFAULT_TARGETED_LATENT_RUN = (
         "20260529_173512_20260602_023404_seed42"
     )
 )
+DEFAULT_TARGETED_LATENT_CW_RUN = (
+    REPO_ROOT
+    / "outputs"
+    / "latent_attacks"
+    / (
+        "targeted_benign_cw_gaussian_anticollapse_beta05_freebits01_"
+        "20260529_173512_20260610_213313_seed42"
+    )
+)
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "results" / "he_idsr"
 DEFAULT_REPORT = REPO_ROOT / "IDSR_REPORT.md"
 
@@ -682,6 +691,52 @@ def _evaluate_targeted_latent_artifacts(
     return pd.concat(results, ignore_index=True)
 
 
+def _load_targeted_latent_cw_outcomes(run_dir: Path) -> pd.DataFrame:
+    saved = pd.read_csv(run_dir / "per_sample_results.csv")
+    required = {
+        "sample_id",
+        "model",
+        "model_tag",
+        "source_class",
+        "target_success",
+        "joint_valid",
+        "mahalanobis_outlier",
+    }
+    missing = required - set(saved.columns)
+    if missing:
+        raise ValueError(
+            f"{run_dir / 'per_sample_results.csv'} is missing columns: "
+            f"{sorted(missing)}"
+        )
+
+    results: list[pd.DataFrame] = []
+    for (model_tag, model_label, class_name), cell in saved.groupby(
+        ["model_tag", "model", "source_class"],
+        sort=False,
+    ):
+        evasion = _as_bool(cell["target_success"])
+        joint_valid = _as_bool(cell["joint_valid"])
+        outlier = _as_bool(cell["mahalanobis_outlier"])
+        results.append(
+            _outcome_frame(
+                family="latent",
+                attack="targeted-benign-latent-cw",
+                attack_goal="target-benign",
+                model_label=str(model_label),
+                model_tag=str(model_tag),
+                class_name=str(class_name),
+                sample_ids=cell["sample_id"].to_numpy(dtype=np.int64),
+                evasion=evasion,
+                joint_valid=joint_valid,
+                outlier=outlier,
+                saved_evasion=evasion,
+                saved_joint_valid=joint_valid,
+                source_run=run_dir,
+            )
+        )
+    return pd.concat(results, ignore_index=True)
+
+
 def _aggregate(outcomes: pd.DataFrame, group_cols: list[str]) -> pd.DataFrame:
     work = outcomes.copy()
     work["asr_valid_outcome"] = work["evasion"] & work["joint_valid"]
@@ -708,11 +763,13 @@ def _pct(value: float) -> str:
 
 def _markdown_table(df: pd.DataFrame, columns: list[str]) -> list[str]:
     labels = {
+        "attack": "Attack",
         "attack_family": "Family",
         "attack_method": "Attack",
         "attack_goal": "Goal",
         "classifier": "Classifier",
         "classifier_tag": "Classifier",
+        "models": "Models included",
         "attack_class": "Class",
         "N": "N",
         "ASR_raw": "ASR raw",
@@ -756,11 +813,34 @@ def _write_report(
     all_models_run: Path,
     constrained_run: Path,
     targeted_latent_run: Path,
+    targeted_latent_cw_run: Path,
 ) -> None:
     overall_by_attack = overall.set_index("attack_method")
 
     def metric(attack: str, column: str) -> str:
         return _pct(float(overall_by_attack.loc[attack, column]))
+
+    target_labels = {
+        "targeted-benign-latent-pgd": "Latent PGD",
+        "targeted-benign-latent-cw": "Latent CW",
+        "cinput-pgd-target-benign": "Constrained input PGD",
+        "cinput-cw-target-benign": "Constrained input CW",
+    }
+    target_average = (
+        by_classifier.loc[
+            (by_classifier["attack_goal"] == "target-benign")
+            & (by_classifier["classifier"] != "DualPath")
+            & by_classifier["attack_method"].isin(target_labels),
+            ["attack_method", "ASR_valid"],
+        ]
+        .groupby("attack_method", as_index=False, sort=False)
+        .agg(ASR_valid=("ASR_valid", "mean"))
+    )
+    target_average["attack"] = target_average["attack_method"].map(target_labels)
+    target_average["models"] = "MLP, CNN, LSTM, CNN-LSTM"
+    target_average = target_average.set_index("attack_method").loc[
+        list(target_labels)
+    ].reset_index()
 
     lines = [
         "# He-IDSR and Domain-Valid Attack Success Report",
@@ -781,7 +861,7 @@ def _write_report(
         "",
         "- Five classifiers: MLP, CNN, LSTM, CNN-LSTM, and DualPath.",
         "- Seven malicious source classes. Benign is a target class, not an attack source class.",
-        "- Nine attack configurations: latent PGD/CW, unconstrained input PGD/CW, targeted latent PGD, constrained input PGD/CW, and their target-to-Benign variants.",
+        "- Ten attack configurations: latent PGD/CW, unconstrained input PGD/CW, targeted latent PGD/CW, constrained input PGD/CW, and their target-to-Benign variants.",
         "- Cells without any correctly classified source samples are omitted, matching the original runs.",
         "",
         "## Overall Results",
@@ -811,7 +891,30 @@ def _write_report(
             f"- Unconstrained input PGD and CW achieve high raw evasion (`{metric('input-pgd', 'ASR_raw')}` and `{metric('input-cw', 'ASR_raw')}`) but `0.00%` ASR_valid because the generated samples fail the attack pipeline's joint domain constraints.",
             f"- Mahalanobis membership alone is not equivalent to domain validity: unconstrained input CW has `{metric('input-cw', 'he_idsr')}` He-IDSR despite `0.00%` ASR_valid.",
             f"- Constrained input CW has the strongest ASR_valid at `{metric('cinput-cw', 'ASR_valid')}`, but its He-IDSR is lower at `{metric('cinput-cw', 'he_idsr')}` because many successful samples are Mahalanobis outliers.",
-            f"- Target-to-Benign attacks remain weak: targeted latent PGD reaches `{metric('targeted-benign-latent-pgd', 'he_idsr')}` He-IDSR, constrained PGD `{metric('cinput-pgd-target-benign', 'he_idsr')}`, and constrained CW `{metric('cinput-cw-target-benign', 'he_idsr')}`.",
+            f"- Target-to-Benign attacks remain weak: targeted latent PGD reaches `{metric('targeted-benign-latent-pgd', 'he_idsr')}` He-IDSR, targeted latent CW `{metric('targeted-benign-latent-cw', 'he_idsr')}`, constrained PGD `{metric('cinput-pgd-target-benign', 'he_idsr')}`, and constrained CW `{metric('cinput-cw-target-benign', 'he_idsr')}`.",
+            "",
+            "## Target-to-Benign Average ASR Valid",
+            "",
+            "These are unweighted macro-averages across MLP, CNN, LSTM, and CNN-LSTM. DualPath is excluded.",
+            "",
+        ]
+    )
+    lines.extend(
+        _markdown_table(
+            target_average,
+            ["attack", "models", "ASR_valid"],
+        )
+    )
+    lines.extend(
+        [
+            "",
+            "### Vertical",
+            "",
+            "![Vertical target-to-Benign average ASR valid chart](results/he_idsr/target_benign_asr_valid_vertical.png)",
+            "",
+            "### Horizontal",
+            "",
+            "![Horizontal target-to-Benign average ASR valid chart](results/he_idsr/target_benign_asr_valid_horizontal.png)",
             "",
             "## Results by Classifier",
             "",
@@ -860,13 +963,14 @@ def _write_report(
             "",
             f"- Minimum per-cell evasion-mask agreement with saved results: `{_pct(min_e_match)}`.",
             f"- Minimum per-cell joint-validity-mask agreement with saved results: `{_pct(min_v_match)}`.",
-            "- Targeted latent PGD used its saved `x_adv` NPZ artifacts; the other families were rerun because their final adversarial samples or per-sample Mahalanobis flags were not persisted.",
+            "- Targeted latent PGD used its saved `x_adv` NPZ artifacts. Targeted latent CW persisted the Mahalanobis flag directly. The older untargeted and constrained families were rerun because their final adversarial samples or per-sample Mahalanobis flags were not persisted.",
             "",
             "## Source Runs",
             "",
             f"- Untargeted latent and unconstrained input: `{all_models_run}`",
             f"- Constrained input: `{constrained_run}`",
             f"- Targeted latent PGD: `{targeted_latent_run}`",
+            f"- Targeted latent CW: `{targeted_latent_cw_run}`",
             "",
             "The CSV files in `results/he_idsr/` contain the same results in machine-readable form.",
         ]
@@ -886,31 +990,64 @@ def main() -> None:
         type=Path,
         default=DEFAULT_TARGETED_LATENT_RUN,
     )
+    parser.add_argument(
+        "--targeted-latent-cw-run",
+        type=Path,
+        default=DEFAULT_TARGETED_LATENT_CW_RUN,
+    )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
+    parser.add_argument(
+        "--merge-targeted-cw-only",
+        action="store_true",
+        help="Reuse existing he_idsr_per_sample.csv and merge only targeted latent CW.",
+    )
     args = parser.parse_args()
 
     if str(args.device).startswith("cuda") and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but is not available")
 
-    all_outcomes, router, detector = _rerun_all_models(
-        run_dir=args.all_models_run,
-        device=args.device,
+    targeted_cw_outcomes = _load_targeted_latent_cw_outcomes(
+        args.targeted_latent_cw_run
     )
-    targeted_outcomes = _evaluate_targeted_latent_artifacts(
-        run_dir=args.targeted_latent_run,
-        router=router,
-        detector=detector,
-        device=args.device,
-    )
-    constrained_outcomes = _rerun_constrained(
-        run_dir=args.constrained_run,
-        device=args.device,
-    )
-    outcomes = pd.concat(
-        [all_outcomes, targeted_outcomes, constrained_outcomes],
-        ignore_index=True,
-    )
+    if args.merge_targeted_cw_only:
+        existing_path = args.output_dir / "he_idsr_per_sample.csv"
+        if not existing_path.exists():
+            raise FileNotFoundError(
+                f"--merge-targeted-cw-only requires {existing_path}"
+            )
+        existing = pd.read_csv(existing_path)
+        existing = existing.loc[
+            existing["attack_method"] != "targeted-benign-latent-cw"
+        ].copy()
+        outcomes = pd.concat(
+            [existing, targeted_cw_outcomes],
+            ignore_index=True,
+        )
+    else:
+        all_outcomes, router, detector = _rerun_all_models(
+            run_dir=args.all_models_run,
+            device=args.device,
+        )
+        targeted_outcomes = _evaluate_targeted_latent_artifacts(
+            run_dir=args.targeted_latent_run,
+            router=router,
+            detector=detector,
+            device=args.device,
+        )
+        constrained_outcomes = _rerun_constrained(
+            run_dir=args.constrained_run,
+            device=args.device,
+        )
+        outcomes = pd.concat(
+            [
+                all_outcomes,
+                targeted_outcomes,
+                targeted_cw_outcomes,
+                constrained_outcomes,
+            ],
+            ignore_index=True,
+        )
 
     by_class = _aggregate(
         outcomes,
@@ -951,6 +1088,7 @@ def main() -> None:
         all_models_run=args.all_models_run,
         constrained_run=args.constrained_run,
         targeted_latent_run=args.targeted_latent_run,
+        targeted_latent_cw_run=args.targeted_latent_cw_run,
     )
 
     print()

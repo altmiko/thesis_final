@@ -16,7 +16,7 @@ VAE run: `gaussian_anticollapse_beta05_freebits01_20260529_173512`
 
 - Five classifiers: MLP, CNN, LSTM, CNN-LSTM, and DualPath.
 - Seven malicious source classes. Benign is a target class, not an attack source class.
-- Nine attack configurations: latent PGD/CW, unconstrained input PGD/CW, targeted latent PGD, constrained input PGD/CW, and their target-to-Benign variants.
+- Ten attack configurations: latent PGD/CW, unconstrained input PGD/CW, targeted latent PGD/CW, constrained input PGD/CW, and their target-to-Benign variants.
 - Cells without any correctly classified source samples are omitted, matching the original runs.
 
 ## Overall Results
@@ -32,6 +32,7 @@ VAE run: `gaussian_anticollapse_beta05_freebits01_20260529_173512`
 | constrained-input | cinput-cw | untargeted | 3200 | 76.22% | 76.22% | 60.59% | 45.38% |
 | constrained-input | cinput-pgd-target-benign | target-benign | 3200 | 4.16% | 4.16% | 33.22% | 1.91% |
 | constrained-input | cinput-cw-target-benign | target-benign | 3200 | 10.78% | 10.78% | 37.91% | 5.69% |
+| latent | targeted-benign-latent-cw | target-benign | 3200 | 5.94% | 5.22% | 90.69% | 5.06% |
 
 ## Key Findings
 
@@ -39,7 +40,26 @@ VAE run: `gaussian_anticollapse_beta05_freebits01_20260529_173512`
 - Unconstrained input PGD and CW achieve high raw evasion (`95.00%` and `90.28%`) but `0.00%` ASR_valid because the generated samples fail the attack pipeline's joint domain constraints.
 - Mahalanobis membership alone is not equivalent to domain validity: unconstrained input CW has `67.72%` He-IDSR despite `0.00%` ASR_valid.
 - Constrained input CW has the strongest ASR_valid at `76.22%`, but its He-IDSR is lower at `45.38%` because many successful samples are Mahalanobis outliers.
-- Target-to-Benign attacks remain weak: targeted latent PGD reaches `4.00%` He-IDSR, constrained PGD `1.91%`, and constrained CW `5.69%`.
+- Target-to-Benign attacks remain weak: targeted latent PGD reaches `4.00%` He-IDSR, targeted latent CW `5.06%`, constrained PGD `1.91%`, and constrained CW `5.69%`.
+
+## Target-to-Benign Average ASR Valid
+
+These are unweighted macro-averages across MLP, CNN, LSTM, and CNN-LSTM. DualPath is excluded.
+
+| Attack | Models included | ASR valid |
+|---|---|---|
+| Latent PGD | MLP, CNN, LSTM, CNN-LSTM | 4.28% |
+| Latent CW | MLP, CNN, LSTM, CNN-LSTM | 5.20% |
+| Constrained input PGD | MLP, CNN, LSTM, CNN-LSTM | 2.22% |
+| Constrained input CW | MLP, CNN, LSTM, CNN-LSTM | 7.67% |
+
+### Vertical
+
+![Vertical target-to-Benign average ASR valid chart](results/he_idsr/target_benign_asr_valid_vertical.png)
+
+### Horizontal
+
+![Horizontal target-to-Benign average ASR valid chart](results/he_idsr/target_benign_asr_valid_horizontal.png)
 
 ## Results by Classifier
 
@@ -90,6 +110,11 @@ VAE run: `gaussian_anticollapse_beta05_freebits01_20260529_173512`
 | cinput-cw | DualPath | 700 | 76.71% | 76.71% | 61.29% | 43.29% |
 | cinput-pgd-target-benign | DualPath | 700 | 11.43% | 11.43% | 34.14% | 4.14% |
 | cinput-cw-target-benign | DualPath | 700 | 23.00% | 23.00% | 36.29% | 10.86% |
+| targeted-benign-latent-cw | MLP | 700 | 5.14% | 4.29% | 89.43% | 5.00% |
+| targeted-benign-latent-cw | CNN | 500 | 6.60% | 6.40% | 91.40% | 6.00% |
+| targeted-benign-latent-cw | LSTM | 700 | 6.00% | 5.43% | 91.00% | 5.14% |
+| targeted-benign-latent-cw | CNN-LSTM | 600 | 4.83% | 4.67% | 94.17% | 4.50% |
+| targeted-benign-latent-cw | DualPath | 700 | 7.14% | 5.57% | 88.14% | 4.86% |
 
 ## Detailed Results by Source Class
 
@@ -426,16 +451,54 @@ VAE run: `gaussian_anticollapse_beta05_freebits01_20260529_173512`
 | DualPath | Spoofing | 100 | 28.00% | 28.00% | 33.00% | 20.00% |
 | DualPath | Web | 100 | 0.00% | 0.00% | 100.00% | 0.00% |
 
+### `targeted-benign-latent-cw`
+
+| Classifier | Class | N | ASR raw | ASR valid | Mahalanobis ID | He-IDSR |
+|---|---|---|---|---|---|---|
+| MLP | BruteForce | 100 | 3.00% | 0.00% | 88.00% | 3.00% |
+| MLP | DDoS | 100 | 0.00% | 0.00% | 82.00% | 0.00% |
+| MLP | DoS | 100 | 0.00% | 0.00% | 85.00% | 0.00% |
+| MLP | Mirai | 100 | 0.00% | 0.00% | 86.00% | 0.00% |
+| MLP | Recon | 100 | 4.00% | 4.00% | 97.00% | 4.00% |
+| MLP | Spoofing | 100 | 27.00% | 24.00% | 95.00% | 26.00% |
+| MLP | Web | 100 | 2.00% | 2.00% | 93.00% | 2.00% |
+| CNN | DDoS | 100 | 0.00% | 0.00% | 89.00% | 0.00% |
+| CNN | DoS | 100 | 0.00% | 0.00% | 91.00% | 0.00% |
+| CNN | Mirai | 100 | 0.00% | 0.00% | 91.00% | 0.00% |
+| CNN | Recon | 100 | 8.00% | 8.00% | 97.00% | 8.00% |
+| CNN | Spoofing | 100 | 25.00% | 24.00% | 89.00% | 22.00% |
+| LSTM | BruteForce | 100 | 4.00% | 3.00% | 93.00% | 1.00% |
+| LSTM | DDoS | 100 | 0.00% | 0.00% | 82.00% | 0.00% |
+| LSTM | DoS | 100 | 0.00% | 0.00% | 90.00% | 0.00% |
+| LSTM | Mirai | 100 | 0.00% | 0.00% | 89.00% | 0.00% |
+| LSTM | Recon | 100 | 3.00% | 3.00% | 96.00% | 3.00% |
+| LSTM | Spoofing | 100 | 29.00% | 26.00% | 87.00% | 26.00% |
+| LSTM | Web | 100 | 6.00% | 6.00% | 100.00% | 6.00% |
+| CNN-LSTM | DDoS | 100 | 0.00% | 0.00% | 88.00% | 0.00% |
+| CNN-LSTM | DoS | 100 | 0.00% | 0.00% | 93.00% | 0.00% |
+| CNN-LSTM | Mirai | 100 | 0.00% | 0.00% | 95.00% | 0.00% |
+| CNN-LSTM | Recon | 100 | 3.00% | 3.00% | 97.00% | 3.00% |
+| CNN-LSTM | Spoofing | 100 | 26.00% | 25.00% | 93.00% | 24.00% |
+| CNN-LSTM | Web | 100 | 0.00% | 0.00% | 99.00% | 0.00% |
+| DualPath | BruteForce | 100 | 14.00% | 8.00% | 80.00% | 3.00% |
+| DualPath | DDoS | 100 | 0.00% | 0.00% | 84.00% | 0.00% |
+| DualPath | DoS | 100 | 0.00% | 0.00% | 91.00% | 0.00% |
+| DualPath | Mirai | 100 | 0.00% | 0.00% | 83.00% | 0.00% |
+| DualPath | Recon | 100 | 4.00% | 4.00% | 97.00% | 4.00% |
+| DualPath | Spoofing | 100 | 31.00% | 26.00% | 82.00% | 26.00% |
+| DualPath | Web | 100 | 1.00% | 1.00% | 100.00% | 1.00% |
+
 ## Reproduction Checks
 
 - Minimum per-cell evasion-mask agreement with saved results: `100.00%`.
 - Minimum per-cell joint-validity-mask agreement with saved results: `100.00%`.
-- Targeted latent PGD used its saved `x_adv` NPZ artifacts; the other families were rerun because their final adversarial samples or per-sample Mahalanobis flags were not persisted.
+- Targeted latent PGD used its saved `x_adv` NPZ artifacts. Targeted latent CW persisted the Mahalanobis flag directly. The older untargeted and constrained families were rerun because their final adversarial samples or per-sample Mahalanobis flags were not persisted.
 
 ## Source Runs
 
 - Untargeted latent and unconstrained input: `D:\thesis_final\outputs\latent_attacks\all_models_rerun_20260602_015314_seed42`
 - Constrained input: `D:\thesis_final\outputs\latent_attacks\constrained_input_baselines_20260602_032651_seed42`
 - Targeted latent PGD: `D:\thesis_final\outputs\latent_attacks\targeted_benign_pgd_gaussian_anticollapse_beta05_freebits01_20260529_173512_20260602_023404_seed42`
+- Targeted latent CW: `D:\thesis_final\outputs\latent_attacks\targeted_benign_cw_gaussian_anticollapse_beta05_freebits01_20260529_173512_20260610_213313_seed42`
 
 The CSV files in `results/he_idsr/` contain the same results in machine-readable form.

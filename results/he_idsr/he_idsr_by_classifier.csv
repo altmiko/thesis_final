@@ -44,3 +44,8 @@ constrained-input,cinput-pgd,untargeted,DualPath,dualpath,700,0.4785714285714286
 constrained-input,cinput-cw,untargeted,DualPath,dualpath,700,0.7671428571428571,0.7671428571428571,0.6128571428571429,0.4328571428571429,1.0,1.0
 constrained-input,cinput-pgd-target-benign,target-benign,DualPath,dualpath,700,0.11428571428571428,0.11428571428571428,0.3414285714285714,0.041428571428571426,1.0,1.0
 constrained-input,cinput-cw-target-benign,target-benign,DualPath,dualpath,700,0.23,0.23,0.3628571428571429,0.10857142857142857,1.0,1.0
+latent,targeted-benign-latent-cw,target-benign,MLP,mlp,700,0.05142857142857143,0.04285714285714286,0.8942857142857142,0.05,1.0,1.0
+latent,targeted-benign-latent-cw,target-benign,CNN,cnn,500,0.066,0.064,0.914,0.06,1.0,1.0
+latent,targeted-benign-latent-cw,target-benign,LSTM,lstm,700,0.06,0.054285714285714284,0.91,0.05142857142857143,1.0,1.0
+latent,targeted-benign-latent-cw,target-benign,CNN-LSTM,serial,600,0.04833333333333333,0.04666666666666667,0.9416666666666667,0.045,1.0,1.0
+latent,targeted-benign-latent-cw,target-benign,DualPath,dualpath,700,0.07142857142857142,0.055714285714285716,0.8814285714285715,0.04857142857142857,1.0,1.0
