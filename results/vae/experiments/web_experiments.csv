@@ -1,6 +1,0 @@
-experiment,class_name,best_val_loss,final_kl,collapsed_dims,unconditional_validity_pre_pct,unconditional_validity_pct,unconditional_repair_pct,conditional_validity_pre_pct,conditional_validity_pct,conditional_repair_pct,protocol_accuracy_pct,worst_feature,worst_feature_error
-wide24_beta050_protocol3_baseline,Web,-28.461358,23.801787,9,0.1,99.1,99.0,0.9,100.0,99.1,99.33,IAT,0.6331859556566767
-wide24_beta050_protocol3_structured,Web,167.031469,1763.434367,0,100.0,100.0,0.0,100.0,100.0,0.0,64.5,Time_To_Live,33.5779916458771
-wide24_beta050_protocol3_structured_constraint005,Web,-19.882939,19.060429,10,100.0,100.0,0.0,100.0,100.0,0.0,98.24,Time_To_Live,1.1115305668165705
-wide24_beta025_protocol3_structured_constraint005,Web,105.941442,1778.710124,0,100.0,100.0,0.0,100.0,100.0,0.0,93.78,Time_To_Live,25.95851578912815
-wide24_beta025_protocol4_structured_constraint005,Web,101.660561,1707.17452,0,100.0,100.0,0.0,100.0,100.0,0.0,96.51,Min,2.7423786836511947

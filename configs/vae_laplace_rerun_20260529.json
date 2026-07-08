@@ -1,6 +1,0 @@
-{
-  "run_tag": "laplace_rerun_20260529",
-  "continuous_likelihood": "laplace",
-  "checkpoint_name_template": "vae_class_{class_id}_{class_name}_{run_tag}.pt",
-  "curves_name_template": "curves_{class_name}_{run_tag}.png"
-}

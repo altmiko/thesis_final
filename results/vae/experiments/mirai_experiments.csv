@@ -1,7 +1,0 @@
-experiment,class_name,best_val_loss,final_kl,collapsed_dims,unconditional_validity_pre_pct,unconditional_validity_pct,unconditional_repair_pct,conditional_validity_pre_pct,conditional_validity_pct,conditional_repair_pct,protocol_accuracy_pct,worst_feature,worst_feature_error
-structured_beta100_constraint000,Mirai,-40.324903,13.203386,9,100.0,100.0,0.0,100.0,100.0,0.0,99.84,Time_To_Live,1.0423314801390404
-structured_beta100_constraint005,Mirai,-41.65755,11.135112,8,100.0,100.0,0.0,100.0,100.0,0.0,99.83,Min,1.0510809709091282
-structured_beta100_constraint010,Mirai,-41.190889,10.735754,8,100.0,100.0,0.0,100.0,100.0,0.0,99.92,Min,1.072971201823611
-structured_beta075_constraint005,Mirai,-42.673324,10.748767,7,100.0,100.0,0.0,100.0,100.0,0.0,99.87,Time_To_Live,1.0513797233292115
-structured_beta050_constraint005,Mirai,-43.848018,12.188149,7,100.0,100.0,0.0,100.0,100.0,0.0,99.89,Time_To_Live,1.0372960014147428
-structured_beta025_constraint005,Mirai,-45.128091,23.477237,3,100.0,100.0,0.0,100.0,100.0,0.0,99.97,Time_To_Live,1.0252460561201434
