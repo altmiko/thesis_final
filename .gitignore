@@ -2,6 +2,7 @@ CLAUDE.md
 
 __pycache__/
 *.pyc
+.venv/
 
 data/*
 !data/raw/

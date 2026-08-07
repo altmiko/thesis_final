@@ -115,6 +115,15 @@ MANUAL_CONCENTRATED_DECISIONS = {
     'ack_flag_number': 'allow_mutable',
     'fin_count': 'allow_mutable',
     'rst_count': 'allow_mutable',
+    # Min (min packet length) and Number (packet count) fell below the near-zero
+    # IQR threshold once preprocessing moved to the FULL labelled parquet, whose
+    # DDoS-dominated (72.65%) distribution concentrates both around a single
+    # value (Q25==Q75) even though they genuinely vary (nunique 1360 / 99, always
+    # non-zero). They are attacker-influenceable aggregates already listed in
+    # FULL_PERTURBABLE_OVERRIDE_FEATURES, so they stay mutable — consistent with
+    # every other concentrated mutable feature above.
+    'Min': 'allow_mutable',
+    'Number': 'allow_mutable',
 }
 
 # ── Category mapping (uppercase labels as found in the CSV) ─────────────────

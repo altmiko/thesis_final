@@ -75,7 +75,7 @@ Raw CSV → eda_tables/figures → preprocessing.py → baseline_experiments.py 
 
 - **Large data**: The source CSV is ~10GB. Use chunking or `head -n 10` to inspect. EDA scripts read from `raw_loaded.parquet` (4.4M rows), not the raw CSV.
 - **Label casing**: Dataset uses ALL UPPERCASE labels (e.g., `DDOS-ICMP_FLOOD`). `CATEGORY_MAP` keys are uppercase.
-- **Schema**: "Modified Schema A" — 39 features. Includes `Time_To_Live`, `IGMP`; excludes Magnitude, Radius, flow_duration, Duration, Srate, Drate, urg_count.
+- **Schema**: 39 features — the CIC vendor's CSV mirror (a subset of the 46-feature CICFlowMeter output). Named "Modified Schema A" in `feature_groups.py`. Includes `Time_To_Live`, `IGMP`; the vendor's mirror already omits `Magnitude`, `Radius`, `flow_duration`, `Duration`, `Srate`, `Drate`, `urg_count`, `Covariance`, `Weight` — these are absent from the shipped CSVs and cannot be recovered without re-running CICFlowMeter on the original PCAPs. See `docs/data/ciciot.md` §4.
 - **Perturbation mask is intentionally unconstrained in attacks**: `run_attack()` has a `perturbation_mask` parameter but it's marked TODO. The unconstrained attack design is deliberate — the ASR_raw vs ASR_valid gap is the thesis contribution.
 - **No SMOTE/oversampling**: By design, to avoid contaminating the VAE manifold.
 - **Hardcoded paths**: EDA and preprocessing scripts use hardcoded `D:/thesis_final/`. Attack/model scripts use `Path(__file__).resolve().parents[1]`.

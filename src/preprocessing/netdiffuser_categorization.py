@@ -10,7 +10,7 @@ def categorize_features(df: pd.DataFrame, feature_cols: list,
     """
     NetDiffuser Algorithm 1: partition features into Discrete vs Relative.
     """
-    corr = df[feature_cols].corr(method=method).abs().values
+    corr = df[feature_cols].corr(method=method).abs().values.copy()  # .copy(): numpy 2.x returns a read-only view; fill_diagonal needs it writable
     np.fill_diagonal(corr, 1.0)
     dist = np.sqrt(np.maximum(2 * (1 - corr), 0.0))
 
